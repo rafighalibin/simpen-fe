@@ -9,7 +9,7 @@ function PengajarPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch('http://'+api+'/pengajar');
+        const res = await fetch('https://'+api+'/pengajar');
         const data = await res.json();
         setPengajarData(data);
       } catch (error) {
