@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 function PengajarPage() {
   const [pengajarData, setPengajarData] = useState(null);
 
-  var api = '34.122.94.183'
+  var api = 'api.simpen.org'
   useEffect(() => {
     const fetchData = async () => {
       try {
