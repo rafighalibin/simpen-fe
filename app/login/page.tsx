@@ -3,17 +3,7 @@
 import { QueryClient, QueryClientProvider, useMutation } from "react-query";
 import { useState } from "react";
 
-const queryClient = new QueryClient();
-
-export default function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Page />
-    </QueryClientProvider>
-  );
-}
-
-function Page() {
+export default function Page() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -48,6 +38,7 @@ function Page() {
           onSubmit={async (e) => {
             e.preventDefault();
             await loginMutation();
+            // TODO: Redirect to dashboard
           }}
         >
           <input type="hidden" name="remember" value="true" />

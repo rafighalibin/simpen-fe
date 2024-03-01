@@ -1,3 +1,5 @@
+// In Next.js, this file would be called: app/layout.jsx
+import Provider from "./provider";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -11,7 +13,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <head />
+      <body className={inter.className}>
+        <Provider>{children}</Provider>
+      </body>
     </html>
   );
 }
