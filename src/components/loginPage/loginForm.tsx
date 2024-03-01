@@ -42,6 +42,7 @@ export const LoginForm = () => {
           onSubmit={async (e) => {
             e.preventDefault();
             await loginMutation();
+            // TODO: Redirect to dashboard
           }}
         >
           <input type="hidden" name="remember" value="true" />

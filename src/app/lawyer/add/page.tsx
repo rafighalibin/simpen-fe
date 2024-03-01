@@ -7,16 +7,6 @@ import {
 } from "react-query";
 import { useState } from "react";
 
-const queryClient = new QueryClient();
-
-export default function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Page />
-    </QueryClientProvider>
-  );
-}
-
 interface Lawyer {
   user_id: number;
   alamat_ktp: string;
@@ -26,7 +16,7 @@ interface Lawyer {
   backup_phone_num: string;
 }
 
-function Page() {
+export default function Page() {
   const [alamat_ktp, setAlamatKtp] = useState("");
   const [domisili_kota, setDomisiliKota] = useState("");
   const [email_pribadi, setEmailPribadi] = useState("");

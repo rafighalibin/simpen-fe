@@ -3,16 +3,6 @@ import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import React from "react";
 import { request } from "http";
 
-const queryClient = new QueryClient();
-
-export default function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Page />
-    </QueryClientProvider>
-  );
-}
-
 interface Lawyer {
   user_id: number;
   nama: string;
@@ -22,7 +12,7 @@ interface Lawyer {
   backup_phone_num: string;
 }
 
-function Page() {
+export default function Page() {
   const { isLoading, error, data } = useQuery({
     queryKey: ["lawyers"],
     queryFn: () =>
