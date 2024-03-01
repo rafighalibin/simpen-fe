@@ -1,9 +1,10 @@
-"use client";
+import React from "react";
 
-import { QueryClient, QueryClientProvider, useMutation } from "react-query";
+import { useMutation } from "react-query";
 import { useState } from "react";
+import { PoppinsBold, QuicksandReguler } from "../../font/font";
 
-export default function Page() {
+export const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -29,7 +30,10 @@ export default function Page() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2
+            className="mt-6 text-center text-3xl  text-gray-900"
+            style={PoppinsBold.style}
+          >
             Sign in to your account
           </h2>
         </div>
@@ -57,6 +61,7 @@ export default function Page() {
                 placeholder="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                style={QuicksandReguler.style}
               />
             </div>
             <div>
@@ -73,6 +78,7 @@ export default function Page() {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                style={QuicksandReguler.style}
               />
             </div>
           </div>
@@ -88,6 +94,7 @@ export default function Page() {
               <label
                 htmlFor="remember-me"
                 className="ml-2 block text-sm text-gray-900"
+                style={QuicksandReguler.style}
               >
                 Remember me
               </label>
@@ -97,6 +104,7 @@ export default function Page() {
               <a
                 href="#"
                 className="font-medium text-indigo-600 hover:text-indigo-500"
+                style={QuicksandReguler.style}
               >
                 Forgot your password?
               </a>
@@ -107,6 +115,7 @@ export default function Page() {
             <button
               type="submit"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              style={QuicksandReguler.style}
             >
               <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                 <svg
@@ -130,4 +139,4 @@ export default function Page() {
       </div>
     </div>
   );
-}
+};
