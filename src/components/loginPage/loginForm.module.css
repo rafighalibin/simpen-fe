@@ -1,0 +1,27 @@
+.heading1 {
+  color: #66a2dc;
+  font-size: 64px;
+  text-align: center;
+  font-feature-settings: "clig" off, "liga" off;
+  line-height: 120%;
+}
+
+.heading2 {
+  color: #66a2dc;
+  font-size: 24px;
+  text-align: center;
+  text-align: center;
+  font-feature-settings: "cv04" on, "cv03" on, "cv02" on, "cv11" on, "clig" off,
+    "liga" off;
+  line-height: 150%;
+}
+
+.button_tx {
+  color: #66a2dc;
+  font-size: 20px;
+  text-align: center;
+  text-align: center;
+  font-feature-settings: "cv04" on, "cv03" on, "cv02" on, "cv11" on, "clig" off,
+    "liga" off;
+  line-height: 150%;
+}

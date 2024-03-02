@@ -6,6 +6,12 @@ export const QuicksandReguler = Quicksand({
   display: "swap",
 });
 
+export const QuicksandBold = Quicksand({
+  subsets: ["latin"],
+  weight: "700",
+  display: "swap",
+});
+
 export const PoppinsReguler = Poppins({
   subsets: ["latin"],
   weight: "400",
