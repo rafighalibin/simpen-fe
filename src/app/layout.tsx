@@ -1,7 +1,6 @@
-// In Next.js, this file would be called: app/layout.jsx
-import Provider from "./provider";
+import Provider from "../common/hooks/provider";
 import { Inter } from "next/font/google";
-import "./globals.css";
+import "../common/styles/globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
