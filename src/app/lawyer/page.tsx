@@ -1,7 +1,8 @@
 "use client";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import React from "react";
-import { request } from "http";
+import { AddForm } from "../../components/addUserPage/addForm";
+import useFetchWithToken from "../../hooks/fetchWithToken";
 
 interface Lawyer {
   user_id: number;
@@ -13,29 +14,21 @@ interface Lawyer {
 }
 
 export default function Page() {
+  const fetchWithToken = useFetchWithToken();
+
   const { isLoading, error, data } = useQuery({
     queryKey: ["lawyers"],
-    queryFn: () =>
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/lawyer`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("Authorization="))
-            ?.split("=")[1],
-        },
-      }).then((res) => res.json()),
+    queryFn: () => fetchWithToken("/lawyer").then((res) => res.json()),
   });
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
-  console.log(data);
   const lawyers: Lawyer[] = data.content;
 
   return (
     <div className="overflow-x-auto">
+      <AddForm />
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
