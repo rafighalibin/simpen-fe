@@ -6,9 +6,9 @@ import {
   useQuery,
 } from "react-query";
 import { useState } from "react";
-import { AddForm } from "../../../components/LawyerPage/addForm";
+import { LawyerForm } from "../../../components/LawyerPage/lawyerForm";
 
 export default function Page() {
   return;
-  <AddForm />;
+  <LawyerForm />;
 }
