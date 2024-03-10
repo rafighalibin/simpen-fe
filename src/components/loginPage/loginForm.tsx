@@ -6,6 +6,9 @@ import { useState } from "react";
 // font and css
 import { PoppinsBold, QuicksandReguler, QuicksandBold } from "../../font/font";
 import styles from "./loginForm.module.css";
+import Background from "./background";
+
+// import componenet
 
 export const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -30,6 +33,7 @@ export const LoginForm = () => {
   });
 
   return (
+    // <Background>
     <div className="bg-[#215E9B] min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-xl w-full space-y-8">
         <div className="bg-white rounded-2xl shadow-lg p-[10%]">
@@ -118,5 +122,6 @@ export const LoginForm = () => {
         </div>
       </div>
     </div>
+    // </Background>
   );
 };
