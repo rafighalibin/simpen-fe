@@ -1,27 +1,48 @@
-.heading1 {
-  color: #66a2dc;
-  font-size: 64px;
-  text-align: center;
-  font-feature-settings: "clig" off, "liga" off;
-  line-height: 120%;
+.form_title {
+  color: var(--Dark-Dark, #111928);
+  font-weight: 500;
+  line-height: 24px; /* 150% */
 }
 
-.heading2 {
-  color: #66a2dc;
-  font-size: 24px;
-  text-align: center;
-  text-align: center;
-  font-feature-settings: "cv04" on, "cv03" on, "cv02" on, "cv11" on, "clig" off,
-    "liga" off;
-  line-height: 150%;
+.form_placeholder {
+  color: var(--Dark-Dark-6, #9ca3af);
+  font-weight: 500;
+  line-height: 24px; /* 150% */
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 4px;
+  background: var(--blue-500, #3b82f6);
 }
 
 .button_tx {
-  color: #66a2dc;
-  font-size: 20px;
+  color: var(--white, var(--White, #fff));
   text-align: center;
-  text-align: center;
-  font-feature-settings: "cv04" on, "cv03" on, "cv02" on, "cv11" on, "clig" off,
-    "liga" off;
-  line-height: 150%;
+  font-size: 16px;
+  line-height: 150%; /* 24px */
+  padding: 10px;
+  padding: 10px 15px;
+}
+
+.card {
+  border-radius: 4px;
+  background: var(--White, #fff);
+  width: 28vw;
+  margin: 0 auto;
+}
+
+.logo {
+  max-width: 50%;
+  max-height: 50%;
+  margin: 0 auto;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }

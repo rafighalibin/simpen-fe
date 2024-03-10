@@ -17,17 +17,19 @@ module.exports = {
   plugins: [require("daisyui")],
   daisyui: {
     themes: [
-        {"Kalananti":{
-          "primary": "#215E9B",
-          "secondary": "#F2AE00",
-          "accent": "#F87E0D",
-          "neutral": "#1E1E1E",
+      {
+        Kalananti: {
+          primary: "#215E9B",
+          secondary: "#F2AE00",
+          accent: "#F87E0D",
+          neutral: "#1E1E1E",
           "base-100": "#FCFCFC",
-          "info": "#215E9B",
-          "success": "#22AD5C",
-          "warning": "#F87E0D",
-          "error": "#F23030",
-      }}
+          info: "#215E9B",
+          success: "#22AD5C",
+          warning: "#F87E0D",
+          error: "#F23030",
+        },
+      },
     ], // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]
     base: true, // applies background color and foreground color for root element by default
     styled: true, // include daisyUI colors and design decisions for all components

@@ -1,24 +1,30 @@
-import React, { ReactNode } from "react";
+import React from "react";
+import Image from "next/image";
 
-interface BackgroundProps {
-  children: ReactNode;
-}
+// font and css
+import styles from "./background.module.css";
 
-const Background: React.FC<BackgroundProps> = ({ children }) => {
+// import component
+import asset1 from "../../../public/BG_asset_1.png";
+import asset2 from "../../../public/BG_asset_2.png";
+
+export const Background = () => {
   return (
-    <div
-      style={{
-        backgroundImage: `url('/loginBG.png')`,
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
-        width: "100%",
-        height: "100vh",
-      }}
-    >
-      {children}
+    <div className={`${styles.bg}`} style={{ minHeight: "100vh" }}>
+      <div>
+        <Image
+          src={asset1}
+          alt={"asset attr 1"}
+          className={`${styles.asset1}`}
+        />
+      </div>
+      <div>
+        <Image
+          src={asset2}
+          alt={"asset attr 2"}
+          className={`${styles.asset2}`}
+        />
+      </div>
     </div>
   );
 };
-
-export default Background;
