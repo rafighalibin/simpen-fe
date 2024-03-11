@@ -64,32 +64,42 @@ const Page = () => {
   };
 
   return (
-    <div>
-      <button
-        onClick={handleDelete}
-        style={{ marginTop: "20px", backgroundColor: "red", color: "white" }}
-      >
-        Delete Class
-      </button>
-      <h1>ID: {id}</h1>
-      <h2>
+    <div className="p-4 bg-gray-100 rounded-lg shadow-md">
+      <h1 className="text-xl font-bold mb-2">ID: {id}</h1>
+      <h2 className="text-lg mb-2">
         {programName} - {jenisKelasName}
       </h2>
-      <div>Start Date: {formatDate(tanggalMulai)}</div>
-      <div>End Date: {formatDate(tanggalSelesai)}</div>
-      <div>Teacher ID: {pengajarId}</div>
-      <div>
-        Group Link: <a href={linkGroup}>{linkGroup}</a>
+      <div className="mb-2">Start Date: {formatDate(tanggalMulai)}</div>
+      <div className="mb-2">End Date: {formatDate(tanggalSelesai)}</div>
+      <div className="mb-2">Teacher ID: {pengajarId}</div>
+      <div className="mb-2">
+        Link Group Wa:{" "}
+        <a href={linkGroup} className="text-blue-500">
+          {linkGroup}
+        </a>
       </div>
-      <div>Level: {level}</div>
-      <div>Platform: {platform}</div>
-      <div>
-        <h3>Students:</h3>
+      <div className="mb-2">Level: {level}</div>
+      <div className="mb-2">Platform: {platform}</div>
+      <div className="mb-2">
+        <h3 className="text-lg font-bold mb-1">Students:</h3>
         <ul>
           {listMurid.map((murid, index) => (
-            <li key={index}>{murid}</li>
+            <li key={index} className="ml-4">
+              {murid}
+            </li>
           ))}
         </ul>
+      </div>
+      <div className="flex justify-end space-x-4">
+        <button className="bg-blue-500 text-white px-4 py-2 rounded-md mb-4">
+          <a href={`/kelas/${id}/edit`}>Edit Class</a>
+        </button>
+        <button
+          onClick={handleDelete}
+          className="bg-red-500 text-white px-4 py-2 rounded-md mb-4"
+        >
+          Delete Class
+        </button>
       </div>
     </div>
   );
