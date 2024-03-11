@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 import { useToken } from "../hooks/useToken";
 import { useRouter } from "next/navigation";
@@ -8,11 +8,17 @@ import { useRouter } from "next/navigation";
 const Navbar = () => {
   const router = useRouter();
   const { removePenggunaToken } = useToken();
+  const [loggingOut, setLoggingOut] = useState(false);
 
   const handleLogout = () => {
+    setLoggingOut(true);
     removePenggunaToken();
-    router.push("/login");
+
+    setTimeout(() => {
+      router.push("/login");
+    }, 1000);
   };
+
   return (
     <nav className="bg-primary py-4">
       <div className="max-w-7xl mx-auto px-4">
@@ -32,12 +38,19 @@ const Navbar = () => {
             </a>
           </div>
           <div>
-            <button
-              className="text-white hover:text-gray-300"
-              onClick={handleLogout}
-            >
-              Logout
-            </button>
+            {loggingOut ? (
+              <div className="flex items-center">
+                <p className="text-white mr-2">Logging out...</p>
+                <div className="loader"></div>
+              </div>
+            ) : (
+              <button
+                className="text-white hover:text-gray-300"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            )}
           </div>
         </div>
       </div>
