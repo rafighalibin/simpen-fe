@@ -8,6 +8,7 @@ import React from "react";
 import Select from "react-select";
 import { MuridSelect } from "../../common/types/murid";
 import useFetchPengajar from "../../common/hooks/user/useFetchPengajar";
+import CalendarIcon from "../../common/components/icons/CalendarIcon";
 
 const listMuridExistingTemp: MuridSelect[] = [
   {
@@ -38,6 +39,8 @@ const UpdateForm = () => {
   const [listMuridExisting, setListMuridExisting] = useState<MuridSelect[]>([]);
   const [muridSelected, setMuridSelected] = useState<MuridSelect[]>([]);
   const [formState, setFormState] = useState({
+    programName: "",
+    jenisKelasName: "",
     tanggalMulai: "",
     tanggalSelesai: "",
     pengajarId: "",
@@ -70,6 +73,8 @@ const UpdateForm = () => {
         level: detailKelas.content.level,
         platform: detailKelas.content.platform,
         listMurid: detailKelas.content.listMurid,
+        programName: detailKelas.content.programName,
+        jenisKelasName: detailKelas.content.jenisKelasName,
       }));
 
       detailKelas.content.listMurid.forEach((e) => {
@@ -83,6 +88,8 @@ const UpdateForm = () => {
         value: detailKelas.content.pengajarId,
         label: detailKelas.content.namaPengajar,
       });
+
+      setListMuridExisting(listMuridExistingTemp);
     },
   });
 
@@ -122,93 +129,161 @@ const UpdateForm = () => {
   if (isSuccess) redirect(`/kelas/${id}`);
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-md mx-auto mt-8 p-4 bg-white shadow-md rounded-lg"
-    >
-      <h1 className="text-2xl font-bold mb-4">Edit Class ID: {id}</h1>
-      <div className="mb-4">
-        <label className="block font-medium">Start Date:</label>
-        <input
-          type="date"
-          name="tanggalMulai"
-          value={formState.tanggalMulai}
-          onChange={handleChange}
-          className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring focus:border-blue-500"
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block font-medium">End Date:</label>
-        <input
-          type="date"
-          name="tanggalSelesai"
-          value={formState.tanggalSelesai}
-          onChange={handleChange}
-          className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring focus:border-blue-500"
-        />
-      </div>
-      <div className="mb-4">
-        <label htmlFor="pengajarId" className="block font-medium">
-          Teacher
-        </label>
-        {
-          <Select
-            defaultValue={pengajarSelected}
-            onChange={handleChangePengajar}
-            options={listPengajarExisting}
-          />
-        }
-      </div>
+    <div>
+      <div className=" px-7 py-20 space-y-4">
+        <h1 className=" flex justify-center text-5xl font-bold text-neutral/100 ">
+          Ubah Detail Kelas
+        </h1>
+        <form onSubmit={handleSubmit}>
+          <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-lg rounded-lg">
+            <div>
+              <label className="block font-medium text-neutral/70">
+                Id Kelas
+              </label>
+              <input
+                disabled
+                type="text"
+                value={id}
+                className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full rounded-md"
+              />
+            </div>
 
-      <div className="mb-4">
-        <label className="block font-medium">Group Link:</label>
-        <input
-          type="text"
-          name="linkGroup"
-          value={formState.linkGroup}
-          onChange={handleChange}
-          className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring focus:border-blue-500"
-        />
+            <div>
+              <label className="block font-medium text-neutral/70">
+                Pengajar
+              </label>
+              <Select
+                defaultValue={pengajarSelected}
+                onChange={handleChangePengajar}
+                options={listPengajarExisting}
+              />
+            </div>
+
+            <div className="flex flex-row gap-4  ">
+              <div className="w-1/2">
+                <label className="block font-medium text-neutral/70">
+                  Program
+                </label>
+                <input
+                  type="text"
+                  value={formState.programName}
+                  readOnly
+                  className="bg-base mt-1 p-2 w-full border rounded-md"
+                />
+              </div>
+
+              <div className="w-1/2">
+                <label className="block font-medium text-neutral/70">
+                  Jenis Kelas
+                </label>
+                <input
+                  type="text"
+                  value={formState.jenisKelasName}
+                  readOnly
+                  className="bg-base mt-1 p-2 w-full border rounded-md"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block font-medium text-neutral/70">
+                Link Group Kelas
+              </label>
+              <input
+                type="text"
+                value={formState.linkGroup}
+                name="linkGroup"
+                onChange={handleChange}
+                className="bg-base mt-1 p-2 w-full border rounded-md"
+              />
+            </div>
+
+            <div className="flex flex-row gap-4">
+              <div className="w-1/2 relative">
+                <label className="block font-medium text-neutral/70">
+                  Tanggal Kelas Dimulai
+                </label>
+                <div className="flex mt-1 relative">
+                  <input
+                    type="date"
+                    value={formState.tanggalMulai}
+                    name="tanggalMulai"
+                    onChange={handleChange}
+                    className="bg-base mt-1 p-2 w-full border rounded-md "
+                  />
+                </div>
+              </div>
+
+              <div className="w-1/2 relative">
+                <label className="block font-medium text-neutral/70">
+                  Tanggal Kelas Selesai
+                </label>
+                <div className="flex mt-1 relative">
+                  <input
+                    type="date"
+                    value={formState.tanggalSelesai}
+                    onChange={handleChange}
+                    className="bg-base mt-1 p-2 w-full border rounded-md "
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block font-medium text-neutral/70">
+                Murid Kelas
+              </label>
+              <Select
+                defaultValue={muridSelected}
+                isMulti
+                name="colors"
+                onChange={handleChangeMurid}
+                options={listMuridExisting}
+                className="bg-base mt-1 p-2 w-full border rounded-md"
+                classNamePrefix="select"
+                styles={{
+                  control: (provided) => ({
+                    ...provided,
+                    border: "none", // Remove border
+                    boxShadow: "none", // Remove box shadow
+                    backgroundColor: "none", // Match platform input background color
+                  }),
+                  multiValue: (provided) => ({
+                    ...provided,
+                    backgroundColor: "#EDF6FF", // Match platform input background color
+                  }),
+                }}
+              />
+            </div>
+
+            <div>
+              <label className="block font-medium text-neutral/70">
+                Platform
+              </label>
+              <input
+                type="text"
+                value={formState.platform}
+                name="platform"
+                onChange={handleChange}
+                className=" bg-base mt-1 p-2 w-full border rounded-md"
+              />
+            </div>
+
+            <div className="flex justify-center py-7 gap-4">
+              <button
+                type="submit"
+                className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
+              >
+                Ubah Kelas
+              </button>
+              <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
-      <div className="mb-4">
-        <label className="block font-medium">Students (comma-separated):</label>
-        <Select
-          defaultValue={muridSelected}
-          isMulti
-          name="colors"
-          onChange={handleChangeMurid}
-          options={listMuridExisting}
-          className="basic-multi-select"
-          classNamePrefix="select"
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block font-medium">Level:</label>
-        <input
-          type="number"
-          name="level"
-          value={formState.level}
-          onChange={handleChange}
-          className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring focus:border-blue-500"
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block font-medium">Platform:</label>
-        <input
-          type="text"
-          name="platform"
-          value={formState.platform}
-          onChange={handleChange}
-          className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring focus:border-blue-500"
-        />
-      </div>
-      <button
-        type="submit"
-        className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-500"
-      >
-        Save Changes
-      </button>
-    </form>
+    </div>
   );
 };
 
