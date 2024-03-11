@@ -9,6 +9,5 @@ import { useState } from "react";
 import { LawyerForm } from "../../../components/LawyerPage/lawyerForm";
 
 export default function Page() {
-  return;
-  <LawyerForm />;
+  return <LawyerForm />;
 }
