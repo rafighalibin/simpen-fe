@@ -12,13 +12,13 @@ import Cookies from "js-cookie";
  */
 export const useToken = () => {
   const setPenggunaToken = (token) => {
-    Cookies.set("pengguna_token", token);
+    Cookies.set("Authorization", token);
   };
   const getPenggunaToken = () => {
-    return Cookies.get("pengguna_token");
-  };  
+    return Cookies.get("Authorization");
+  };
   const removePenggunaToken = () => {
-    Cookies.remove("pengguna_token");
+    Cookies.remove("Authorization");
   };
 
   return { setPenggunaToken, getPenggunaToken, removePenggunaToken };
