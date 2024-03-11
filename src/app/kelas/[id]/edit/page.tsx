@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { redirect, useParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import useFetchWithToken from "../../../../common/hooks/fetchWithToken";
 import { PengajarSelect } from "../../../../common/types/pengajar";
@@ -24,6 +24,7 @@ const EditPage = () => {
     linkGroup: "",
     level: 0,
     platform: "",
+    listMurid: [],
   });
 
   const {
@@ -44,6 +45,17 @@ const EditPage = () => {
     queryKey: ["listUser"],
     queryFn: () => fetchWithToken(`/user`).then((res) => res.json()),
     onSuccess: (data) => {},
+  });
+
+  const {
+    mutateAsync: editKelasMutation,
+    data: editResponse,
+    isSuccess,
+  } = useMutation({
+    mutationFn: () =>
+      fetchWithToken(`/kelas/${id}`, "PUT", formState).then((res) =>
+        res.json()
+      ),
   });
 
   useEffect(() => {
@@ -116,27 +128,23 @@ const EditPage = () => {
   };
 
   const handleChangeMurid = (e) => {
-    const { value } = e;
-    setFormState((prev) => ({ ...prev, pengajarId: value }));
+    const murid = e.map((e) => e.value);
+    setFormState((prev) => ({ ...prev, listMurid: murid }));
   };
+
   const handleSubmit = async (e) => {
-    const payload = {
-      tanggalMulai: formState.tanggalMulai,
-      tanggalSelesai: formState.tanggalSelesai,
-      pengajarId: formState.pengajarId,
-      linkGroup: formState.linkGroup,
-      level: formState.level,
-      platform: formState.platform,
-      listMurid: muridSelected.map((e) => e.value),
-    };
     e.preventDefault();
-    console.log(payload);
+    editKelasMutation();
+    console.log(formState);
   };
 
   if (detailKelasLoading || listUserLoading) {
     return <p>Loading...</p>;
   }
 
+  if (isSuccess) {
+    redirect(`/kelas/${id}`);
+  }
   return (
     <form
       onSubmit={handleSubmit}
@@ -183,7 +191,7 @@ const EditPage = () => {
           type="text"
           name="linkGroup"
           value={formState.linkGroup}
-          onChange={handleChangeMurid}
+          onChange={handleChange}
           className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring focus:border-blue-500"
         />
       </div>
@@ -193,6 +201,7 @@ const EditPage = () => {
           defaultValue={muridSelected}
           isMulti
           name="colors"
+          onChange={handleChangeMurid}
           options={listMuridExisting}
           className="basic-multi-select"
           classNamePrefix="select"
