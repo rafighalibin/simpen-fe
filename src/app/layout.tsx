@@ -13,6 +13,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head />
+      <title>SIMPEN</title>
       <body className={inter.className}>
         {/* start excluded navbar */}
         {path != "/login" && <Navbar />}
