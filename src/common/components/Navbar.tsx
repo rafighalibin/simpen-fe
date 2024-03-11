@@ -1,10 +1,22 @@
+"use client";
+
 import React from "react";
 
+import { useToken } from "../hooks/useToken";
+import { useRouter } from "next/navigation";
+
 const Navbar = () => {
+  const router = useRouter();
+  const { removePenggunaToken } = useToken();
+
+  const handleLogout = () => {
+    removePenggunaToken();
+    router.push("/login");
+  };
   return (
     <nav className="bg-primary py-4">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between">
+        <div className="flex justify-between items-center">
           <div className="flex space-x-4">
             <a href="#" className="text-white hover:text-gray-300">
               Home
@@ -20,7 +32,12 @@ const Navbar = () => {
             </a>
           </div>
           <div>
-            <div className="w-5 h-5 bg-gray-300"></div>
+            <button
+              className="text-white hover:text-gray-300"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
           </div>
         </div>
       </div>
