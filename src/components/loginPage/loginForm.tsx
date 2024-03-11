@@ -1,8 +1,11 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 
 import { useMutation } from "react-query";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 // font and css
 import { InterMedium, InterReguler } from "../../font/font";
@@ -14,6 +17,8 @@ import logo from "../../../public/Logo.png";
 export const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   const { mutateAsync: loginMutation, data } = useMutation({
     mutationFn: () =>
@@ -28,8 +33,15 @@ export const LoginForm = () => {
         }),
       }).then((res) => res.json()),
     onSuccess: (data) => {
-      console.log(data.content);
-      document.cookie = `Authorization=${data.content}`;
+      if (data.code == 200) {
+        console.log(data.content);
+        document.cookie = `Authorization=${data.content}`;
+        router.push("/dashboard");
+      } else if (data.code == 401) {
+        setError("Incorrect email or password.");
+      } else {
+        setError("Could not sign in.");
+      }
     },
   });
 
@@ -44,7 +56,6 @@ export const LoginForm = () => {
           onSubmit={async (e) => {
             e.preventDefault();
             await loginMutation();
-            // TODO: Redirect to dashboard
           }}
         >
           <input type="hidden" name="remember" value="true" />
@@ -110,6 +121,14 @@ export const LoginForm = () => {
           </div> */}
 
           <div>
+            {error && (
+              <div
+                className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2"
+                style={InterReguler.style}
+              >
+                {error}
+              </div>
+            )}
             <button
               type="submit"
               className={`${styles.button_tx} ${styles.btn} mt-[25px]`}
