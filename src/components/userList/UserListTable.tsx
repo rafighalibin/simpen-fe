@@ -4,7 +4,7 @@ import useFetchAllUser from "../../common/hooks/user/useFetchAllUser";
 
 // import font and css
 import styles from "./UserListTable.module.css";
-import { InterMedium, PoppinsBold } from "../../font/font";
+import { InterMedium } from "../../font/font";
 import { Filtering } from "./Filtering";
 
 export const UserListTable = () => {
