@@ -5,31 +5,98 @@ import { useState } from "react";
 import { Kelas } from "../../common/types/kelas";
 import { Program } from "../../common/types/program";
 import { JenisKelas } from "../../common/types/jenis";
-import { set } from "react-hook-form";
+import useFetchPengajar from "../../common/hooks/user/useFetchPengajar";
+import { PengajarSelect } from "../../common/types/pengajar";
+import Select from "react-select";
+import { MuridSelect } from "../../common/types/murid";
+
 
 export const AddKelas = () => {
     const [programId, setProgramId] = useState("");
+    const [jumlahPertemuan, setJumlahPertemuan] = useState(0);
+    const [jumlahLevel, setJumlahLevel] = useState(0);
+
+    const [bahasa, setBahasa] = useState("");
+    const [modaPertemuan, setModaPertemuan] = useState("");
+    const [tipe, setTipe] = useState("");
+    const [jenisKelasNama, setJenisKelasNama] = useState("");
+    const [jenisKelas, setJenisKelas] = useState<JenisKelas>(null);
     const [jenisKelasId, setJenisKelasId] = useState("");
-    const [tanggalMulai, setTanggalMulai] = useState("");
-    const [tanggalSelesai, setTanggalSelesai] = useState("");
+    
+    
     const [selectedDays, setSelectedDays] = useState([]);
     const [selectedTime, setSelectedTime] = useState("00:00");
     const [listJadwalKelas, setListJadwalKelas] = useState([]);
-    const [jumlahPertemuan, setJumlahPertemuan] = useState(0);
+    
+    const [tanggalMulai, setTanggalMulai] = useState("");
+    const [tanggalSelesai, setTanggalSelesai] = useState("");
 
-    const queryClient = useQueryClient();
+    const [pengajarSelected, setPengajarSelected] = useState<PengajarSelect>(null);
+    const [pengajarId, setPengajarId] = useState("");
 
-    const fetchWithToken = useFetchWithToken();
+    const [listMuridExisting, setListMuridExisting] = useState<MuridSelect[]>([]);
+    const listMuridExistingTemp: MuridSelect[] = [
+        {
+          value: "Student1",
+          label: "Student1",
+        },
+        {
+          value: "Student2",
+          label: "Student2",
+        },
+        {
+          value: "Student3",
+          label: "Student3",
+        },
+        {
+          value: "Student4",
+          label: "Student4",
+        },
+      ];
+    const [muridSelected, setMuridSelected] = useState<MuridSelect[]>([]);
+    const [muridValues, setMuridValues] = useState([]);
 
+    const [level, setLevel] = useState(0);
+    const [platform, setPlatform] = useState("");
+    const [linkGroup, setLinkGroup] = useState("");
+    
     const payload = {
         programId,
         jenisKelasId,
-        listJadwalKelas,
+        jadwalKelas: listJadwalKelas,
         tanggalMulai,
         tanggalSelesai,
+        pengajarId,
+        listMurid: muridValues,
+        level,
+        platform,
+        linkGroup,
     };
 
-    const { mutateAsync: addKelasMutation, data } = useMutation({
+    const fetchWithToken = useFetchWithToken();
+    const { isLoading: listUserLoading, listPengajarExisting } = useFetchPengajar();
+    const [listProgram, setListProgram] = useState([]);
+    const [listJenisKelas, setListJenisKelas] = useState([]);
+    const [listBahasa, setListBahasa] = useState([]);
+    const [listModePertemuan, setListModePertemuan] = useState([]);
+    const [listTipe, setListTipe] = useState([]);
+    const daysOfWeek = [
+        { id: 0, name: "Sunday" },
+        { id: 1, name: "Monday" },
+        { id: 2, name: "Tuesday" },
+        { id: 3, name: "Wednesday" },
+        { id: 4, name: "Thursday" },
+        { id: 5, name: "Friday" },
+        { id: 6, name: "Saturday" },
+    ];
+    
+    const handleChangeMurid = (e) => {
+        const murid = e.map((e) => e.value);
+        setMuridSelected(e);
+        setMuridValues(murid);
+    };
+
+    const { mutateAsync: addKelasMutation, data, error } = useMutation({
         mutationFn: () =>
             fetchWithToken("/kelas", "POST", payload).then((res) =>
                 res.json()
@@ -37,11 +104,10 @@ export const AddKelas = () => {
         onSuccess: (data) => {
             console.log(data.content as Kelas);
         },
+        onError: (error) => {
+            console.log(error);
+        }
     });
-
-    const [listProgram, setListProgram] = useState([]);
-
-    const [listJenisKelas, setListJenisKelas] = useState([]);
 
     const {
         isLoading: isLoadingProgram,
@@ -55,36 +121,50 @@ export const AddKelas = () => {
         },
     });
 
-    const [listBahasa, setListBahasa] = useState([]);
-    const [listModePertemuan, setListModePertemuan] = useState([]);
-    const [listTipe, setListTipe] = useState([]);
-
     const {
         isLoading: isLoadingJenisAttributes,
         data: dataJenisAttributes,
-        refetch: getJenisAttributes,
+        refetch: getJenisKelas,
     } = useQuery({
-        queryKey: ["jenis", jenisKelasId],
+        queryKey: ["jenis", jenisKelas],
         queryFn: () =>
             fetchWithToken(
-                `/kelas/jenis/existing-attributes-detail?nama=${jenisKelasId}`,
+                `/kelas/jenis/find?nama=${jenisKelasNama}&modaPertemuan=${modaPertemuan}&bahasa=${bahasa}&tipe=${tipe}`,
                 "GET"
             ).then((res) => res.json()),
         onSuccess: (data) => {
-            const { bahasa, modaPertemuan, tipe } = data.content;
-            setListBahasa(bahasa);
-            setListModePertemuan(modaPertemuan);
-            setListTipe(tipe);
+            console.log(data);
+            setJenisKelas(data.content);
+            setJenisKelasId(data.content.id);
         },
-        enabled: !!jenisKelasId,
+        enabled: !!jenisKelasNama && !!tipe && !!modaPertemuan && !!bahasa,
+    });
+
+    const {
+        isLoading: isLoadingJenisKelas,
+        data: dataJenisKelas,
+        refetch: getJenisAttributes,
+    } = useQuery({
+        queryKey: ["jenis", jenisKelasNama],
+        queryFn: () =>
+            fetchWithToken(
+                `/kelas/jenis/existing-attributes-detail?nama=${jenisKelasNama}`,
+                "GET"
+            ).then((res) => res.json()),
+        onSuccess: (data) => {
+            setListBahasa(data.content.bahasa);
+            setListModePertemuan(data.content.modaPertemuan);
+            setListTipe(data.content.tipe);
+        },
+        enabled: !!jenisKelasNama,
     });
 
     const {
         isLoading: isLoadingJenis,
-        data: dataJenis,
-        refetch: getJenisKelas,
+        data: dataListJenisKelas,
+        refetch: getListJenisKelas,
     } = useQuery({
-        queryKey: ["jenis", programId],
+        queryKey: ["listJenis", programId],
         queryFn: () =>
             fetchWithToken(
                 `/kelas/program/${programId}/jenis-kelas`,
@@ -95,30 +175,7 @@ export const AddKelas = () => {
         },
         enabled: !!programId,
     });
-
-    const daysOfWeek = [
-        { id: 0, name: "Sunday" },
-        { id: 1, name: "Monday" },
-        { id: 2, name: "Tuesday" },
-        { id: 3, name: "Wednesday" },
-        { id: 4, name: "Thursday" },
-        { id: 5, name: "Friday" },
-        { id: 6, name: "Saturday" },
-    ];
-
-    useEffect(() => {
-        if (programId) {
-            getJenisKelas();
-        }
-        if (jenisKelasId) {
-            getJenisAttributes();
-        }
-    }, [programId, jenisKelasId]);
-
-    useEffect(() => {
-        generateClassDates();
-    }, [selectedDays, selectedTime, tanggalMulai]);
-
+    
     const handleDayChange = (dayId) => {
         const index = selectedDays.indexOf(dayId);
         if (index > -1) {
@@ -127,61 +184,87 @@ export const AddKelas = () => {
             setSelectedDays([...selectedDays, dayId]);
         }
     };
-
-    // Function to generate dates based on selectedDays, starting date (tanggalMulai), and selectedTime
+    
     const generateClassDates = () => {
         if (
             programId &&
-            jenisKelasId &&
+            jenisKelasNama &&
             tanggalMulai &&
             selectedDays.length > 0 &&
             selectedTime
-        ) {
-            const startDate = new Date(tanggalMulai);
-            const classDates = [];
-            const numMeetings = jumlahPertemuan; // Assuming jenisKelasId contains the number of meetings
-            let meetingCounter = 0;
-            let currentDate = new Date(startDate);
-            
-            // Loop until the required number of meetings are generated
-            while (classDates.length < numMeetings) {
-                const dayOfWeek = currentDate.getDay();
-                if (selectedDays.includes(dayOfWeek)) {
-                    const dateString = new Date(
-                        currentDate.getFullYear(),
-                        currentDate.getMonth(),
-                        currentDate.getDate(),
-                        parseInt(selectedTime.split(":")[0]),
-                        parseInt(selectedTime.split(":")[1])
-                    );
-                    classDates.push(dateString);
+            ) {
+                const startDate = new Date(tanggalMulai);
+                const classDates = [];
+                const numMeetings = jumlahPertemuan;
+                let currentDate = new Date(startDate);
+                
+                // Loop until the required number of meetings are generated
+                while (classDates.length < numMeetings) {
+                    const dayOfWeek = currentDate.getDay();
+                    if (selectedDays.includes(dayOfWeek)) {
+                        // Format the date string as "YYYY-MM-DD HH:mm:ss"
+                        const dateString = currentDate.toLocaleString('en-US', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            hour12: false,
+                        }).replace(/\//g, '-').replace(',', '');
+                        classDates.push(dateString);
+                    }
+                    if (classDates.length === numMeetings) {
+                        setTanggalSelesai(currentDate.toISOString().split("T")[0]);
+                    }
+                    currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
                 }
-                if (classDates.length === numMeetings) {
-                    setTanggalSelesai(currentDate.toISOString().split("T")[0]);
-                }
-                currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+                setListJadwalKelas(classDates);
             }
-            setListJadwalKelas(classDates);
-        }
-    };
+        };
+        
+        useEffect(() => {
+            generateClassDates();
+        }, [selectedDays, selectedTime, tanggalMulai]);
+        
+        useEffect(() => {
+            if (programId) {
+                getListJenisKelas();
+            }
+            if (jenisKelasNama) {
+                getJenisAttributes();
+            }
+        }, [programId, jenisKelasNama]);
+    
+        useEffect(() => {
+            generateClassDates();
+        }, [selectedDays, selectedTime, tanggalMulai]);
 
-    useEffect(() => {
-        console.log(listJadwalKelas);
-    }, [listJadwalKelas]);
+        useEffect(() => {
+            if (bahasa && tipe && modaPertemuan) {
+                getJenisKelas();
+            }
+        }, [bahasa, tipe, modaPertemuan]);        
 
-    return (
-        <div>
-            {isLoadingProgram || isLoadingJenis || isLoadingJenisAttributes ? (
+        useEffect(() => {
+            if(jenisKelasId){
+                console.log(jenisKelasId);
+            }
+        }, [jenisKelasId]);
+
+        return (
+            <div>
+            {isLoadingProgram || isLoadingJenis || isLoadingJenisAttributes || listUserLoading ? (
                 <div className="loading-overlay">
                     <div className="spinner"></div>
                 </div>
             ) : null}
             <div className="max-w-md mx-auto mt-8">
                 <form
-                    onSubmit={async (e) => {
+                    onSubmit={(e) => {
+                        console.log(payload);
                         e.preventDefault();
-                        await addKelasMutation();
-                        queryClient.invalidateQueries("kelas");
+                        addKelasMutation();
                     }}
                     className="space-y-6"
                 >
@@ -191,14 +274,19 @@ export const AddKelas = () => {
                             <select
                                 value={programId}
                                 onChange={(e) => {
-                                    setProgramId(e.target.value);
-                                    setJumlahPertemuan(
-                                        listProgram.find(
-                                            (program) =>
-                                                program.id ===
-                                                e.target.value
-                                        ).jumlahPertemuan
-                                    )
+                                    const selectedProgramId = e.target.value;
+                                    setProgramId(selectedProgramId);
+                                    if (selectedProgramId) {
+                                        setJumlahPertemuan(
+                                            listProgram.find((program) => program.id === selectedProgramId).jumlahPertemuan
+                                        );
+                                        setJumlahLevel(
+                                            listProgram.find((program) => program.id === selectedProgramId).jumlahLevel
+                                        );
+                                    } else {
+                                        setJumlahPertemuan(0);
+                                        setJumlahLevel(0);
+                                    }
                                 }}
                                 className="input"
                             >
@@ -213,15 +301,18 @@ export const AddKelas = () => {
                                 ))}
                             </select>
                         </label>
+                        <label>
+                            Jumlah Pertemuan: {jumlahPertemuan}
+                        </label>
                     </div>
 
                     <div className="form-control">
                         <label className="label">
                             Jenis
                             <select
-                                value={jenisKelasId}
+                                value={jenisKelasNama}
                                 onChange={(e) => {
-                                    setJenisKelasId(e.target.value);
+                                    setJenisKelasNama(e.target.value);
                                 }}
                                 className="input"
                                 disabled={programId === ""}
@@ -248,7 +339,7 @@ export const AddKelas = () => {
                                     name="bahasa"
                                     value={bahasaItem}
                                     onChange={(e) => {
-                                        // Handle radio button change
+                                        setBahasa(e.target.value);
                                     }}
                                 />
                                 <label>{bahasaItem}</label>
@@ -266,6 +357,7 @@ export const AddKelas = () => {
                                     value={modaItem}
                                     onChange={(e) => {
                                         // Handle radio button change
+                                        setModaPertemuan(e.target.value);
                                     }}
                                 />
                                 <label>{modaItem}</label>
@@ -283,6 +375,7 @@ export const AddKelas = () => {
                                     value={tipeItem}
                                     onChange={(e) => {
                                         // Handle radio button change
+                                        setTipe(e.target.value);
                                     }}
                                 />
                                 <label>{tipeItem}</label>
@@ -355,22 +448,100 @@ export const AddKelas = () => {
 
                     <div className="form-control">
                         <label className="label">Pengajar</label>
-                        <input />
+                        <Select
+                            defaultValue={pengajarSelected}
+                            name="colors"
+                            onChange={(e) => {
+                                setPengajarSelected(e)
+                                setPengajarId(e.value)
+                            }}
+                            options={listPengajarExisting}
+                            className="bg-base mt-1 p-2 w-full border rounded-md"
+                            classNamePrefix="select"
+                            styles={{
+                            control: (provided, state) => ({
+                                ...provided,
+                                border: "none", // Remove border
+                                boxShadow: "none", // Remove box shadow
+                                backgroundColor: "none", // Match platform input background color
+                            }),
+                            multiValue: (provided) => ({
+                                ...provided,
+                                backgroundColor: "#EDF6FF", // Match platform input background color
+                            }),
+                            option: (provided, state) => ({
+                                ...provided,
+                                backgroundColor: state.isSelected
+                                ? "#215E9B"
+                                : provided.backgroundColor, // Change background color for selected option
+                                color: state.isSelected ? "white" : provided.color, // Change text color for selected option
+                                fontWeight: state.isSelected ? "bold" : provided.fontWeight, // Change font weight for selected option
+                            }),
+                            }}
+                        />
                     </div>
                     <div className="form-control">
                         <label className="label">List Murid</label>
-                        <input />
+                        <Select
+                            defaultValue={muridSelected}
+                            isMulti
+                            name="colors"
+                            onChange={handleChangeMurid}
+                            options={listMuridExistingTemp}
+                            className="bg-base mt-1 p-2 w-full border rounded-md"
+                            classNamePrefix="select"
+                            styles={{
+                            control: (provided) => ({
+                                ...provided,
+                                border: "none", // Remove border
+                                boxShadow: "none", // Remove box shadow
+                                backgroundColor: "none", // Match platform input background color
+                            }),
+                            multiValue: (provided) => ({
+                                ...provided,
+                                backgroundColor: "#EDF6FF", // Match platform input background color
+                            }),
+                            }}
+                        />
                     </div>
                     <div className="form-control">
                         <label className="label">Level</label>
-                        <input />
+                        <select
+                            value={level.toString()}
+                            onChange={(e) => setLevel(parseInt(e.target.value))} 
+                            className="input"
+                        >
+                            <option value="0">Select Level</option>
+                            {Array.from({ length: jumlahLevel }, (_, i) => (
+                                <option key={i} value={(i + 1).toString()}> 
+                                    {i + 1}
+                                </option>
+                            ))}
+                        </select>
                     </div>
+
                     <div className="form-control">
                         <label className="label">Platform</label>
-                        <input />
+                        <input
+                            type="text"
+                            className="input"
+                            value={platform}
+                            onChange={(e) => setPlatform(e.target.value)}
+                        />
                     </div>
-                    <button type="submit" className="btn">
-                        Add Lawyer
+
+                    <div className="form-control">
+                        <label className="label">Link Group</label>
+                        <input
+                            type="text"
+                            className="input"
+                            value={linkGroup}
+                            onChange={(e) => setLinkGroup(e.target.value)}
+                        />
+                    </div>
+
+                    <button type="submit" className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
+                        Buat Kelas
                     </button>
                 </form>
             </div>
