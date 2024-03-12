@@ -17,7 +17,7 @@ const daysOfWeek = [
   "Saturday",
 ];
 
-const DetailKelas = ({ buttons }) => {
+const DetailKelas = () => {
   const fetchWithToken = useFetchWithToken();
   const { id } = useParams();
   const { isLoading, error, data } = useQuery({
