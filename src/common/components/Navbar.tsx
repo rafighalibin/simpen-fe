@@ -23,7 +23,6 @@ const Navbar = () => {
     router.push("/login");
     return;
   }
-  console.log(parseToken());
   const claims = parseToken();
   const role = claims["role"];
 

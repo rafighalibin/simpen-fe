@@ -9,6 +9,7 @@ import Select from "react-select";
 import { MuridSelect } from "../../common/types/murid";
 import useFetchPengajar from "../../common/hooks/user/useFetchPengajar";
 import { set } from "react-hook-form";
+import Loading from "../../common/components/Loading";
 
 const hoursList = Array.from({ length: 24 }, (_, i) => {
   const hour = i < 10 ? `0${i}` : i;
@@ -155,7 +156,7 @@ const UpdateForm = () => {
     }
   }, [muridSelected]);
 
-  if (detailKelasLoading || listUserLoading) return <p>Loading...</p>;
+  if (detailKelasLoading || listUserLoading) return <Loading />;
 
   if (isSuccess) redirect(`/kelas/${id}`);
 
