@@ -29,6 +29,9 @@ export const AddForm = () => {
       if (data.code == 200) {
         console.log(data.content);
         setSuccess("Sukses mendaftarkan.");
+        setTimeout(() => {
+          router.push("/user");
+        }, 1000);
       } else if (data.code == 400) {
         setError("Email sudah pernah terdaftar.");
         setFormState({
@@ -43,10 +46,6 @@ export const AddForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await addUserMutation();
-
-    setTimeout(() => {
-      router.push("/dashboard");
-    }, 1000);
   };
 
   return (

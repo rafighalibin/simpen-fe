@@ -1,4 +1,4 @@
-import { Poppins, Quicksand, Inter } from "next/font/google";
+import { Poppins, Inter } from "next/font/google";
 
 export const InterReguler = Inter({
   subsets: ["latin"],
@@ -9,18 +9,6 @@ export const InterReguler = Inter({
 export const InterMedium = Inter({
   subsets: ["latin"],
   weight: "500",
-  display: "swap",
-});
-
-export const QuicksandReguler = Quicksand({
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-});
-
-export const QuicksandBold = Quicksand({
-  subsets: ["latin"],
-  weight: "700",
   display: "swap",
 });
 

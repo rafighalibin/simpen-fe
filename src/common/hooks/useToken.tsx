@@ -13,7 +13,7 @@ import { jwtDecode } from "jwt-decode";
  */
 export const useToken = () => {
   const setPenggunaToken = (token) => {
-    Cookies.set("Authorization", token);
+    Cookies.set("Authorization", "Bearer " + token.split(" ")[1]);
   };
   const getPenggunaToken = () => {
     return Cookies.get("Authorization");
@@ -23,7 +23,10 @@ export const useToken = () => {
   };
   const parseToken = () => {
     const token = getPenggunaToken();
-    const decodedToken = jwtDecode(token, { header: true });
+    if (token === undefined) {
+      return null;
+    }
+    const decodedToken = jwtDecode(token);
     return decodedToken;
   };
 
