@@ -1,6 +1,5 @@
 "use client";
 
-import { QueryClient } from "react-query";
 import { LoginForm } from "../../components/loginPage/loginForm";
 import { Background } from "../../components/loginPage/background";
 

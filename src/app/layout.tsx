@@ -1,5 +1,4 @@
 "use client";
-
 import { usePathname } from "next/navigation";
 import Provider from "../common/hooks/provider";
 import { Inter } from "next/font/google";
