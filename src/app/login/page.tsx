@@ -6,6 +6,8 @@ import { Background } from "../../components/loginPage/background";
 
 // Import images
 
+// Import images
+
 export default function App() {
   return (
     <div>
