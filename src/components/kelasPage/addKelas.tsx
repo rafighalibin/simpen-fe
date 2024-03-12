@@ -9,9 +9,12 @@ import useFetchPengajar from "../../common/hooks/user/useFetchPengajar";
 import { PengajarSelect } from "../../common/types/pengajar";
 import Select from "react-select";
 import { MuridSelect } from "../../common/types/murid";
+import { useRouter } from "next/navigation";
 
 
 export const AddKelas = () => {
+    const router = useRouter();
+
     const [programId, setProgramId] = useState("");
     const [jumlahPertemuan, setJumlahPertemuan] = useState(0);
     const [jumlahLevel, setJumlahLevel] = useState(0);
@@ -103,6 +106,7 @@ export const AddKelas = () => {
             ),
         onSuccess: (data) => {
             console.log(data.content as Kelas);
+            router.push("/kelas");
         },
         onError: (error) => {
             console.log(error);
