@@ -4,7 +4,6 @@ import Image from "next/image";
 
 import { useMutation } from "react-query";
 import { useState } from "react";
-import { PoppinsBold, QuicksandReguler } from "../../font/font";
 import { useToken } from "../../common/hooks/useToken";
 import { useRouter } from "next/navigation";
 
