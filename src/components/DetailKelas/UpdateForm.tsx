@@ -8,7 +8,22 @@ import React from "react";
 import Select from "react-select";
 import { MuridSelect } from "../../common/types/murid";
 import useFetchPengajar from "../../common/hooks/user/useFetchPengajar";
-import CalendarIcon from "../../common/components/icons/CalendarIcon";
+import { set } from "react-hook-form";
+
+const hoursList = Array.from({ length: 24 }, (_, i) => {
+  const hour = i < 10 ? `0${i}` : i;
+  return `${hour}:00`;
+});
+
+const daysOfWeek = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 
 const listMuridExistingTemp: MuridSelect[] = [
   {
@@ -38,11 +53,13 @@ const UpdateForm = () => {
     useState<PengajarSelect>(null);
   const [listMuridExisting, setListMuridExisting] = useState<MuridSelect[]>([]);
   const [muridSelected, setMuridSelected] = useState<MuridSelect[]>([]);
+  const [selectedHour, setSelectedHour] = useState(null);
   const [formState, setFormState] = useState({
     programName: "",
     jenisKelasName: "",
     tanggalMulai: "",
     tanggalSelesai: "",
+    jam: "",
     pengajarId: "",
     namaPengajar: "",
     linkGroup: "",
@@ -75,6 +92,10 @@ const UpdateForm = () => {
         listMurid: detailKelas.content.listMurid,
         programName: detailKelas.content.programName,
         jenisKelasName: detailKelas.content.jenisKelasName,
+        jam: new Date(detailKelas.content.tanggalMulai)
+          .toISOString()
+          .split("T")[1]
+          .substring(0, 5),
       }));
 
       detailKelas.content.listMurid.forEach((e) => {
@@ -144,7 +165,7 @@ const UpdateForm = () => {
                 disabled
                 type="text"
                 value={id}
-                className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full rounded-md"
+                className=" read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full rounded-md"
               />
             </div>
 
@@ -154,8 +175,31 @@ const UpdateForm = () => {
               </label>
               <Select
                 defaultValue={pengajarSelected}
+                name="colors"
                 onChange={handleChangePengajar}
                 options={listPengajarExisting}
+                className="bg-base mt-1 p-2 w-full border rounded-md"
+                classNamePrefix="select"
+                styles={{
+                  control: (provided, state) => ({
+                    ...provided,
+                    border: "none", // Remove border
+                    boxShadow: "none", // Remove box shadow
+                    backgroundColor: "none", // Match platform input background color
+                  }),
+                  multiValue: (provided) => ({
+                    ...provided,
+                    backgroundColor: "#EDF6FF", // Match platform input background color
+                  }),
+                  option: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isSelected
+                      ? "#215E9B"
+                      : provided.backgroundColor, // Change background color for selected option
+                    color: state.isSelected ? "white" : provided.color, // Change text color for selected option
+                    fontWeight: state.isSelected ? "bold" : provided.fontWeight, // Change font weight for selected option
+                  }),
+                }}
               />
             </div>
 
@@ -165,10 +209,11 @@ const UpdateForm = () => {
                   Program
                 </label>
                 <input
+                  disabled
                   type="text"
                   value={formState.programName}
                   readOnly
-                  className="bg-base mt-1 p-2 w-full border rounded-md"
+                  className="read-only:text-neutral/60 bg-neutral/5  mt-1 p-2 w-full border rounded-md"
                 />
               </div>
 
@@ -177,10 +222,11 @@ const UpdateForm = () => {
                   Jenis Kelas
                 </label>
                 <input
+                  disabled
                   type="text"
                   value={formState.jenisKelasName}
                   readOnly
-                  className="bg-base mt-1 p-2 w-full border rounded-md"
+                  className="read-only:text-neutral/60 bg-neutral/5  mt-1 p-2 w-full border rounded-md"
                 />
               </div>
             </div>
@@ -227,6 +273,32 @@ const UpdateForm = () => {
                   />
                 </div>
               </div>
+            </div>
+
+            <div className="flex flex-row">
+              {daysOfWeek.map((day) => (
+                <div key={day} className="flex items-center mr-4">
+                  <input
+                    disabled
+                    type="checkbox"
+                    className="bg-base -mb-0.5 p-2 w-full border rounded-md"
+                  />
+                  <label className="block font-medium text-neutral/70 ml-0.5">
+                    {day}
+                  </label>
+                </div>
+              ))}
+            </div>
+
+            <div>
+              <label className="block font-medium text-neutral/70">Jam</label>
+              <input
+                disabled
+                type="text"
+                value={formState.jam}
+                name="platform"
+                className=" read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
+              />
             </div>
 
             <div>
