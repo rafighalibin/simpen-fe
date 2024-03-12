@@ -3,6 +3,7 @@ import React from "react";
 import { useMutation } from "react-query";
 import { useState } from "react";
 import { PoppinsBold, QuicksandReguler } from "../../font/font";
+import { useToken } from "../../common/hooks/useToken";
 
 export const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -23,6 +24,7 @@ export const LoginForm = () => {
     onSuccess: (data) => {
       console.log(data.content);
       document.cookie = `Authorization=${data.content}`;
+      useToken().setPenggunaToken(data.content);
     },
   });
 
