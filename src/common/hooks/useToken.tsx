@@ -23,7 +23,7 @@ export const useToken = () => {
   };
   const parseToken = () => {
     const token = getPenggunaToken();
-    const decodedToken = jwtDecode(token);
+    const decodedToken = jwtDecode(token, { header: true });
     return decodedToken;
   };
 
