@@ -18,7 +18,7 @@ export const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { setPenggunaToken, getPenggunaToken } = useToken();
+  const { parseToken, getPenggunaToken, setPenggunaToken } = useToken();
   const router = useRouter();
 
   const { mutateAsync: loginMutation, data } = useMutation({
