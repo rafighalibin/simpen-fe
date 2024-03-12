@@ -47,13 +47,17 @@ const listMuridExistingTemp: MuridSelect[] = [
 const UpdateForm = () => {
   const fetchWithToken = useFetchWithToken();
   const { id } = useParams();
+
   const { isLoading: listUserLoading, listPengajarExisting } =
     useFetchPengajar();
   const [pengajarSelected, setPengajarSelected] =
     useState<PengajarSelect>(null);
+  const [pengajarRendered, setPengajarRendered] = useState(false);
+
   const [listMuridExisting, setListMuridExisting] = useState<MuridSelect[]>([]);
   const [muridSelected, setMuridSelected] = useState<MuridSelect[]>([]);
-  const [selectedHour, setSelectedHour] = useState(null);
+  const [muridRendered, setMuridRendered] = useState(false);
+
   const [formState, setFormState] = useState({
     programName: "",
     jenisKelasName: "",
@@ -145,6 +149,12 @@ const UpdateForm = () => {
     editKelasMutation();
   };
 
+  useEffect(() => {
+    if (muridSelected.length > 0) {
+      setMuridRendered(true);
+    }
+  }, [muridSelected]);
+
   if (detailKelasLoading || listUserLoading) return <p>Loading...</p>;
 
   if (isSuccess) redirect(`/kelas/${id}`);
@@ -173,34 +183,38 @@ const UpdateForm = () => {
               <label className="block font-medium text-neutral/70">
                 Pengajar
               </label>
-              <Select
-                defaultValue={pengajarSelected}
-                name="colors"
-                onChange={handleChangePengajar}
-                options={listPengajarExisting}
-                className="bg-base mt-1 p-2 w-full border rounded-md"
-                classNamePrefix="select"
-                styles={{
-                  control: (provided, state) => ({
-                    ...provided,
-                    border: "none", // Remove border
-                    boxShadow: "none", // Remove box shadow
-                    backgroundColor: "none", // Match platform input background color
-                  }),
-                  multiValue: (provided) => ({
-                    ...provided,
-                    backgroundColor: "#EDF6FF", // Match platform input background color
-                  }),
-                  option: (provided, state) => ({
-                    ...provided,
-                    backgroundColor: state.isSelected
-                      ? "#215E9B"
-                      : provided.backgroundColor, // Change background color for selected option
-                    color: state.isSelected ? "white" : provided.color, // Change text color for selected option
-                    fontWeight: state.isSelected ? "bold" : provided.fontWeight, // Change font weight for selected option
-                  }),
-                }}
-              />
+              {!pengajarRendered && (
+                <Select
+                  defaultValue={pengajarSelected}
+                  name="colors"
+                  onChange={handleChangePengajar}
+                  options={listPengajarExisting}
+                  className="bg-base mt-1 p-2 w-full border rounded-md"
+                  classNamePrefix="select"
+                  styles={{
+                    control: (provided, state) => ({
+                      ...provided,
+                      border: "none", // Remove border
+                      boxShadow: "none", // Remove box shadow
+                      backgroundColor: "none", // Match platform input background color
+                    }),
+                    multiValue: (provided) => ({
+                      ...provided,
+                      backgroundColor: "#EDF6FF", // Match platform input background color
+                    }),
+                    option: (provided, state) => ({
+                      ...provided,
+                      backgroundColor: state.isSelected
+                        ? "#215E9B"
+                        : provided.backgroundColor, // Change background color for selected option
+                      color: state.isSelected ? "white" : provided.color, // Change text color for selected option
+                      fontWeight: state.isSelected
+                        ? "bold"
+                        : provided.fontWeight, // Change font weight for selected option
+                    }),
+                  }}
+                />
+              )}
             </div>
 
             <div className="flex flex-row gap-4  ">
@@ -305,27 +319,29 @@ const UpdateForm = () => {
               <label className="block font-medium text-neutral/70">
                 Murid Kelas
               </label>
-              <Select
-                defaultValue={muridSelected}
-                isMulti
-                name="colors"
-                onChange={handleChangeMurid}
-                options={listMuridExisting}
-                className="bg-base mt-1 p-2 w-full border rounded-md"
-                classNamePrefix="select"
-                styles={{
-                  control: (provided) => ({
-                    ...provided,
-                    border: "none", // Remove border
-                    boxShadow: "none", // Remove box shadow
-                    backgroundColor: "none", // Match platform input background color
-                  }),
-                  multiValue: (provided) => ({
-                    ...provided,
-                    backgroundColor: "#EDF6FF", // Match platform input background color
-                  }),
-                }}
-              />
+              {!muridRendered && (
+                <Select
+                  defaultValue={muridSelected}
+                  isMulti
+                  name="colors"
+                  onChange={handleChangeMurid}
+                  options={listMuridExisting}
+                  className="bg-base mt-1 p-2 w-full border rounded-md"
+                  classNamePrefix="select"
+                  styles={{
+                    control: (provided) => ({
+                      ...provided,
+                      border: "none", // Remove border
+                      boxShadow: "none", // Remove box shadow
+                      backgroundColor: "none", // Match platform input background color
+                    }),
+                    multiValue: (provided) => ({
+                      ...provided,
+                      backgroundColor: "#EDF6FF", // Match platform input background color
+                    }),
+                  }}
+                />
+              )}
             </div>
 
             <div>
