@@ -6,8 +6,6 @@ import { Background } from "../../components/loginPage/background";
 
 // Import images
 
-const queryClient = new QueryClient();
-
 export default function App() {
   return (
     <div>
