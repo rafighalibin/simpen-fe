@@ -1,24 +1,13 @@
 import React from "react";
 import Link from "next/link";
 
-export const Breadcrumbs = ({ crumbs }) => {
+// Import font and css
+import styles from "./breadcurmbs.module.css";
+
+export const Breadcrumbs = () => {
   return (
-    <div>
-      <nav aria-label="Breadcrumb">
-        <ol className="breadcrumb">
-          {crumbs.map((crumb, index) => (
-            <li key={index} className="breadcrumb-item">
-              {crumb.link ? (
-                <Link href={crumb.link}>
-                  <a>{crumb.label}</a>
-                </Link>
-              ) : (
-                <span>{crumb.label}</span>
-              )}
-            </li>
-          ))}
-        </ol>
-      </nav>
+    <div className={`${styles.card_breadcrumbs} px-7 py-6`}>
+      TO DO: Breadcrumbs
     </div>
   );
 };
