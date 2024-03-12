@@ -1,0 +1,26 @@
+.bg {
+  background: var(
+    --Gradient-Blue,
+    radial-gradient(50% 50% at 50% 50%, #3c81d3 0%, #164c88 100%)
+  );
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+@media (max-width: 400px) {
+  .bg {
+    background: #164c88;
+  }
+}
+
+.asset1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.asset2 {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
