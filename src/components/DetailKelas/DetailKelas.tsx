@@ -1,11 +1,12 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useMutation, useQuery } from "react-query";
 import { useEffect, useState } from "react";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import CalendarIcon from "../../common/components/icons/CalendarIcon";
 import { MuridSelect } from "../../common/types/murid";
+import Loading from "../../common/components/Loading";
 
 const daysOfWeek = [
   "Sunday",
@@ -20,11 +21,17 @@ const daysOfWeek = [
 const DetailKelas = ({ buttons }) => {
   const fetchWithToken = useFetchWithToken();
   const { id } = useParams();
+  const router = useRouter();
   const [muridRendered, setMuridRendered] = useState(false);
   const { isLoading, error, data } = useQuery({
     queryKey: ["kelasDetail"],
     queryFn: () => fetchWithToken(`/kelas/${id}`).then((res) => res.json()),
     onSuccess: (data) => {
+      console.log(data);
+      if (data.status != "OK") {
+        window.alert(data.message);
+        router.push("/dashboard");
+      }
       data.content.listMurid.forEach((e) => {
         muridSelected.push({
           value: e,
@@ -33,18 +40,8 @@ const DetailKelas = ({ buttons }) => {
       });
     },
   });
+
   const [muridSelected, setMuridSelected] = useState<MuridSelect[]>([]);
-
-  const { mutateAsync: deleteMutation } = useMutation({
-    mutationFn: () =>
-      fetchWithToken(`/kelas/${id}`, "DELETE").then((res) => res.json()),
-  });
-
-  const handleDelete = async () => {
-    if (window.confirm("Are you sure you want to delete this class?")) {
-      await deleteMutation();
-    }
-  };
 
   useEffect(() => {
     if (muridSelected.length > 0) {
@@ -52,9 +49,7 @@ const DetailKelas = ({ buttons }) => {
     }
   }, [muridSelected]);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  if (isLoading) return <Loading />;
 
   if (error || !data) {
     return <div>Error fetching class details.</div>;

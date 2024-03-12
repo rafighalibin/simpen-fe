@@ -3,12 +3,28 @@ import { useParams } from "next/navigation";
 
 import DetailKelas from "../../../components/DetailKelas/DetailKelas";
 import { useToken } from "../../../common/hooks/useToken";
+import IsLoggedIn from "../../../common/utils/IsLoggedIn";
+import useFetchWithToken from "../../../common/hooks/fetchWithToken";
+import { useMutation } from "react-query";
 
 const Page = () => {
   const { id } = useParams();
   const { parseToken } = useToken();
   const claims = parseToken();
   const role = claims["role"];
+  const fetchWithToken = useFetchWithToken();
+
+  const { mutateAsync: deleteMutation } = useMutation({
+    mutationFn: () =>
+      fetchWithToken(`/kelas/${id}`, "DELETE").then((res) => res.json()),
+  });
+
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this class?")) {
+      await deleteMutation();
+    }
+  };
+
   return (
     <div>
       {(role === "superadmin" ||
@@ -18,12 +34,15 @@ const Page = () => {
           buttons={
             <div className="flex justify-center py-7 gap-4">
               <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
-                Absensi Kelas
+                <a href={`/kelas/${id}/absen`}> Absensi Kelas </a>
               </button>
               <button className="bg-warning text-white px-4 py-2 rounded-md hover:bg-warningHover">
                 <a href={`/kelas/${id}/edit`}>Ubah Detail Kelas</a>
               </button>
-              <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
+              <button
+                onClick={handleDelete}
+                className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover"
+              >
                 Hapus Kelas
               </button>
             </div>
@@ -35,10 +54,10 @@ const Page = () => {
           buttons={
             <div className="flex justify-center py-7 gap-4">
               <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
-                Zoom Kelas
+                <a href={`/error/construction`}> Zoom Kelas</a>
               </button>
               <button className="bg-warning text-white px-4 py-2 rounded-md hover:bg-warningHover">
-                <a href={`/kelas/pengajar/${id}/absen`}>Absensi Kelas</a>
+                <a href={`/kelas/${id}/absen`}>Absensi Kelas</a>
               </button>
             </div>
           }
@@ -48,4 +67,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default IsLoggedIn(Page);

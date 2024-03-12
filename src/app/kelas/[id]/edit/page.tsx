@@ -2,7 +2,7 @@
 import React from "react";
 import UpdateForm from "../../../../components/DetailKelas/UpdateForm";
 import { useToken } from "../../../../common/hooks/useToken";
-import Unauthorized from "../../../../components/errors/unauthorized";
+import Unauthorized from "../../../../components/errors/Unauthorized";
 
 export default function EditPage() {
   const { parseToken } = useToken();
