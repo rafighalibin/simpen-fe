@@ -13,7 +13,6 @@ import styles from "./loginForm.module.css";
 
 // import images
 import logo from "../../../public/Logo.png";
-import { get } from "http";
 
 export const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -36,9 +35,8 @@ export const LoginForm = () => {
       }).then((res) => res.json()),
     onSuccess: (data) => {
       if (data.code == 200) {
-        console.log(data.content);
-        document.cookie = `Authorization=${data.content}`;
-        router.push("/dashboard");
+        setPenggunaToken(data.token);
+        router.replace("/dashboard");
       } else if (data.code == 401) {
         setError("Incorrect email or password.");
       } else {

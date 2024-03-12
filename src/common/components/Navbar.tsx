@@ -4,11 +4,14 @@ import React, { useState } from "react";
 
 import { useToken } from "../hooks/useToken";
 import { useRouter } from "next/navigation";
+import { useAuthContext } from "../utils/authContext";
+import IsLoggedIn from "../utils/IsLoggedIn";
 
 const Navbar = () => {
   const router = useRouter();
   const { removePenggunaToken } = useToken();
   const [loggingOut, setLoggingOut] = useState(false);
+  const { pengguna, isAuthenticated } = useAuthContext();
 
   const handleLogout = () => {
     setLoggingOut(true);
@@ -18,14 +21,10 @@ const Navbar = () => {
       router.push("/login");
     }, 1000);
   };
-  const { parseToken } = useToken();
-  if (parseToken() == null) {
-    router.push("/login");
-    return;
-  }
-  const claims = parseToken();
-  const role = claims["role"];
 
+  if (!isAuthenticated) {
+    return null;
+  }
   return (
     <nav className="bg-primary py-4">
       <div className="mx-auto px-2">
@@ -35,7 +34,7 @@ const Navbar = () => {
               Simpen
             </a>
 
-            {role === "superadmin" && (
+            {pengguna.role === "superadmin" && (
               <div className="flex space-x-4 pt-2 pl-7">
                 <a href="/#" className="text-white text-xl">
                   Akun
@@ -55,7 +54,7 @@ const Navbar = () => {
               </div>
             )}
 
-            {role === "operasional" && (
+            {pengguna.role === "operasional" && (
               <div className="flex space-x-4 pt-2 pl-7">
                 <a href="/kelas" className="text-white text-xl">
                   Kelas
@@ -69,7 +68,7 @@ const Navbar = () => {
               </div>
             )}
 
-            {role === "akademik" && (
+            {pengguna.role === "akademik" && (
               <div className="flex space-x-4 pt-2 pl-7">
                 <a href="/kelas" className="text-white text-xl">
                   Kelas
@@ -83,7 +82,7 @@ const Navbar = () => {
               </div>
             )}
 
-            {role === "pengajar" && (
+            {pengguna.role === "pengajar" && (
               <div className="flex space-x-4 pt-2 pl-7">
                 <a href="/kelas" className="text-white text-xl">
                   Kelas

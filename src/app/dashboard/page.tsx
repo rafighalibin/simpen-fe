@@ -1,22 +1,18 @@
 "use client";
 
 import { useToken } from "../../common/hooks/useToken";
+import { User } from "../../common/types/user";
+import IsLoggedIn from "../../common/utils/IsLoggedIn";
+import { useAuthContext } from "../../common/utils/authContext";
 
 export default function App() {
-  const { parseToken } = useToken();
-  const claims = parseToken();
-  const role = claims["role"];
-
-  switch (role) {
-    case "superadmin":
-      return <div>Superadmin dashboard</div>;
-    case "pengajar":
-      return <div>pengajar dashboard</div>;
-    case "operasional":
-      return <div>operasional dashboard</div>;
-    case "akademik":
-      return <div>akademik dashboard</div>;
-    default:
-      return <div>akademik NULL</div>;
+  const { pengguna } = useAuthContext();
+  if (pengguna.role) {
+    return (
+      <div>
+        <h1>Dashboard</h1>
+        <p>Welcome, {pengguna.role}</p>
+      </div>
+    );
   }
 }
