@@ -29,6 +29,7 @@ export const AddForm = () => {
       if (data.code == 200) {
         console.log(data.content);
         setSuccess("Sukses mendaftarkan.");
+        setError(null);
         setTimeout(() => {
           router.push("/user");
         }, 1000);
