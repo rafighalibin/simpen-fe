@@ -7,10 +7,11 @@ import IsLoggedIn from "../../../common/utils/IsLoggedIn";
 import useFetchWithToken from "../../../common/hooks/fetchWithToken";
 import { useMutation } from "react-query";
 import { useAuthContext } from "../../../common/utils/authContext";
+import { useEffect } from "react";
 
 const Page = () => {
   const { id } = useParams();
-  const { pengguna } = useAuthContext();
+  const { pengguna, isAuthenticated } = useAuthContext();
 
   const fetchWithToken = useFetchWithToken();
 
@@ -24,6 +25,10 @@ const Page = () => {
       await deleteMutation();
     }
   };
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div>
@@ -67,4 +72,4 @@ const Page = () => {
   );
 };
 
-export default IsLoggedIn(Page);
+export default Page;
