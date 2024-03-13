@@ -5,25 +5,59 @@ import React, { useState } from "react";
 //import font and css
 import { PoppinsBold, InterMedium, InterReguler } from "../../font/font";
 import styles from "./addForm.module.css";
+import { useMutation } from "react-query";
+import { useRouter } from "next/navigation";
+
+//import component
+import useFetchWithToken from "../../common/hooks/fetchWithToken";
 
 export const AddForm = () => {
-  const [email, setEmail] = useState("");
-  const [nama, setNama] = useState("");
-  const [role, setRole] = useState("");
+  const fetchWithToken = useFetchWithToken();
+  const [error, setError] = useState("");
+  const [succces, setSuccess] = useState("");
+  const router = useRouter();
+  const [formState, setFormState] = useState({
+    email: "",
+    role: "",
+    nama: "",
+  });
+
+  const { mutateAsync: addUserMutation, data: response } = useMutation({
+    mutationFn: () =>
+      fetchWithToken(`/user`, "POST", formState).then((res) => res.json()),
+    onSuccess: (data) => {
+      if (data.code == 200) {
+        console.log(data.content);
+        setSuccess("Sukses mendaftarkan.");
+        setTimeout(() => {
+          router.push("/user");
+        }, 1000);
+      } else if (data.code == 400) {
+        setError("Email sudah pernah terdaftar.");
+        setFormState({
+          email: "",
+          role: "",
+          nama: "",
+        });
+      }
+    },
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await addUserMutation();
+  };
 
   return (
-    <div className="px-[6vw] py-8">
-      <div className={`${styles.card_breadcrumbs} px-7 py-6`}>
-        TO DO: Breadcrumbs
-      </div>
+    <div className="">
       <div
         className={`${styles.heading} text-center my-10`}
         style={PoppinsBold.style}
       >
         Register Akun
       </div>
-      <div className={`${styles.card_form} px-7 py-8`}>
-        <form>
+      <div className={`${styles.card_form} px-7 py-8 mb-12`}>
+        <form onSubmit={handleSubmit}>
           <div>
             <div
               style={InterMedium.style}
@@ -39,8 +73,10 @@ export const AddForm = () => {
               required
               className={`${styles.form_placeholder} appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
               placeholder="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) =>
+                setFormState({ ...formState, email: e.target.value })
+              }
+              value={formState.email}
               style={InterReguler.style}
             />
             <div
@@ -65,8 +101,10 @@ export const AddForm = () => {
               required
               className={`${styles.form_placeholder} appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
               placeholder="Nama Lengkap"
-              value={nama}
-              onChange={(e) => setNama(e.target.value)}
+              onChange={(e) =>
+                setFormState({ ...formState, nama: e.target.value })
+              }
+              value={formState.nama}
               style={InterReguler.style}
             />
             <div
@@ -90,17 +128,46 @@ export const AddForm = () => {
               autoComplete="role"
               required
               className={`${styles.form_placeholder} appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
+              value={formState.role}
+              onChange={(e) =>
+                setFormState({ ...formState, role: e.target.value })
+              }
               style={InterReguler.style}
             >
-              <option value="" disabled selected>
+              <option value="" disabled>
                 Role
               </option>
               <option value="pengajar">Mitra Pengajar</option>
               <option value="operasional">Operasional</option>
               <option value="akademik">Akademik</option>
             </select>
+          </div>
+          <div className="mt-5">
+            {succces && (
+              <div
+                className="bg-[#DAF8E6] text-[#004434] text-sm px-4 py-2"
+                style={InterReguler.style}
+              >
+                {succces}
+              </div>
+            )}
+            {error && (
+              <div
+                className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2"
+                style={InterReguler.style}
+              >
+                {error}
+              </div>
+            )}
+          </div>
+          <div className="flex justify-center mt-9">
+            <button
+              type="submit"
+              className={`${styles.button_tx} ${styles.btn} `}
+              style={InterMedium.style}
+            >
+              Tambah Akun
+            </button>
           </div>
         </form>
       </div>

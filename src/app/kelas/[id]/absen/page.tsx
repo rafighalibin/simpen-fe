@@ -3,9 +3,10 @@
 import { useParams } from "next/navigation";
 import { useMutation, useQuery } from "react-query";
 import { useState } from "react";
-import useFetchWithToken from "../../../../../common/hooks/fetchWithToken";
-import CalendarIcon from "../../../../../common/components/icons/CalendarIcon";
-import { MuridSelect } from "../../../../../common/types/murid";
+import useFetchWithToken from "../../../../common/hooks/fetchWithToken";
+import CalendarIcon from "../../../../common/components/icons/CalendarIcon";
+import { MuridSelect } from "../../../../common/types/murid";
+import Loading from "../../../../common/components/Loading";
 
 const daysOfWeek = [
   "Sunday",
@@ -17,7 +18,7 @@ const daysOfWeek = [
   "Saturday",
 ];
 
-const DetailKelas = () => {
+const AbsenKelas = () => {
   const fetchWithToken = useFetchWithToken();
   const { id } = useParams();
   const { isLoading, error, data } = useQuery({
@@ -52,7 +53,7 @@ const DetailKelas = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   if (error || !data) {
@@ -92,13 +93,13 @@ const DetailKelas = () => {
             </h1>
             <div className="flex justify-end gap-4">
               <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
-                Zoom Kelas
+                <a href={"/error/construction"}>Zoom Kelas</a>
               </button>
               <button className="bg-warning text-white px-4 py-2 rounded-md hover:bg-warningHover">
-                <a href={`/kelas/${id}/edit`}>Ubah Jadwal / Ganti Guru</a>
+                <a href={"/error/construction"}>Ubah Jadwal / Ganti Guru</a>
               </button>
               <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
-                Detail Kelas
+                <a href={`/kelas/${id}`}>Detail Kelas</a>
               </button>
             </div>
           </div>
@@ -219,7 +220,7 @@ const DetailKelas = () => {
 
           <div>
             <div className="flex justify-between items-center">
-              <h1 className="flex justify-start text-3xl font-bold pt-7 text-neutral/100">
+              <h1 className="flex justify-start text-3xl font-bold py-7 text-neutral/100">
                 Kehadiran Per Sesi
               </h1>
               <div className="flex justify-end gap-4">
@@ -273,4 +274,4 @@ const DetailKelas = () => {
   );
 };
 
-export default DetailKelas;
+export default AbsenKelas;

@@ -14,7 +14,7 @@ const useFetchWithToken = () => {
       (options as { headers?: HeadersInit }).headers || {}
     );
     if (token) {
-      headers.append("Authorization", `${token}`);
+      headers.append("Authorization", `Bearer ${token}`);
     }
 
     if (body) {

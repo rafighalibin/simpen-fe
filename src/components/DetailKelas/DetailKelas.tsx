@@ -1,11 +1,12 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useMutation, useQuery } from "react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import CalendarIcon from "../../common/components/icons/CalendarIcon";
 import { MuridSelect } from "../../common/types/murid";
+import Loading from "../../common/components/Loading";
 
 const daysOfWeek = [
   "Sunday",
@@ -20,39 +21,35 @@ const daysOfWeek = [
 const DetailKelas = ({ buttons }) => {
   const fetchWithToken = useFetchWithToken();
   const { id } = useParams();
+  const router = useRouter();
+  const [muridRendered, setMuridRendered] = useState(false);
   const { isLoading, error, data } = useQuery({
     queryKey: ["kelasDetail"],
     queryFn: () => fetchWithToken(`/kelas/${id}`).then((res) => res.json()),
     onSuccess: (data) => {
+      console.log(data);
+      if (data.status != "OK") {
+        window.alert(data.message);
+        router.push("/dashboard");
+      }
       data.content.listMurid.forEach((e) => {
         muridSelected.push({
           value: e,
           label: e,
         });
       });
-      console.log(muridSelected);
     },
   });
+
   const [muridSelected, setMuridSelected] = useState<MuridSelect[]>([]);
 
-  const { mutateAsync: deleteMutation } = useMutation({
-    mutationFn: () =>
-      fetchWithToken(`/kelas/${id}`, "DELETE").then((res) => res.json()),
-    onSuccess: (data) => {
-      console.log(data);
-    },
-  });
-
-  const handleDelete = async () => {
-    if (window.confirm("Are you sure you want to delete this class?")) {
-      await deleteMutation();
-      // Redirect or handle post-delete logic here
+  useEffect(() => {
+    if (muridSelected.length > 0) {
+      setMuridRendered(true);
     }
-  };
+  }, [muridSelected]);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  if (isLoading) return <Loading />;
 
   if (error || !data) {
     return <div>Error fetching class details.</div>;
@@ -212,84 +209,86 @@ const DetailKelas = ({ buttons }) => {
           </div>
 
           <div className="flex flex-row gap-4">
-            {muridSelected.length > 2 ? (
-              <>
+            {!muridRendered &&
+              (muridSelected.length > 2 ? (
+                <>
+                  <div className="w-1/2">
+                    <label className="block font-medium text-neutral/70">
+                      Murid Kelas
+                    </label>
+                    <div className="mt-1">
+                      {/* Distribute elements between both columns */}
+                      {muridSelected
+                        .slice(0, Math.ceil(muridSelected.length / 2))
+                        .map((murid, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center py-2 border-b"
+                          >
+                            <div className="w-8 h-8 rounded-full bg-neutral/5 mr-4"></div>
+                            <input
+                              key={index}
+                              type="text"
+                              value={murid.label}
+                              className="flex-1 bg-transparent border-none cursor-not-allowed"
+                              disabled
+                            />
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                  <div className="w-1/2">
+                    <label className="block font-medium text-neutral/70">
+                      <br />
+                    </label>
+                    <div className="mt-1">
+                      {/* Distribute elements between both columns */}
+                      {muridSelected
+                        .slice(Math.ceil(muridSelected.length / 2))
+                        .map((murid, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center py-2 border-b"
+                          >
+                            <div className="w-8 h-8 rounded-full bg-neutral/5 mr-4"></div>
+                            <input
+                              key={index}
+                              type="text"
+                              value={murid.label}
+                              className="flex-1 bg-transparent border-none cursor-not-allowed"
+                              disabled
+                            />
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                </>
+              ) : (
                 <div className="w-1/2">
                   <label className="block font-medium text-neutral/70">
                     Murid Kelas
                   </label>
                   <div className="mt-1">
-                    {/* Distribute elements between both columns */}
-                    {muridSelected
-                      .slice(0, Math.ceil(muridSelected.length / 2))
-                      .map((murid, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center py-2 border-b"
-                        >
-                          <div className="w-8 h-8 rounded-full bg-neutral/5 mr-4"></div>
-                          <input
-                            key={index}
-                            type="text"
-                            value={murid.label}
-                            className="flex-1 bg-transparent border-none cursor-not-allowed"
-                            disabled
-                          />
-                        </div>
-                      ))}
-                  </div>
-                </div>
-                <div className="w-1/2">
-                  <label className="block font-medium text-neutral/70">
-                    <br />
-                  </label>
-                  <div className="mt-1">
-                    {/* Distribute elements between both columns */}
-                    {muridSelected
-                      .slice(Math.ceil(muridSelected.length / 2))
-                      .map((murid, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center py-2 border-b"
-                        >
-                          <div className="w-8 h-8 rounded-full bg-neutral/5 mr-4"></div>
-                          <input
-                            key={index}
-                            type="text"
-                            value={murid.label}
-                            className="flex-1 bg-transparent border-none cursor-not-allowed"
-                            disabled
-                          />
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              </>
-            ) : (
-              <div className="w-1/2">
-                <label className="block font-medium text-neutral/70">
-                  Murid Kelas
-                </label>
-                <div className="mt-1">
-                  {/* Display all elements in the first column */}
-                  {muridSelected.map((murid, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center py-2 border-b"
-                    >
-                      <div className="w-8 h-8 rounded-full bg-neutral/5 mr-4"></div>
-                      <input
+                    {/* Display all elements in the first column */}
+
+                    {muridSelected.map((murid, index) => (
+                      <div
                         key={index}
-                        type="text"
-                        value={murid.label}
-                        className="flex-1 bg-transparent border-none cursor-not-allowed"
-                        disabled
-                      />
-                    </div>
-                  ))}
+                        className="flex items-center py-2 border-b"
+                      >
+                        <div className="w-8 h-8 rounded-full bg-neutral/5 mr-4"></div>
+                        <input
+                          key={index}
+                          type="text"
+                          value={murid.label}
+                          className="flex-1 bg-transparent border-none cursor-not-allowed"
+                          disabled
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              ))}
           </div>
 
           <div>
