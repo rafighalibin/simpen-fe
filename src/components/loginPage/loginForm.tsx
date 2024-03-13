@@ -35,8 +35,7 @@ export const LoginForm = () => {
       }).then((res) => res.json()),
     onSuccess: (data) => {
       if (data.code == 200) {
-        // setPenggunaToken(data.token);
-        document.cookie = `Authorization=${data.content}`;
+        setPenggunaToken(data.content);
         router.replace("/dashboard");
       } else if (data.code == 401) {
         setError("Incorrect email or password.");
