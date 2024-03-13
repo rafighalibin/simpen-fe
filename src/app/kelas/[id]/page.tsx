@@ -6,12 +6,12 @@ import { useToken } from "../../../common/hooks/useToken";
 import IsLoggedIn from "../../../common/utils/IsLoggedIn";
 import useFetchWithToken from "../../../common/hooks/fetchWithToken";
 import { useMutation } from "react-query";
+import { useAuthContext } from "../../../common/utils/authContext";
 
 const Page = () => {
   const { id } = useParams();
-  const { parseToken } = useToken();
-  const claims = parseToken();
-  const role = claims["role"];
+  const { pengguna } = useAuthContext();
+
   const fetchWithToken = useFetchWithToken();
 
   const { mutateAsync: deleteMutation } = useMutation({
@@ -27,9 +27,9 @@ const Page = () => {
 
   return (
     <div>
-      {(role === "superadmin" ||
-        role === "akademik" ||
-        role === "operasional") && (
+      {(pengguna.role === "superadmin" ||
+        pengguna.role === "akademik" ||
+        pengguna.role === "operasional") && (
         <DetailKelas
           buttons={
             <div className="flex justify-center py-7 gap-4">
@@ -49,7 +49,7 @@ const Page = () => {
           }
         />
       )}
-      {role === "pengajar" && (
+      {pengguna.role === "pengajar" && (
         <DetailKelas
           buttons={
             <div className="flex justify-center py-7 gap-4">

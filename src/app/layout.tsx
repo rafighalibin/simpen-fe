@@ -5,6 +5,7 @@ import { Inter } from "next/font/google";
 import "../common/styles/globals.css";
 import Navbar from "../common/components/Navbar";
 import { Footer } from "../common/components/Footer";
+import { AuthContextProvider } from "../common/utils/authContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,14 +15,18 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head />
       <title>SIMPEN</title>
-      <body className={inter.className}>
-        {/* start excluded navbar */}
-        {path != "/login" && <Navbar />}
-        {/* end excluded navbar */}
+      <Provider>
+        <AuthContextProvider>
+          <body className={inter.className}>
+            {/* start excluded navbar */}
+            {path != "/login" && <Navbar />}
+            {/* end excluded navbar */}
 
-        <Provider>{children}</Provider>
-        <Footer />
-      </body>
+            {children}
+            <Footer />
+          </body>
+        </AuthContextProvider>
+      </Provider>
     </html>
   );
 }

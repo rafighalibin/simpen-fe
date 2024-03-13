@@ -13,13 +13,12 @@ import styles from "./loginForm.module.css";
 
 // import images
 import logo from "../../../public/Logo.png";
-import { get } from "http";
 
 export const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  // const { parseToken, getPenggunaToken } = useToken();
+  const { parseToken, getPenggunaToken, setPenggunaToken } = useToken();
   const router = useRouter();
 
   const { mutateAsync: loginMutation, data } = useMutation({
@@ -36,12 +35,9 @@ export const LoginForm = () => {
       }).then((res) => res.json()),
     onSuccess: (data) => {
       if (data.code == 200) {
-        console.log(data.content);
+        // setPenggunaToken(data.token);
         document.cookie = `Authorization=${data.content}`;
-        // const token = getPenggunaToken();
-        // const claims = parseToken(token);
-        // console.log(claims);
-        router.push("/dashboard");
+        router.replace("/dashboard");
       } else if (data.code == 401) {
         setError("Incorrect email or password.");
       } else {
