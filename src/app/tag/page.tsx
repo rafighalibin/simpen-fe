@@ -211,17 +211,17 @@ export default function TagPage() {
         const startPage =
           selectedPage <= 3 ? 1 : Math.min(selectedPage - 2, numPages - 3);
         const endPage = Math.min(startPage + 3, numPages);
-        return [...Array(endPage - startPage + 1).keys()].map((pageNumber) => (
+        return [...Array(endPage - startPage + 1)].map((_, index) => (
           <button
-            key={startPage + pageNumber}
-            onClick={() => setSelectedPage(startPage + pageNumber)}
+            key={startPage + index}
+            onClick={() => setSelectedPage(startPage + index)}
             className={`${
-              startPage + pageNumber === selectedPage
+              startPage + index === selectedPage
                 ? 'bg-blue-700 text-white'
                 : 'bg-blue-500 hover:bg-blue-700 text-white hover:text-white'
             } font-bold py-2 px-4 rounded`}
           >
-            {startPage + pageNumber}
+            {startPage + index}
           </button>
         ));
       })()}
