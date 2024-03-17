@@ -1,6 +1,9 @@
+"use client";
+
 import React, { useState } from "react";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import useFetchAllUser from "../../common/hooks/user/useFetchAllUser";
+import { useRouter } from "next/navigation";
 
 // import font and css
 import styles from "./UserListTable.module.css";
@@ -14,6 +17,7 @@ export const UserListTable = () => {
   const [sortBy, setSortBy] = useState("");
   const [filterBy, setFilterBy] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
 
   const totalPages = Math.ceil(listAllUser.length / itemsPerPage);
 
@@ -41,6 +45,12 @@ export const UserListTable = () => {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+  const handleDetailClick = (user) => {
+    const { password, ...userWithoutPassword } = user; // Exclude "password" property
+    const queryString = encodeURIComponent(JSON.stringify(userWithoutPassword));
+    router.push(`/user/detail?user=${queryString}`);
+  };
 
   //To-Do: Filtering
 
@@ -103,6 +113,7 @@ export const UserListTable = () => {
                     <td className="border-b px-4 py-5">{user.email}</td>
                     <td className="border-b px-4 py-5">
                       <button
+                        onClick={() => handleDetailClick(user)}
                         className={`bg-transparent hover:bg-[#215E9B] text-[#215E9B]  hover:text-white py-2 px-4 border border-[#215E9B] hover:border-transparent rounded-full`}
                       >
                         Detail
