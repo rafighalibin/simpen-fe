@@ -11,7 +11,7 @@ import { useEffect } from "react";
 
 const Page = () => {
   const { id } = useParams();
-  const { pengguna, isAuthenticated } = useAuthContext();
+  const { pengguna } = useAuthContext();
 
   const fetchWithToken = useFetchWithToken();
 
@@ -25,10 +25,6 @@ const Page = () => {
       await deleteMutation();
     }
   };
-
-  if (!isAuthenticated) {
-    return null;
-  }
 
   return (
     <div>
@@ -72,4 +68,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default IsLoggedIn(Page);

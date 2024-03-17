@@ -1,11 +1,14 @@
 "use client";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import Provider from "../common/hooks/provider";
 import { Inter } from "next/font/google";
 import "../common/styles/globals.css";
 import Navbar from "../common/components/Navbar";
 import { Footer } from "../common/components/Footer";
-import { AuthContextProvider } from "../common/utils/authContext";
+import {
+  AuthContextProvider,
+  useAuthContext,
+} from "../common/utils/authContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,11 +22,14 @@ export default function RootLayout({ children }) {
         <AuthContextProvider>
           <body className={inter.className}>
             {/* start excluded navbar */}
-            {path != "/login" && <Navbar />}
+            {path != "/login" && path != "/" && <Navbar />}
             {/* end excluded navbar */}
 
             {children}
-            <Footer />
+
+            {/* start excluded footer */}
+            {path != "/login" && path != "/" && <Footer />}
+            {/* end excluded footer */}
           </body>
         </AuthContextProvider>
       </Provider>

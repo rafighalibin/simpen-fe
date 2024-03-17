@@ -3,12 +3,15 @@
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import React from "react";
 import { request } from "http";
-import { KelasTable} from "../../components/kelasPage/kelasTable";
+import { KelasTable } from "../../components/kelasPage/kelasTable";
+import IsLoggedIn from "../../common/utils/IsLoggedIn";
 
-export default function Page() {
-    return (
+const Page = () => {
+  return (
     <div>
-        <KelasTable/>
+      <KelasTable />
     </div>
-    );
-}
+  );
+};
+
+export default IsLoggedIn(Page);
