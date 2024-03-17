@@ -7,6 +7,7 @@ import useFetchWithToken from "../../../../common/hooks/fetchWithToken";
 import CalendarIcon from "../../../../common/components/icons/CalendarIcon";
 import { MuridSelect } from "../../../../common/types/murid";
 import Loading from "../../../../common/components/Loading";
+import IsLoggedIn from "../../../../common/utils/IsLoggedIn";
 
 const daysOfWeek = [
   "Sunday",
@@ -274,4 +275,4 @@ const AbsenKelas = () => {
   );
 };
 
-export default AbsenKelas;
+export default IsLoggedIn(AbsenKelas);
