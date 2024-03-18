@@ -1,14 +1,17 @@
 "use client";
 
+import IsLoggedIn from "../../../common/utils/IsLoggedIn";
 // import component
 import { AddForm } from "../../../components/addUserPage/addForm";
 import { Breadcrumbs } from "../../../components/breadcrumbs/breadcrumbs";
 
-export default function App() {
+const App = () => {
   return (
     <div className="px-[8vw] py-8">
       <Breadcrumbs />
       <AddForm />
     </div>
   );
-}
+};
+
+export default IsLoggedIn(App);

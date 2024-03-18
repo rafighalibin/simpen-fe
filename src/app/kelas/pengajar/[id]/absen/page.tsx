@@ -3,11 +3,9 @@
 import { useParams } from "next/navigation";
 import { useMutation, useQuery } from "react-query";
 import { useState } from "react";
-import useFetchWithToken from "../../../../common/hooks/fetchWithToken";
-import CalendarIcon from "../../../../common/components/icons/CalendarIcon";
-import { MuridSelect } from "../../../../common/types/murid";
-import Loading from "../../../../common/components/Loading";
-import IsLoggedIn from "../../../../common/utils/IsLoggedIn";
+import useFetchWithToken from "../../../../../common/hooks/fetchWithToken";
+import CalendarIcon from "../../../../../common/components/icons/CalendarIcon";
+import { MuridSelect } from "../../../../../common/types/murid";
 
 const daysOfWeek = [
   "Sunday",
@@ -19,7 +17,7 @@ const daysOfWeek = [
   "Saturday",
 ];
 
-const AbsenKelas = () => {
+const DetailKelas = () => {
   const fetchWithToken = useFetchWithToken();
   const { id } = useParams();
   const { isLoading, error, data } = useQuery({
@@ -54,7 +52,7 @@ const AbsenKelas = () => {
   };
 
   if (isLoading) {
-    return <Loading />;
+    return <div>Loading...</div>;
   }
 
   if (error || !data) {
@@ -94,13 +92,13 @@ const AbsenKelas = () => {
             </h1>
             <div className="flex justify-end gap-4">
               <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
-                <a href={"/error/construction"}>Zoom Kelas</a>
+                Zoom Kelas
               </button>
               <button className="bg-warning text-white px-4 py-2 rounded-md hover:bg-warningHover">
-                <a href={"/error/construction"}>Ubah Jadwal / Ganti Guru</a>
+                <a href={`/kelas/${id}/edit`}>Ubah Jadwal / Ganti Guru</a>
               </button>
               <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
-                <a href={`/kelas/${id}`}>Detail Kelas</a>
+                Detail Kelas
               </button>
             </div>
           </div>
@@ -221,7 +219,7 @@ const AbsenKelas = () => {
 
           <div>
             <div className="flex justify-between items-center">
-              <h1 className="flex justify-start text-3xl font-bold py-7 text-neutral/100">
+              <h1 className="flex justify-start text-3xl font-bold pt-7 text-neutral/100">
                 Kehadiran Per Sesi
               </h1>
               <div className="flex justify-end gap-4">
@@ -275,4 +273,4 @@ const AbsenKelas = () => {
   );
 };
 
-export default IsLoggedIn(AbsenKelas);
+export default DetailKelas;
