@@ -12,7 +12,9 @@ export default function TagDetail() {
   const queryClient = useQueryClient();
   const fetchWithToken = useFetchWithToken();
   const [selectedPengajar, setSelectedPengajar] = useState([]);
-  const [listPengajarExisting, setListPengajar] = useState<PengajarSelect[]>([]);
+  const [listPengajarExisting, setListPengajar] = useState<PengajarSelect[]>(
+    []
+  );
 
   const payload = {
     id: id,
@@ -55,7 +57,7 @@ export default function TagDetail() {
 
   const handleCheckboxChange = (event, pengajarId) => {
     const isChecked = event.target.checked;
-  
+
     setSelectedPengajar((prevSelected) => {
       if (isChecked) {
         console.log(selectedPengajar);
@@ -69,9 +71,7 @@ export default function TagDetail() {
     });
 
     // Menampilkan nilai selectedPengajar setelah pembaruan dilakukan
-    
-};
-
+  };
 
   const handleAssignButtonClick = async () => {
     try {
@@ -137,7 +137,7 @@ export default function TagDetail() {
       <button
         className="block mt-2 px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm focus:outline-none focus:bg-blue-600 "
         onClick={handleAssignButtonClick}
-        style={{ margin: 'auto', display: 'block' }}
+        style={{ margin: "auto", display: "block" }}
       >
         Assign
       </button>

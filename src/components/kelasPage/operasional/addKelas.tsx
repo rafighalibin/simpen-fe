@@ -11,7 +11,7 @@ import Select from "react-select";
 import { MuridSelect } from "../../../common/types/murid";
 import { useRouter } from "next/navigation";
 
-export const AddKelas = () => {
+const AddKelas = () => {
   const router = useRouter();
 
   const [programId, setProgramId] = useState("");
@@ -547,3 +547,5 @@ export const AddKelas = () => {
     </div>
   );
 };
+
+export default AddKelas;
