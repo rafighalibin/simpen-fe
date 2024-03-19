@@ -4,11 +4,9 @@ import Provider from "../common/hooks/provider";
 import { Inter } from "next/font/google";
 import "../common/styles/globals.css";
 import Navbar from "../common/components/Navbar";
-import { Footer } from "../common/components/Footer";
-import {
-  AuthContextProvider,
-  useAuthContext,
-} from "../common/utils/authContext";
+import Footer from "../common/components/Footer";
+import { AuthContextProvider } from "../common/utils/authContext";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,10 +21,7 @@ export default function RootLayout({ children }) {
           <body className={inter.className}>
             {/* start excluded navbar */}
             {path != "/login" && path != "/" && <Navbar />}
-            {/* end excluded navbar */}
-
             {children}
-
             {/* start excluded footer */}
             {path != "/login" && path != "/" && <Footer />}
             {/* end excluded footer */}
