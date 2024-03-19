@@ -162,216 +162,212 @@ const UpdateForm = () => {
 
   return (
     <div>
-      <div className=" px-7 py-20 space-y-4">
-        <h1 className=" flex justify-center text-5xl font-bold text-neutral/100 ">
-          Ubah Detail Kelas
-        </h1>
-        <form onSubmit={handleSubmit}>
-          <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-lg rounded-lg">
-            <div>
-              <label className="block font-medium text-neutral/70">
-                Id Kelas
-              </label>
-              <input
-                disabled
-                type="text"
-                value={id}
-                className=" read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full rounded-md"
-              />
-            </div>
+      <h1 className=" flex justify-center text-5xl font-bold text-neutral/100 ">
+        Ubah Detail Kelas
+      </h1>
+      <form onSubmit={handleSubmit}>
+        <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-lg rounded-lg">
+          <div>
+            <label className="block font-medium text-neutral/70">
+              Id Kelas
+            </label>
+            <input
+              disabled
+              type="text"
+              value={id}
+              className=" read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full rounded-md"
+            />
+          </div>
 
-            <div>
-              <label className="block font-medium text-neutral/70">
-                Pengajar
-              </label>
-              {!pengajarRendered && (
-                <Select
-                  defaultValue={pengajarSelected}
-                  name="colors"
-                  onChange={handleChangePengajar}
-                  options={listPengajarExisting}
-                  className="bg-base mt-1 p-2 w-full border rounded-md"
-                  classNamePrefix="select"
-                  styles={{
-                    control: (provided, state) => ({
-                      ...provided,
-                      border: "none", // Remove border
-                      boxShadow: "none", // Remove box shadow
-                      backgroundColor: "none", // Match platform input background color
-                    }),
-                    multiValue: (provided) => ({
-                      ...provided,
-                      backgroundColor: "#EDF6FF", // Match platform input background color
-                    }),
-                    option: (provided, state) => ({
-                      ...provided,
-                      backgroundColor: state.isSelected
-                        ? "#215E9B"
-                        : provided.backgroundColor, // Change background color for selected option
-                      color: state.isSelected ? "white" : provided.color, // Change text color for selected option
-                      fontWeight: state.isSelected
-                        ? "bold"
-                        : provided.fontWeight, // Change font weight for selected option
-                    }),
-                  }}
-                />
-              )}
-            </div>
-
-            <div className="flex flex-row gap-4  ">
-              <div className="w-1/2">
-                <label className="block font-medium text-neutral/70">
-                  Program
-                </label>
-                <input
-                  disabled
-                  type="text"
-                  value={formState.programName}
-                  readOnly
-                  className="read-only:text-neutral/60 bg-neutral/5  mt-1 p-2 w-full border rounded-md"
-                />
-              </div>
-
-              <div className="w-1/2">
-                <label className="block font-medium text-neutral/70">
-                  Jenis Kelas
-                </label>
-                <input
-                  disabled
-                  type="text"
-                  value={formState.jenisKelasName}
-                  readOnly
-                  className="read-only:text-neutral/60 bg-neutral/5  mt-1 p-2 w-full border rounded-md"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block font-medium text-neutral/70">
-                Link Group Kelas
-              </label>
-              <input
-                type="text"
-                value={formState.linkGroup}
-                name="linkGroup"
-                onChange={handleChange}
+          <div>
+            <label className="block font-medium text-neutral/70">
+              Pengajar
+            </label>
+            {!pengajarRendered && (
+              <Select
+                defaultValue={pengajarSelected}
+                name="colors"
+                onChange={handleChangePengajar}
+                options={listPengajarExisting}
                 className="bg-base mt-1 p-2 w-full border rounded-md"
+                classNamePrefix="select"
+                styles={{
+                  control: (provided, state) => ({
+                    ...provided,
+                    border: "none", // Remove border
+                    boxShadow: "none", // Remove box shadow
+                    backgroundColor: "none", // Match platform input background color
+                  }),
+                  multiValue: (provided) => ({
+                    ...provided,
+                    backgroundColor: "#EDF6FF", // Match platform input background color
+                  }),
+                  option: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isSelected
+                      ? "#215E9B"
+                      : provided.backgroundColor, // Change background color for selected option
+                    color: state.isSelected ? "white" : provided.color, // Change text color for selected option
+                    fontWeight: state.isSelected ? "bold" : provided.fontWeight, // Change font weight for selected option
+                  }),
+                }}
               />
-            </div>
+            )}
+          </div>
 
-            <div className="flex flex-row gap-4">
-              <div className="w-1/2 relative">
-                <label className="block font-medium text-neutral/70">
-                  Tanggal Kelas Dimulai
-                </label>
-                <div className="flex mt-1 relative">
-                  <input
-                    type="date"
-                    value={formState.tanggalMulai}
-                    name="tanggalMulai"
-                    onChange={handleChange}
-                    className="bg-base mt-1 p-2 w-full border rounded-md "
-                  />
-                </div>
-              </div>
-
-              <div className="w-1/2 relative">
-                <label className="block font-medium text-neutral/70">
-                  Tanggal Kelas Selesai
-                </label>
-                <div className="flex mt-1 relative">
-                  <input
-                    type="date"
-                    value={formState.tanggalSelesai}
-                    onChange={handleChange}
-                    className="bg-base mt-1 p-2 w-full border rounded-md "
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-row">
-              {daysOfWeek.map((day) => (
-                <div key={day} className="flex items-center mr-4">
-                  <input
-                    disabled
-                    type="checkbox"
-                    className="bg-base -mb-0.5 p-2 w-full border rounded-md"
-                  />
-                  <label className="block font-medium text-neutral/70 ml-0.5">
-                    {day}
-                  </label>
-                </div>
-              ))}
-            </div>
-
-            <div>
-              <label className="block font-medium text-neutral/70">Jam</label>
+          <div className="flex flex-row gap-4  ">
+            <div className="w-1/2">
+              <label className="block font-medium text-neutral/70">
+                Program
+              </label>
               <input
                 disabled
                 type="text"
-                value={formState.jam}
-                name="platform"
-                className=" read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
+                value={formState.programName}
+                readOnly
+                className="read-only:text-neutral/60 bg-neutral/5  mt-1 p-2 w-full border rounded-md"
               />
             </div>
 
-            <div>
+            <div className="w-1/2">
               <label className="block font-medium text-neutral/70">
-                Murid Kelas
-              </label>
-              {!muridRendered && (
-                <Select
-                  defaultValue={muridSelected}
-                  isMulti
-                  name="colors"
-                  onChange={handleChangeMurid}
-                  options={listMuridExisting}
-                  className="bg-base mt-1 p-2 w-full border rounded-md"
-                  classNamePrefix="select"
-                  styles={{
-                    control: (provided) => ({
-                      ...provided,
-                      border: "none", // Remove border
-                      boxShadow: "none", // Remove box shadow
-                      backgroundColor: "none", // Match platform input background color
-                    }),
-                    multiValue: (provided) => ({
-                      ...provided,
-                      backgroundColor: "#EDF6FF", // Match platform input background color
-                    }),
-                  }}
-                />
-              )}
-            </div>
-
-            <div>
-              <label className="block font-medium text-neutral/70">
-                Platform
+                Jenis Kelas
               </label>
               <input
+                disabled
                 type="text"
-                value={formState.platform}
-                name="platform"
-                onChange={handleChange}
-                className=" bg-base mt-1 p-2 w-full border rounded-md"
+                value={formState.jenisKelasName}
+                readOnly
+                className="read-only:text-neutral/60 bg-neutral/5  mt-1 p-2 w-full border rounded-md"
               />
-            </div>
-
-            <div className="flex justify-center py-7 gap-4">
-              <button
-                type="submit"
-                className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
-              >
-                Ubah Kelas
-              </button>
-              <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
-                Cancel
-              </button>
             </div>
           </div>
-        </form>
-      </div>
+
+          <div>
+            <label className="block font-medium text-neutral/70">
+              Link Group Kelas
+            </label>
+            <input
+              type="text"
+              value={formState.linkGroup}
+              name="linkGroup"
+              onChange={handleChange}
+              className="bg-base mt-1 p-2 w-full border rounded-md"
+            />
+          </div>
+
+          <div className="flex flex-row gap-4">
+            <div className="w-1/2 relative">
+              <label className="block font-medium text-neutral/70">
+                Tanggal Kelas Dimulai
+              </label>
+              <div className="flex mt-1 relative">
+                <input
+                  type="date"
+                  value={formState.tanggalMulai}
+                  name="tanggalMulai"
+                  onChange={handleChange}
+                  className="bg-base mt-1 p-2 w-full border rounded-md "
+                />
+              </div>
+            </div>
+
+            <div className="w-1/2 relative">
+              <label className="block font-medium text-neutral/70">
+                Tanggal Kelas Selesai
+              </label>
+              <div className="flex mt-1 relative">
+                <input
+                  type="date"
+                  value={formState.tanggalSelesai}
+                  onChange={handleChange}
+                  className="bg-base mt-1 p-2 w-full border rounded-md "
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-row">
+            {daysOfWeek.map((day) => (
+              <div key={day} className="flex items-center mr-4">
+                <input
+                  disabled
+                  type="checkbox"
+                  className="bg-base -mb-0.5 p-2 w-full border rounded-md"
+                />
+                <label className="block font-medium text-neutral/70 ml-0.5">
+                  {day}
+                </label>
+              </div>
+            ))}
+          </div>
+
+          <div>
+            <label className="block font-medium text-neutral/70">Jam</label>
+            <input
+              disabled
+              type="text"
+              value={formState.jam}
+              name="platform"
+              className=" read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
+            />
+          </div>
+
+          <div>
+            <label className="block font-medium text-neutral/70">
+              Murid Kelas
+            </label>
+            {!muridRendered && (
+              <Select
+                defaultValue={muridSelected}
+                isMulti
+                name="colors"
+                onChange={handleChangeMurid}
+                options={listMuridExisting}
+                className="bg-base mt-1 p-2 w-full border rounded-md"
+                classNamePrefix="select"
+                styles={{
+                  control: (provided) => ({
+                    ...provided,
+                    border: "none", // Remove border
+                    boxShadow: "none", // Remove box shadow
+                    backgroundColor: "none", // Match platform input background color
+                  }),
+                  multiValue: (provided) => ({
+                    ...provided,
+                    backgroundColor: "#EDF6FF", // Match platform input background color
+                  }),
+                }}
+              />
+            )}
+          </div>
+
+          <div>
+            <label className="block font-medium text-neutral/70">
+              Platform
+            </label>
+            <input
+              type="text"
+              value={formState.platform}
+              name="platform"
+              onChange={handleChange}
+              className=" bg-base mt-1 p-2 w-full border rounded-md"
+            />
+          </div>
+
+          <div className="flex justify-center py-7 gap-4">
+            <button
+              type="submit"
+              className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
+            >
+              Ubah Kelas
+            </button>
+            <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </form>
     </div>
   );
 };

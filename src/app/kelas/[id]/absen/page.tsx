@@ -82,8 +82,8 @@ const AbsenKelas = () => {
   };
 
   return (
-    <div>
-      <div className=" px-7 py-20 space-y-4">
+    <div className="px-[8vw] py-8">
+      <div>
         <h1 className=" flex justify-center text-5xl font-bold text-neutral/100 ">
           Absensi Kelas
         </h1>

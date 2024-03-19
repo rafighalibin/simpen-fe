@@ -8,7 +8,7 @@ import IsLoggedIn from "../../common/utils/IsLoggedIn";
 
 const Page = () => {
   return (
-    <div>
+    <div className="px-[8vw] py-8">
       <KelasTable />
     </div>
   );

@@ -10,7 +10,11 @@ const EditPage = () => {
   const claims = parseToken();
   const role = claims["role"];
   if (role === "superadmin" || role === "akademik" || role === "operasional") {
-    return <UpdateForm />;
+    return (
+      <div className="px-[8vw] py-8">
+        <UpdateForm />;
+      </div>
+    );
   }
   return <Unauthorized />;
 };

@@ -13,7 +13,6 @@ const AuthContext = createContext({});
 export const AuthContextProvider = ({ children }) => {
   const [pengguna, setPengguna] = useState<User>({} as User);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const router = useRouter();
 
   const { getPenggunaToken } = useToken();
 
@@ -21,6 +20,7 @@ export const AuthContextProvider = ({ children }) => {
     const decodedToken: User = jwtDecode(getPenggunaToken());
     setPengguna(decodedToken);
   };
+
   useEffect(() => {
     if (getPenggunaToken()) {
       setPenggunaData();
