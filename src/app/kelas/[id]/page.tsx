@@ -18,6 +18,10 @@ const Page = () => {
   const { mutateAsync: deleteMutation } = useMutation({
     mutationFn: () =>
       fetchWithToken(`/kelas/${id}`, "DELETE").then((res) => res.json()),
+    onSuccess: () => {
+      alert("Kelas berhasil dihapus");
+      window.location.href = "/kelas";
+    },
   });
 
   const handleDelete = async () => {
@@ -27,7 +31,7 @@ const Page = () => {
   };
 
   return (
-    <div>
+    <div className="px-[8vw] py-8">
       {(pengguna.role === "superadmin" ||
         pengguna.role === "akademik" ||
         pengguna.role === "operasional") && (

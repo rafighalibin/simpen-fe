@@ -4,7 +4,12 @@ import Image from "next/image";
 // import component
 import nakahamaLogo from "../../../public/LogoNakahama.png";
 import kalanantiLogo from "../../../public/Logo.png";
-export const Footer = () => {
+import { useAuthContext } from "../utils/authContext";
+const Footer = () => {
+  const { isAuthenticated } = useAuthContext();
+  if (!isAuthenticated) {
+    return null;
+  }
   return (
     <div className="bg-primaryForeground flex items-center justify-center">
       <div className="flex items-center justify-center py-10">
@@ -22,3 +27,4 @@ export const Footer = () => {
     </div>
   );
 };
+export default Footer;
