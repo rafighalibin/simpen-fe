@@ -2,21 +2,24 @@
 import React from "react";
 import UpdateForm from "../../../../components/DetailKelas/UpdateForm";
 import { useToken } from "../../../../common/hooks/useToken";
-import Unauthorized from "../../../../components/errors/Unauthorized";
 import IsLoggedIn from "../../../../common/utils/IsLoggedIn";
+import { useAuthContext } from "../../../../common/utils/authContext";
+import { Breadcrumbs } from "../../../../components/breadcrumbs/breadcrumbs";
 
 const EditPage = () => {
   const { parseToken } = useToken();
+  const { checkPermission } = useAuthContext();
   const claims = parseToken();
   const role = claims["role"];
-  if (role === "superadmin" || role === "akademik" || role === "operasional") {
-    return (
+
+  return (
+    checkPermission(true, true, false) && (
       <div className="px-[8vw] py-8">
-        <UpdateForm />;
+        <Breadcrumbs />
+        <UpdateForm />
       </div>
-    );
-  }
-  return <Unauthorized />;
+    )
+  );
 };
 
 export default IsLoggedIn(EditPage);

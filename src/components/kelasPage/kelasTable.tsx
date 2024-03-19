@@ -29,7 +29,7 @@ export const KelasTable = () => {
     pengguna.role === "superadmin"
   ) {
     return (
-      <div className="flex flex-col space-y-8">
+      <div className="flex flex-col space-y-8 my-10">
         <h1 className=" flex justify-start text-6xl font-bold text-neutral/100 ">
           Daftar Kelas
         </h1>
@@ -40,7 +40,7 @@ export const KelasTable = () => {
 
   if (pengguna.role === "pengajar") {
     return (
-      <div className="flex flex-col space-y-8">
+      <div className="flex flex-col space-y-8 my-10">
         <h1 className=" flex justify-start text-6xl font-bold text-neutral/100 ">
           Daftar Kelas Pengajaran
         </h1>
