@@ -1,7 +1,7 @@
 // src/components/KelasTable/columns.ts
 import { ColumnDef, RowData } from "@tanstack/react-table";
 
-import { KelasRead } from "../../../common/types/kelas";
+import { KelasRead } from "../../../../common/types/kelas";
 
 declare module "@tanstack/react-table" {
   interface ColumnMeta<TData extends RowData, TValue> {
@@ -24,6 +24,10 @@ export const columns: ColumnDef<KelasRead>[] = [
   {
     accessorKey: "jenisKelasName",
     header: "Jenis Kelas",
+  },
+  {
+    accessorKey: "pengajar",
+    header: "Pengajar",
   },
   {
     accessorKey: "tanggalSelesai",

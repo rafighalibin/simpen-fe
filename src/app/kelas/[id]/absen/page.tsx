@@ -1,7 +1,7 @@
 "use client";
 
 import IsLoggedIn from "../../../../common/utils/IsLoggedIn";
-import Absen from "../../../../components/DetailKelas/Absen/Absen";
+import Absen from "../../../../components/kelasPage/absenKelas/Absen";
 import { Breadcrumbs } from "../../../../components/breadcrumbs/breadcrumbs";
 
 const daysOfWeek = [

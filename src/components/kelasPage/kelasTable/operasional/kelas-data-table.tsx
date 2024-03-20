@@ -12,8 +12,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { Filter, fuzzyFilter } from "../../../common/utils/table/filter";
-import { DebouncedInput } from "../../../common/utils/table/debounceInput";
+import { Filter, fuzzyFilter } from "../../../../common/utils/table/filter";
+import { DebouncedInput } from "../../../../common/utils/table/debounceInput";
 import styles from "../KelasTable.module.css"; // Assuming the same CSS module is applicable
 
 interface DataTableProps<TData, TValue> {

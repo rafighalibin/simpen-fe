@@ -14,7 +14,6 @@ const toPascalCase = (text: String) => {
 export const Breadcrumbs = () => {
   const path = usePathname();
   const pathArr = getPath(path);
-  console.log(pathArr);
   return (
     <div className={`${styles.card_breadcrumbs} px-7 py-6`}>
       <a className="text-xl" href={`/dashboard`}>
