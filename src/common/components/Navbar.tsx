@@ -36,7 +36,7 @@ const Navbar = () => {
 
             {pengguna.role === "superadmin" && (
               <div className="flex space-x-4 pt-2 pl-7">
-                <a href="/#" className="text-white text-xl">
+                <a href="/user" className="text-white text-xl">
                   Akun
                 </a>
                 <a href="/#" className="text-white text-xl">
