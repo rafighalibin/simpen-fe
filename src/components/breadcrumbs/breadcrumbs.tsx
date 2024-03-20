@@ -17,7 +17,7 @@ export const Breadcrumbs = () => {
   const path = usePathname();
   const pathArr = getPath(path);
   return (
-    <div className={`${styles.card_breadcrumbs} px-7 py-4`}>
+    <div className={`${styles.card_breadcrumbs} md:px-7 px-5 md:py-4 py-2`}>
       <a
         className={`${styles.home_tx} text-xl ${
           path === "/dashboard" ? styles.current : styles.home
@@ -32,7 +32,7 @@ export const Breadcrumbs = () => {
         return (
           <>
             <RiArrowRightSLine
-              className={`${styles.arrow} inline-block mx-2`}
+              className={`${styles.arrow} inline-block md:mx-2 mx-1`}
             />
             <a
               key={index}

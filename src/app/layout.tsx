@@ -23,7 +23,11 @@ export default function RootLayout({ children }) {
             {path != "/login" && path != "/" && <Navbar />}
             {children}
             {/* start excluded footer */}
-            {path != "/login" && path != "/" && <Footer />}
+            {path != "/login" && path != "/" && (
+              <div>
+                <Footer />
+              </div>
+            )}
             {/* end excluded footer */}
           </body>
         </AuthContextProvider>

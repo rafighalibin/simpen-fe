@@ -22,3 +22,13 @@
 .arrow {
   color: var(--Primary-Text-Color, #637381);
 }
+
+@media (max-width: 639px) {
+  .home_tx {
+    font-size: 14px;
+  }
+
+  .path_tx {
+    font-size: 14px;
+  }
+}
