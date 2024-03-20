@@ -9,9 +9,14 @@ import { useRouter } from "next/navigation";
 import styles from "./UserListTable.module.css";
 import { InterMedium } from "../../font/font";
 import { Filtering } from "./Filtering";
+import Loading from "../../common/components/Loading";
 
 export const UserListTable = () => {
-  const { isLoading: listAllUserLoading, listAllUser } = useFetchAllUser();
+  const {
+    isLoading: listAllUserLoading,
+    error,
+    listAllUser,
+  } = useFetchAllUser();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(6);
   const [sortBy, setSortBy] = useState("");
@@ -52,6 +57,10 @@ export const UserListTable = () => {
     router.push(`/user/detail?user=${queryString}`);
   };
 
+  if (error || !listAllUser) {
+    return <div>Error fetching all users.</div>;
+  }
+
   //To-Do: Filtering
 
   return (
@@ -70,7 +79,7 @@ export const UserListTable = () => {
         />
       </div>
       {listAllUserLoading ? (
-        <div>Loading...</div>
+        <Loading />
       ) : (
         <div className={` ${styles.card_form} `}>
           <table className={`table-auto w-full`}>
@@ -114,7 +123,7 @@ export const UserListTable = () => {
                     <td className="border-b px-4 py-5">
                       <button
                         onClick={() => handleDetailClick(user)}
-                        className={`bg-transparent hover:bg-[#215E9B] text-[#215E9B]  hover:text-white py-2 px-4 border border-[#215E9B] hover:border-transparent rounded-full`}
+                        className={`bg-transparent hover:bg-[#215E9B] text-[#215E9B] focus:bg-[#215E9B] focus:text-white hover:text-white py-2 px-4 border border-[#215E9B] hover:border-transparent rounded-full`}
                       >
                         Detail
                       </button>
