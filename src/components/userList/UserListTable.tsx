@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import useFetchAllUser from "../../common/hooks/user/useFetchAllUser";
 import { useRouter } from "next/navigation";
@@ -22,9 +22,52 @@ export const UserListTable = () => {
   const [sortBy, setSortBy] = useState("");
   const [filterBy, setFilterBy] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const router = useRouter();
 
-  const totalPages = Math.ceil(listAllUser.length / itemsPerPage);
+  useEffect(() => {
+    let filtered = listAllUser;
+
+    console.log(filterBy);
+
+    if (sortBy) {
+      filtered = filtered.filter(
+        (user) => user.role.toLowerCase() === sortBy.toLowerCase()
+      );
+    }
+
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (user) =>
+          user.nama.toLowerCase().includes(query) ||
+          user.email.toLowerCase().includes(query)
+      );
+    }
+
+    function sortUsers(users, filterBy) {
+      return [...users].sort((a, b) => {
+        if (filterBy === "nama-asc") {
+          return a.nama.localeCompare(b.nama);
+        } else if (filterBy === "nama-desc") {
+          return b.nama.localeCompare(a.nama);
+        } else if (filterBy === "email-asc") {
+          return a.email.localeCompare(b.email);
+        } else if (filterBy === "email-desc") {
+          return b.email.localeCompare(a.email);
+        }
+        return 0;
+      });
+    }
+
+    if (filterBy) {
+      filtered = sortUsers(filtered, filterBy);
+    }
+
+    setFilteredUsers(filtered);
+  }, [listAllUser, sortBy, filterBy, searchQuery]);
+
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -106,7 +149,7 @@ export const UserListTable = () => {
               </tr>
             </thead>
             <tbody>
-              {listAllUser
+              {filteredUsers
                 .slice(indexOfFirstItem, indexOfLastItem)
                 .map((user, index) => (
                   <tr
