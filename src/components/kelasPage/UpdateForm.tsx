@@ -162,11 +162,11 @@ const UpdateForm = () => {
 
   return (
     <div>
-      <h1 className=" flex justify-center text-5xl font-bold text-neutral/100 ">
+      <h1 className=" flex justify-center text-5xl font-bold text-neutral/100 my-10">
         Ubah Detail Kelas
       </h1>
       <form onSubmit={handleSubmit}>
-        <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-lg rounded-lg">
+        <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-lg rounded-lg border">
           <div>
             <label className="block font-medium text-neutral/70">
               Id Kelas

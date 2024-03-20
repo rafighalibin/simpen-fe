@@ -4,3 +4,21 @@
   background: var(--White-White, #fff);
   box-shadow: 0px 1px 3px 0px rgba(166, 175, 195, 0.4);
 }
+
+.home_tx {
+  color: var(--Dark-Dark, #111928);
+  font-size: 16px;
+  font-style: normal;
+  line-height: 24px; /* 150% */
+}
+
+.path_tx {
+  color: var(--Primary-Text-Color, #637381);
+  font-size: 16px;
+  font-style: normal;
+  line-height: 24px; /* 150% */
+}
+
+.arrow {
+  color: var(--Primary-Text-Color, #637381);
+}

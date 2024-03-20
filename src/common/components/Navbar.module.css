@@ -1,0 +1,31 @@
+.logo_tx {
+  color: var(--white, var(--White, #fff));
+  font-style: normal;
+  line-height: 150%; /* 30px */
+}
+
+.nav_items_tx {
+  color: var(--Blue, #66a2dc);
+  font-style: normal;
+  line-height: 150%; /* 24px */
+}
+
+.logout_tx {
+  color: var(--Blue, #ef7373);
+  font-style: normal;
+  line-height: 150%; /* 24px */
+}
+
+@media (max-width: 767px) {
+  .card {
+    border-radius: 10px;
+    background: white;
+    margin: 0 auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow effect */
+    outline: 1px solid rgba(194, 194, 194, 0.5); /* Stroke effect */
+  }
+}
+
+.navbar_logo {
+  color: white;
+}
