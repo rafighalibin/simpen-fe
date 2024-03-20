@@ -1,0 +1,15 @@
+.tx {
+  color: var(--Primary-Text-Color, #637381);
+  font-size: 16px;
+  font-style: normal;
+  line-height: 24px; /* 150% */
+}
+
+@media (max-width: 639px) {
+  .tx {
+    color: var(--Primary-Text-Color, #637381);
+    font-size: 10px;
+    font-style: normal;
+    line-height: 24px; /* 150% */
+  }
+}

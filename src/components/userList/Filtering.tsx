@@ -57,7 +57,7 @@ export const Filtering = (props) => {
         </select>
         <button
           onClick={handleAddUser}
-          className={`px-4 py-2 ${styles.btn} ${styles.btn_tx} text-white rounded`}
+          className={`px-4 py-2 ${styles.btn} ${styles.btn_tx} text-white rounded hover:bg-[#215E9B] focus:bg-[#215E9B] `}
           style={InterReguler.style}
         >
           + Tambah Akun
