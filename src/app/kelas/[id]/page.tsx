@@ -1,7 +1,7 @@
 "use client";
 import { useParams } from "next/navigation";
 
-import DetailKelas from "../../../components/DetailKelas/DetailKelas";
+import DetailKelas from "../../../components/kelasPage/DetailKelas";
 import IsLoggedIn from "../../../common/utils/IsLoggedIn";
 import useFetchWithToken from "../../../common/hooks/fetchWithToken";
 import { useMutation } from "react-query";

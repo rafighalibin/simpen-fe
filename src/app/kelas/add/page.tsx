@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import AddKelas from "../../../components/kelasPage/operasional/addKelas";
+import AddKelas from "../../../components/kelasPage/kelasTable/operasional/addKelas";
 import { useAuthContext } from "../../../common/utils/authContext";
 import { useRouter } from "next/navigation";
 import IsLoggedIn from "../../../common/utils/IsLoggedIn";

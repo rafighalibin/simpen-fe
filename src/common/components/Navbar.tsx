@@ -99,21 +99,43 @@ const Navbar = () => {
               <div className="flex space-x-4 pt-2 pl-7">
                 <a
                   href="/kelas"
-                  className="text-info hover:text-primaryForeground text-xl"
+                  className={`${
+                    getRootPath(path) == "kelas"
+                      ? "text-primaryForeground"
+                      : "text-info"
+                  }  hover:text-primaryForeground text-xl`}
                 >
                   Kelas
                 </a>
                 <a
                   href="/#"
-                  className="text-info hover:text-primaryForeground text-xl"
+                  className={`${
+                    getRootPath(path) == "pengajar"
+                      ? "text-primaryForeground"
+                      : "text-info"
+                  }  hover:text-primaryForeground text-xl`}
                 >
                   Pengajar
                 </a>
                 <a
                   href="/user/profile"
-                  className="text-info hover:text-primaryForeground text-xl"
+                  className={`${
+                    getRootPath(path) == "user"
+                      ? "text-primaryForeground"
+                      : "text-info"
+                  }  hover:text-primaryForeground text-xl`}
                 >
                   Profil
+                </a>
+                <a
+                  href="/murid"
+                  className={`${
+                    getRootPath(path) == "murid"
+                      ? "text-primaryForeground"
+                      : "text-info"
+                  }  hover:text-primaryForeground text-xl`}
+                >
+                  Murid
                 </a>
               </div>
             )}
@@ -122,19 +144,31 @@ const Navbar = () => {
               <div className="flex space-x-4 pt-2 pl-7">
                 <a
                   href="/kelas"
-                  className="text-info hover:text-primaryForeground text-xl"
+                  className={`${
+                    getRootPath(path) == "kelas"
+                      ? "text-primaryForeground"
+                      : "text-info"
+                  }  hover:text-primaryForeground text-xl`}
                 >
                   Kelas
                 </a>
                 <a
                   href="/#"
-                  className="text-info hover:text-primaryForeground text-xl"
+                  className={`${
+                    getRootPath(path) == "user"
+                      ? "text-primaryForeground"
+                      : "text-info"
+                  }  hover:text-primaryForeground text-xl`}
                 >
                   Pengajar
                 </a>
                 <a
                   href="/user/profile"
-                  className="text-info hover:text-primaryForeground text-xl"
+                  className={`${
+                    getRootPath(path) == "user"
+                      ? "text-primaryForeground"
+                      : "text-info"
+                  }  hover:text-primaryForeground text-xl`}
                 >
                   Profil
                 </a>

@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import UpdateForm from "../../../../components/DetailKelas/UpdateForm";
+import UpdateForm from "../../../../components/kelasPage/UpdateForm";
 import { useToken } from "../../../../common/hooks/useToken";
 import IsLoggedIn from "../../../../common/utils/IsLoggedIn";
 import { useAuthContext } from "../../../../common/utils/authContext";
