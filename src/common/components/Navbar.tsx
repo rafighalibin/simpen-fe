@@ -143,7 +143,7 @@ const Navbar = () => {
                   >
                     {loggingOut ? (
                       <div className="flex items-center">
-                        <p className="mr-2">Logging out</p>
+                        <p className="mr-2">Logging out...</p>
                         <div className="loader"></div>
                       </div>
                     ) : (
@@ -161,98 +161,177 @@ const Navbar = () => {
 
             {pengguna.role === "operasional" && (
               <>
-                <a
-                  href="/kelas"
-                  className={`${
-                    getRootPath(path) === "kelas"
-                      ? "text-primaryForeground"
-                      : "text-info"
-                  }  hover:text-primaryForeground`}
-                >
-                  Kelas
-                </a>
-                <a
-                  href="/#"
-                  className={`${
-                    getRootPath(path) === "pengajar"
-                      ? "text-primaryForeground"
-                      : "text-info"
-                  }  hover:text-primaryForeground`}
-                >
-                  Pengajar
-                </a>
-                <a
-                  href="/user/profile"
-                  className={`${
-                    getRootPath(path) === "user"
-                      ? "text-primaryForeground"
-                      : "text-info"
-                  }  hover:text-primaryForeground`}
-                >
-                  Profil
-                </a>
-                <a
-                  href="/murid"
-                  className={`${
-                    getRootPath(path) === "murid"
-                      ? "text-primaryForeground"
-                      : "text-info"
-                  }  hover:text-primaryForeground`}
-                >
-                  Murid
-                </a>
+                <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                  <a
+                    href="/kelas"
+                    className={`${
+                      getRootPath(path) === "kelas"
+                        ? "md:text-primaryForeground"
+                        : "md:text-info"
+                    }  md:hover:text-primaryForeground`}
+                  >
+                    Kelas
+                  </a>
+                </li>
+                <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                  <a
+                    href="/#"
+                    className={`${
+                      getRootPath(path) === "pengajar"
+                        ? "md:text-primaryForeground"
+                        : "md:text-info"
+                    }  md:hover:text-primaryForeground`}
+                  >
+                    Pengajar
+                  </a>
+                </li>
+                <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                  <a
+                    href="/user/profile"
+                    className={`${
+                      getRootPath(path) === "user"
+                        ? "md:text-primaryForeground"
+                        : "md:text-info"
+                    }  md:hover:text-primaryForeground`}
+                  >
+                    Profil
+                  </a>
+                </li>
+                <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent  hover:bg-[#efefef]">
+                  <a
+                    href="/murid"
+                    className={`${
+                      getRootPath(path) === "murid"
+                        ? "md:text-primaryForeground"
+                        : "md:text-info"
+                    }  md:hover:text-primaryForeground`}
+                  >
+                    Murid
+                  </a>
+                </li>
+                <li className="p-2 hover:bg-[#efefef] md:hidden block">
+                  <div
+                    className={`text-[16px] ${styles.logout_tx} md:hidden block `}
+                    style={InterMedium.style}
+                  >
+                    {loggingOut ? (
+                      <div className="flex items-center">
+                        <p className="mr-2">Logging out...</p>
+                        <div className="loader"></div>
+                      </div>
+                    ) : (
+                      <button
+                        className=" md:hover:text-white"
+                        onClick={handleLogout}
+                      >
+                        Logout
+                      </button>
+                    )}
+                  </div>
+                </li>
               </>
             )}
 
             {pengguna.role === "akademik" && (
               <>
-                <a
-                  href="/kelas"
-                  className={`${
-                    getRootPath(path) === "kelas"
-                      ? "text-primaryForeground"
-                      : "text-info"
-                  }  hover:text-primaryForeground`}
-                >
-                  Kelas
-                </a>
-                <a
-                  href="/#"
-                  className={`${
-                    getRootPath(path) === "user"
-                      ? "text-primaryForeground"
-                      : "text-info"
-                  }  hover:text-primaryForeground`}
-                >
-                  Pengajar
-                </a>
-                <a
-                  href="/user/profile"
-                  className={`${
-                    getRootPath(path) === "user"
-                      ? "text-primaryForeground"
-                      : "text-info"
-                  }  hover:text-primaryForeground`}
-                >
-                  Profil
-                </a>
+                <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                  <a
+                    href="/kelas"
+                    className={`${
+                      getRootPath(path) === "kelas"
+                        ? "md:text-primaryForeground"
+                        : "md:text-info"
+                    }  md:hover:text-primaryForeground`}
+                  >
+                    Kelas
+                  </a>
+                </li>
+                <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                  <a
+                    href="/#"
+                    className={`${
+                      getRootPath(path) === "user"
+                        ? "md:text-primaryForeground"
+                        : "md:text-info"
+                    }  md:hover:text-primaryForeground`}
+                  >
+                    Pengajar
+                  </a>
+                </li>
+                <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent  hover:bg-[#efefef]">
+                  <a
+                    href="/user/profile"
+                    className={`${
+                      getRootPath(path) === "user"
+                        ? "md:text-primaryForeground"
+                        : "md:text-info"
+                    }  md:hover:text-primaryForeground`}
+                  >
+                    Profil
+                  </a>
+                </li>
+                <li className="p-2 hover:bg-[#efefef] md:hidden block">
+                  <div
+                    className={`text-[16px] ${styles.logout_tx} md:hidden block `}
+                    style={InterMedium.style}
+                  >
+                    {loggingOut ? (
+                      <div className="flex items-center">
+                        <p className="mr-2">Logging out...</p>
+                        <div className="loader"></div>
+                      </div>
+                    ) : (
+                      <button
+                        className=" md:hover:text-white"
+                        onClick={handleLogout}
+                      >
+                        Logout
+                      </button>
+                    )}
+                  </div>
+                </li>
               </>
             )}
 
             {pengguna.role === "pengajar" && (
               <>
-                <a
-                  href="/kelas"
-                  className="text-info hover:text-primaryForeground"
-                >
-                  Kelas
-                </a>
-                <a
-                  href="/user/profile"
-                  className="text-info hover:text-primaryForeground"
-                >
-                  Profil
-                </a>
+                <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                  <a
+                    href="/kelas"
+                    className="md:text-info md:hover:text-primaryForeground"
+                  >
+                    Kelas
+                  </a>
+                </li>
+                <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                  <a
+                    href="/user/profile"
+                    className="md:text-info md:hover:text-primaryForeground"
+                  >
+                    Profil
+                  </a>
+                </li>
+
+                <li className="p-2 hover:bg-[#efefef] md:hidden block">
+                  <div
+                    className={`text-[16px] ${styles.logout_tx} md:hidden block `}
+                    style={InterMedium.style}
+                  >
+                    {loggingOut ? (
+                      <div className="flex items-center">
+                        <p className="mr-2">Logging out...</p>
+                        <div className="loader"></div>
+                      </div>
+                    ) : (
+                      <button
+                        className=" md:hover:text-white"
+                        onClick={handleLogout}
+                      >
+                        Logout
+                      </button>
+                    )}
+                  </div>
+                </li>
               </>
             )}
           </ul>
