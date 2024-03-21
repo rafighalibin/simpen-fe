@@ -6,6 +6,7 @@ import { MuridSelect } from "../../../common/types/murid";
 import { useMutation, useQuery } from "react-query";
 import CalendarIcon from "../../../common/components/icons/CalendarIcon";
 import Loading from "../../../common/components/Loading";
+import SesiAbsen from "./SesiAbsen";
 
 const Absen = () => {
   const fetchWithToken = useFetchWithToken();
@@ -20,7 +21,6 @@ const Absen = () => {
           label: e,
         });
       });
-      console.log(muridSelected);
     },
   });
   const [muridSelected, setMuridSelected] = useState<MuridSelect[]>([]);
@@ -201,54 +201,7 @@ const Absen = () => {
         </div>
 
         <div>
-          <div className="flex justify-between items-center">
-            <h1 className="flex justify-start text-3xl font-bold py-7 text-neutral/100">
-              Kehadiran Per Sesi
-            </h1>
-            <div className="flex justify-end gap-4">
-              <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
-                Simpan
-              </button>
-            </div>
-          </div>
-          <div className="flex flex-col space-y-4">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Nama
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Kelas
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Status
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap">John Doe</td>
-                  <td className="px-6 py-4 whitespace-nowrap">Grade 9</td>
-                  <td className="px-6 py-4 whitespace-nowrap">Present</td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap">Jane Smith</td>
-                  <td className="px-6 py-4 whitespace-nowrap">Grade 10</td>
-                  <td className="px-6 py-4 whitespace-nowrap">Absent</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <SesiAbsen />
         </div>
       </div>
     </div>
