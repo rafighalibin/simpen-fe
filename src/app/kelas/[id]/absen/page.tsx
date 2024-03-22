@@ -3,23 +3,18 @@
 import IsLoggedIn from "../../../../common/utils/IsLoggedIn";
 import Absen from "../../../../components/kelasPage/absenKelas/Absen";
 import { Breadcrumbs } from "../../../../components/breadcrumbs/breadcrumbs";
-
-const daysOfWeek = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-];
+import { useAuthContext } from "../../../../common/utils/authContext";
 
 const AbsenKelas = () => {
+  const { checkPermission } = useAuthContext();
+
   return (
-    <div className="px-[8vw] py-8">
-      <Breadcrumbs />
-      <Absen />
-    </div>
+    checkPermission(true, false, true) && (
+      <div className="px-[8vw] py-8">
+        <Breadcrumbs />
+        <Absen />
+      </div>
+    )
   );
 };
 
