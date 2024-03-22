@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import useFetchWithToken from "../../../common/hooks/fetchWithToken";
 import { useParams } from "next/navigation";
 import { MuridSelect } from "../../../common/types/murid";
@@ -25,6 +25,7 @@ const Absen = () => {
   });
   const [muridSelected, setMuridSelected] = useState<MuridSelect[]>([]);
   const [playlistKelas, setPlaylistKelas] = useState("");
+  const [isChanged, setIsChanged] = useState(false);
 
   const { mutateAsync: deleteMutation } = useMutation({
     mutationFn: () =>
@@ -34,12 +35,26 @@ const Absen = () => {
     },
   });
 
-  const handleDelete = async () => {
-    if (window.confirm("Are you sure you want to delete this class?")) {
-      await deleteMutation();
-      // Redirect or handle post-delete logic here
+  const {
+    mutateAsync: updatePlaylistMutation,
+    isSuccess: updatePlaylistSuccess,
+    isError: updatePlaylistError,
+  } = useMutation({
+    mutationFn: () =>
+      fetchWithToken(`/kelas/playlist/${id}`, "PUT", {
+        id: id,
+        linkPlaylist: playlistKelas,
+      }).then((res) => res.json()),
+    onSuccess: (data) => {
+      console.log(data.message);
+    },
+  });
+
+  useEffect(() => {
+    if (data) {
+      setPlaylistKelas(data.content.linkPlaylist);
     }
-  };
+  }, [data]);
 
   if (isLoading) {
     return <Loading />;
@@ -57,6 +72,7 @@ const Absen = () => {
     tanggalSelesai,
     pengajarId,
     linkGroup,
+    linkPlaylist,
     listMurid,
     level,
     platform,
@@ -67,6 +83,28 @@ const Absen = () => {
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
     return date.toLocaleDateString("en-US");
+  };
+
+  function isValidUrl(input) {
+    const urlPattern = new RegExp(
+      "^(https?:\\/\\/)?" + // protocol
+        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name and extension
+        "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+        "(\\#[-a-z\\d_]*)?$",
+      "i" // fragment locator
+    );
+    return !!urlPattern.test(input);
+  }
+
+  const handleSubmitPlaylist = () => {
+    if (!isValidUrl(playlistKelas)) {
+      alert("Link Playlist tidak valid");
+      return;
+    }
+    updatePlaylistMutation();
+    setIsChanged(false);
   };
 
   return (
@@ -190,14 +228,37 @@ const Absen = () => {
           <label className="block font-medium text-neutral/70">
             Link Group Kelas
           </label>
-          <input
-            type="text"
-            value={playlistKelas}
-            placeholder="LInk Playlist Rekaman Kelas"
-            name="linkGroup"
-            onChange={(e) => setPlaylistKelas(e.target.value)}
-            className="bg-base mt-1 p-2 w-full border rounded-md"
-          />
+          <div className="flex space-x-4">
+            <input
+              type="search"
+              value={playlistKelas}
+              placeholder="LInk Playlist Rekaman Kelas"
+              name="linkGroup"
+              onChange={(e) => {
+                setIsChanged(true);
+                setPlaylistKelas(e.target.value);
+              }}
+              className="bg-base  p-2 w-full border rounded-md"
+            />
+            <button
+              className="bg-info text-white px-4  rounded-md hover:bg-infoHover"
+              onClick={(e) => handleSubmitPlaylist()}
+            >
+              Update Playlist
+            </button>
+          </div>
+          <div className="mt-5">
+            {updatePlaylistSuccess && !isChanged && (
+              <div className="bg-[#DAF8E6] text-[#004434] text-sm px-4 py-2">
+                Berhasil update Playlist
+              </div>
+            )}
+            {updatePlaylistError && !isChanged && (
+              <div className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2">
+                Gagal update Playlist
+              </div>
+            )}
+          </div>
         </div>
 
         <div>
