@@ -4,10 +4,16 @@ import React from 'react'
 import {UpdateForm} from "../../../components/profilePage/updateForm"
 import  useFetchWithToken from "../../../common/hooks/fetchWithToken";
 import DetailAkun from "../../../components/profilePage/detailAkun";
+import { useAuthContext } from "../../../common/utils/authContext";
+import { Breadcrumbs } from '../../../components/breadcrumbs/breadcrumbs';
 
 const Page= () =>{
   const fetchWithToken = useFetchWithToken();
+  const { checkPermission } = useAuthContext();
   return (
+    checkPermission(true, true, true) && (
+      <div className="px-[8vw] py-8">
+      <Breadcrumbs/>
     <DetailAkun
     buttons={
       <div className="flex justify-center py-7 gap-4">
@@ -17,7 +23,8 @@ const Page= () =>{
       </div>
     }
   />
-  )
+  </div>
+  ))
 }
 
 export default Page;

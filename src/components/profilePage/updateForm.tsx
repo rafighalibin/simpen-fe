@@ -1,13 +1,24 @@
 "use client";
-import { redirect, useParams } from "next/navigation";
+import { redirect } from "next/navigation";
 import { useMutation, useQuery } from "react-query";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
+import { useQueryClient } from "react-query";
+import { useAuthContext } from "../../common/utils/authContext";
 
 export const UpdateForm = () => {
   const fetchWithToken = useFetchWithToken();
+  const queryClient = useQueryClient();
+  const { pengguna, isAuthenticated } = useAuthContext();
+  const [passwordsMatch, setPasswordsMatch] = useState(true);
+  const nikRef = useRef(null);
+  const passReff = useRef(null);
   const [formState, setFormState] = useState({
+    id: "",
+    role: "",
     alamatKTP: "",
+    password: "",
+    konfirmasiPassword: "",
     domisiliKota: "",
     nama: "",
     fotoDiri: null,
@@ -30,6 +41,7 @@ export const UpdateForm = () => {
     fotoNpwp: null,
     namaKontakDarurat: "",
     noTelpDarurat: "",
+    nikError: "",
   });
 
   const { isLoading, error, data } = useQuery({
@@ -39,7 +51,11 @@ export const UpdateForm = () => {
       console.log(detailAkun);
       setFormState((prev) => ({
         ...prev,
+        id: detailAkun.content.id,
+        role: detailAkun.content.role,
         alamatKTP: detailAkun.content.alamatKTP,
+        password: null,
+        konfirmasiPassword: null,
         nama: detailAkun.content.nama,
         domisiliKota: detailAkun.content.domisiliKota,
         fotoDiri: detailAkun.content.fotoDiri,
@@ -54,7 +70,7 @@ export const UpdateForm = () => {
         fotoBukuTabungan: detailAkun.content.fotoBukuTabungan,
         pendidikanTerakhir: detailAkun.content.pendidikanTerakhir,
         pekerjaanLainnya: detailAkun.content.pekerjaanLainnya,
-        tglMasukKontrak: new Date(detailAkun.content.tglMasukKontrak).toISOString().split("T")[0],
+        tglMasukKontrak: detailAkun.content.tglMasukKontrak,
         nik: detailAkun.content.nik,
         fotoKtp: detailAkun.content.fotoKtp,
         npwp: detailAkun.content.npwp,
@@ -72,8 +88,19 @@ export const UpdateForm = () => {
     isSuccess,
   } = useMutation({
     mutationFn: () =>
-      fetchWithToken("/user", "PUT", formState).then((res) => res.json()),
+      fetchWithToken(`/user`, "PUT", formState).then((res) => res.json()),
+    onSuccess: () => {
+      console.log(formState);
+    },
   });
+
+  const handleConfirmPassword = () => {
+    if (formState.password !== formState.konfirmasiPassword) {
+      setPasswordsMatch(false);
+    } else {
+      setPasswordsMatch(true);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -94,94 +121,129 @@ export const UpdateForm = () => {
         }));
       }
     } else {
-      // Update formState untuk field NPWP
       setFormState((prevState) => ({
         ...prevState,
         [name]: value,
       }));
-    }
-  };
-
-  const handleChangePendidikanTerakhir = (e) => {
-    const { value } = e;
-    setFormState((prev) => ({ ...prev, pendidikanTerakhir: value }));
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0]; // Ambil file yang dipilih oleh pengguna
-    if (file) {
-      // Jika ada file yang dipilih
-      const reader = new FileReader(); // Buat objek FileReader
-      reader.onloadend = () => {
-        // Saat selesai membaca file
-        setFormState((prev) => ({
-          // Update state formState dengan file gambar yang dipilih
-          ...prev,
-          fotoDiri: file,
-        }));
-      };
-      reader.readAsDataURL(file); // Baca file sebagai data URL
-    }
-  };
-
-  const handleFileChangeKTP = (e) => {
-    const file = e.target.files[0]; // Ambil file yang dipilih oleh pengguna
-    if (file) {
-      // Jika ada file yang dipilih
-      const reader = new FileReader(); // Buat objek FileReader
-      reader.onloadend = () => {
-        // Saat selesai membaca file
-        setFormState((prev) => ({
-          // Update state formState dengan file gambar yang dipilih
-          ...prev,
-          fotoKtp: file,
-        }));
-      };
-      reader.readAsDataURL(file); // Baca file sebagai data URL
-    }
-  };
-
-  const handleFileChangeBukuTabungan = (e) => {
-    const file = e.target.files[0]; // Ambil file yang dipilih oleh pengguna
-    if (file) {
-      // Jika ada file yang dipilih
-      const reader = new FileReader(); // Buat objek FileReader
-      reader.onloadend = () => {
-        // Saat selesai membaca file
-        setFormState((prev) => ({
-          // Update state formState dengan file gambar buku tabungan yang dipilih
-          ...prev,
-          fotoBukuTabungan: file,
-        }));
-      };
-      reader.readAsDataURL(file); // Baca file sebagai data URL
-    }
-  };
-
-  const handleFileChangeNPWP = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormState((prev) => ({
-          ...prev,
-          fotoNpwp: file,
-        }));
-      };
-      reader.readAsDataURL(file);
+      // Update formState untuk field NPWP
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(pengguna.role);
+    
+    if (
+      pengguna.role === "pengajar" && (formState.nik.length !== 16 ||
+      !/^\d+$/.test(formState.nik)) 
+    ) {
+      setFormState({
+        ...formState,
+        nikError: "NIK harus terdiri dari 16 digit angka",
+      });
+      // Setelah menetapkan pesan kesalahan, fokuskan kembali ke input NIK
+      nikRef.current.focus();
+      return; // Menghentikan proses submit jika terdapat kesalahan
+    }
+    if (formState.password !== formState.konfirmasiPassword) {
+      console.log(formState.password, formState.konfirmasiPassword);
+      passReff.current.focus();
+      return;
+    }
     updateProfileMutation();
   };
+
+  const handleFotoDiriChange = (e) => {
+    formState.fotoDiri = e.target.files[0];
+
+    getBase64(formState.fotoDiri)
+      .then((result) => {
+        setFormState((prevState) => ({
+          ...prevState,
+          fotoDiri: result,
+        }));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleFotoKtpChange = (e) => {
+    formState.fotoKtp = e.target.files[0];
+
+    getBase64(formState.fotoKtp)
+      .then((result) => {
+        setFormState((prevState) => ({
+          ...prevState,
+          fotoKtp: result,
+        }));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleFotoBukuTabunganChange = (e) => {
+    formState.fotoBukuTabungan = e.target.files[0];
+
+    getBase64(formState.fotoBukuTabungan)
+      .then((result) => {
+        setFormState((prevState) => ({
+          ...prevState,
+          fotoBukuTabungan: result,
+        }));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleFotoNPWPChange = (e) => {
+    formState.fotoNpwp = e.target.files[0];
+
+    getBase64(formState.fotoNpwp)
+      .then((result) => {
+        setFormState((prevState) => ({
+          ...prevState,
+          fotoNpwp: result,
+        }));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  function getBase64(file) {
+    return new Promise((resolve) => {
+      let fileInfo;
+      let baseURL = "";
+      // Make new FileReader
+      let reader = new FileReader();
+
+      // Convert the file to base64 text
+      reader.readAsDataURL(file);
+
+      // on reader load somthing...
+      reader.onload = () => {
+        // Make a fileInfo Object
+        console.log("Called", reader);
+        baseURL = reader.result as string; // Explicitly cast reader.result to string
+        resolve(baseURL);
+      };
+      console.log(fileInfo);
+    });
+  }
+
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  if (isSuccess) redirect(`/user`);
+  if (isSuccess) {
+    queryClient.invalidateQueries("detailAkun");
+    localStorage.setItem("updateSuccess", "true");
+    redirect(`/user/profile`);
+  }
 
   return (
     <div>
@@ -189,493 +251,758 @@ export const UpdateForm = () => {
         <h1 className=" flex justify-center text-5xl font-bold text-neutral/100 ">
           Detail Akun
         </h1>
-        <form onSubmit={handleSubmit}>
-          <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-md rounded-lg ">
-            <div className="flex flex-col items-center pb-16">
-              <label className="block font-medium text-neutral/70">
-                Foto Diri
-              </label>
-              <div className="mt-1 relative w-48 h-48 flex items-center justify-center rounded-full overflow-hidden">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-                />
-                {formState.fotoDiri && (
-                  <img
-                    src={URL.createObjectURL(formState.fotoDiri)}
-                    alt="Foto Diri"
-                    className="object-cover w-full h-full"
-                    style={{ borderRadius: "50%" }}
-                  />
-                )}
-                {!formState.fotoDiri && (
-                  <div className="bg-neutral/5 rounded-full flex items-center justify-center w-full h-full">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      className="h-12 w-12 text-neutral/50"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                      />
-                    </svg>
-                  </div>
-                )}
-              </div>
-            </div>
-            <h1 className=" flex text-3xl font-bold text-neutral/100 ">
-              Data Diri
-            </h1>
-            <div className="flex flex-row gap-4 space-x-8">
-              <div className="w-1/2">
+        {pengguna.role === "pengajar" && (
+          <form onSubmit={handleSubmit}>
+            <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-md rounded-lg ">
+              <div className="flex flex-col items-center pb-16">
                 <label className="block font-medium text-neutral/70">
-                  Email Kalananti
+                  Foto Diri
                 </label>
-                <input
-                  disabled
-                  readOnly
-                  type="text"
-                  name="email"
-                  value={formState.email}
-                  className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
-                />
-              </div>
-
-              <div className="w-1/2">
-                <label className="block font-medium text-neutral/70">
-                  Jenis Kelamin
-                </label>
-                <div className="flex items-center mt-1">
+                <div className="mt-1 relative w-48 h-48 flex items-center justify-center rounded-full overflow-hidden">
                   <input
-                    type="radio"
-                    id="laki-laki"
-                    name="jenisKelamin"
-                    value="laki-laki"
-                    onChange={handleChange}
-                    checked={formState.jenisKelamin === "laki-laki"}
-                    className="mr-2"
+                    type="file"
+                    name="image"
+                    accept="image/*"
+                    value={""}
+                    onChange={handleFotoDiriChange}
+                    className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                   />
-                  <label htmlFor="laki-laki" className="mr-4">
-                    Laki-laki
+                  {formState.fotoDiri ? (
+                    <img
+                      src={formState.fotoDiri}
+                      alt="Foto Diri"
+                      className="object-cover w-full h-full"
+                      style={{ borderRadius: "50%" }}
+                    />
+                  ) : (
+                    <div className="bg-neutral/5 rounded-full flex items-center justify-center w-full h-full">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        className="h-12 w-12 text-neutral/50"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                        />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <h1 className=" flex text-3xl font-bold text-neutral/100 ">
+                Data Diri
+              </h1>
+              <div className="flex flex-row gap-4 space-x-8">
+                <div className="w-1/2">
+                  <label className="block font-medium text-neutral/70">
+                    Email Kalananti
                   </label>
                   <input
-                    type="radio"
-                    id="perempuan"
-                    name="jenisKelamin"
-                    value="perempuan"
-                    onChange={handleChange}
-                    checked={formState.jenisKelamin === "perempuan"}
-                    className="mr-2"
-                  />
-                  <label htmlFor="perempuan">Perempuan</label>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-row gap-4 space-x-8">
-              <div className="w-1/2 relative">
-                <label className="block font-medium text-neutral/70">
-                  Nama Lengkap
-                </label>
-                <div className="flex mt-1 relative">
-                  <input
+                    disabled
+                    readOnly
                     type="text"
-                    value={formState.nama}
-                    name="nama"
-                    onChange={handleChange}
-                    className="bg-base mt-1 p-2 w-full border rounded-md "
+                    name="email"
+                    value={formState.email == null ? "" : formState.email}
+                    className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
                 </div>
-              </div>
 
-              <div className="w-1/2 relative">
-                <label className="block font-medium text-neutral/70">NIK</label>
-                <div className="flex mt-1 relative">
-                  <input
-                    type="text"
-                    name="nik"
-                    value={formState.nik}
-                    onChange={handleChange}
-                    className="bg-base mt-1 p-2 w-full border rounded-md "
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label className="block font-medium text-neutral/70">
-                Alamat KTP
-              </label>
-              <input
-                type="text"
-                name="alamatKTP"
-                value={formState.alamatKTP}
-                onChange={handleChange}
-                className="bg-base mt-1 p-2 w-full border rounded-md"
-              />
-            </div>
-
-            <div className="flex flex-row gap-4 space-x-8">
-              <div className="w-1/2 relative">
-                <label className="block font-medium text-neutral/70">
-                  Email Pribadi
-                </label>
-                <div className="flex mt-1 relative">
-                  <input
-                    type="text"
-                    value={formState.emailPribadi}
-                    name="emailPribadi"
-                    onChange={handleChange}
-                    className="bg-base mt-1 p-2 w-full border rounded-md "
-                  />
-                </div>
-              </div>
-
-              <div className="w-1/2 relative">
-                <label className="block font-medium text-neutral/70">
-                  Domisili Kota
-                </label>
-                <div className="flex mt-1 relative">
-                  <input
-                    type="text"
-                    name="domisiliKota"
-                    value={formState.domisiliKota}
-                    onChange={handleChange}
-                    className="bg-base mt-1 p-2 w-full border rounded-md "
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-row gap-4 space-x-8">
-              <div className="w-1/2 relative">
-                <label className="block font-medium text-neutral/70">
-                  No. Telpon
-                </label>
-                <div className="flex mt-1 relative">
-                  <input
-                    type="text"
-                    value={formState.noTelp}
-                    name="noTelp"
-                    onChange={handleChange}
-                    className="bg-base mt-1 p-2 w-full border rounded-md "
-                  />
-                </div>
-              </div>
-
-              <div className="w-1/2 relative">
-                <label className="block font-medium text-neutral/70">
-                  No. Telpon Alternatif
-                </label>
-                <div className="flex mt-1 relative">
-                  <input
-                    type="text"
-                    name="backupPhoneNum"
-                    value={formState.backupPhoneNum}
-                    onChange={handleChange}
-                    className="bg-base mt-1 p-2 w-full border rounded-md "
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-row gap-4 space-x-8">
-              <div className="w-1/2 relative">
-                <label className="block font-medium text-neutral/70">
-                  Nama Kontak Darurat
-                </label>
-                <div className="flex mt-1 relative">
-                  <input
-                    type="text"
-                    value={formState.namaKontakDarurat}
-                    name="namaKontakDarurat"
-                    onChange={handleChange}
-                    className="bg-base mt-1 p-2 w-full border rounded-md "
-                  />
-                </div>
-              </div>
-
-              <div className="w-1/2 relative">
-                <label className="block font-medium text-neutral/70">
-                  No. Telpon Kontak Darurat
-                </label>
-                <div className="flex mt-1 relative">
-                  <input
-                    type="text"
-                    name="noTelpDarurat"
-                    value={formState.noTelpDarurat}
-                    onChange={handleChange}
-                    className="bg-base mt-1 p-2 w-full border rounded-md "
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-row gap-4 space-x-8">
-              <div className="w-1/2 relative">
-                <label className="block font-medium text-neutral/70">
-                  Pendidikan Terakhir
-                </label>
-                <div className="mt-1 relative">
-                  <select
-                    value={formState.pendidikanTerakhir}
-                    name="pendidikanTerakhir"
-                    onChange={handleChange}
-                    className="bg-base p-2 w-full border rounded-md"
-                  >
-                    <option value="">Pilih Pendidikan Terakhir</option>
-                    <option value="SMP">SMP</option>
-                    <option value="SMA">SMA</option>
-                    <option value="S1">S1</option>
-                    <option value="S2">S2</option>
-                    <option value="S3">S3</option>
-                  </select>
-                </div>
-              </div>
-              <div className="w-1/2 relative">
-                <label className="block font-medium text-neutral/70">
-                  Pekerjaan Lainnya
-                </label>
-                <div className="flex mt-1 relative">
-                  <input
-                    type="text"
-                    name="pekerjaanLainnya"
-                    value={formState.pekerjaanLainnya}
-                    onChange={handleChange}
-                    className="bg-base mt-1 p-2 w-full border rounded-md "
-                  />
-                </div>
-              </div>
-            </div>
-            <div>
-              <label className="block font-medium text-neutral/70">
-                Foto KTP
-              </label>
-              <div className="mt-1 relative w-full h-80 flex items-center justify-center rounded-lg overflow-hidden">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChangeKTP} // Gunakan fungsi handleFileChangeKTP untuk foto KTP
-                  className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-                />
-                {formState.fotoKtp && (
-                  <img
-                    src={URL.createObjectURL(formState.fotoKtp)}
-                    alt="Foto KTP"
-                    className="object-cover w-full h-full"
-                  />
-                )}
-                {!formState.fotoKtp && (
-                  <div className="bg-neutral/5 w-full h-full flex items-center justify-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      className="h-12 w-12 text-neutral/50"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                      />
-                    </svg>
+                <div className="w-1/2">
+                  <label className="block font-medium text-neutral/70">
+                    Jenis Kelamin
+                  </label>
+                  <div className="flex items-center mt-1">
+                    <input
+                      type="radio"
+                      id="laki-laki"
+                      name="jenisKelamin"
+                      value="laki-laki"
+                      onChange={handleChange}
+                      checked={formState.jenisKelamin == "laki-laki"}
+                      className="mr-2"
+                    />
+                    <label htmlFor="laki-laki" className="mr-4">
+                      Laki-laki
+                    </label>
+                    <input
+                      type="radio"
+                      id="perempuan"
+                      name="jenisKelamin"
+                      value="perempuan"
+                      onChange={handleChange}
+                      checked={formState.jenisKelamin === "perempuan"}
+                      className="mr-2"
+                    />
+                    <label htmlFor="perempuan">Perempuan</label>
                   </div>
-                )}
-              </div>
-            </div>
-            <h1 className=" flex text-3xl pt-12 font-bold text-neutral/100 ">
-              Data Pengajar
-            </h1>
-            <div className="flex flex-row gap-4 space-x-8">
-              <div className="w-1/2 relative">
-                <label className="block font-medium text-neutral/70">
-                  Tanggal Masuk Kontrak
-                </label>
-                <div className="flex mt-1 relative">
-                  <input
-                    type="date"
-                    value={formState.tglMasukKontrak}
-                    name="tanggalMasukKontrak"
-                    onChange={handleChange}
-                    className="bg-base mt-1 p-2 w-full border rounded-md "
-                  />
                 </div>
               </div>
-
-              <div className="w-1/2 relative">
-                <label className="block font-medium text-neutral/70">
-                  Nama Bank Penerima
-                </label>
-                <div className="flex mt-1 relative">
-                  <input
-                    type="text"
-                    name="namaBank"
-                    value={formState.namaBank}
-                    onChange={handleChange}
-                    className="bg-base mt-1 p-2 w-full border rounded-md "
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-row gap-4 space-x-8">
-              <div className="w-1/2 relative">
-                <label className="block font-medium text-neutral/70">
-                  Nomor Rekening Bank
-                </label>
-                <div className="flex mt-1 relative">
-                  <input
-                    type="text"
-                    value={formState.noRekBank}
-                    name="noRekBank"
-                    onChange={handleChange}
-                    className="bg-base mt-1 p-2 w-full border rounded-md "
-                  />
-                </div>
-              </div>
-              <div className="w-1/2 relative">
-                <label className="block font-medium text-neutral/70">
-                  Nama Pemilik Rekening Bank
-                </label>
-                <div className="flex mt-1 relative">
-                  <input
-                    type="text"
-                    value={formState.namaPemilikRek}
-                    name="namaPemilikRek"
-                    onChange={handleChange}
-                    className="bg-base mt-1 p-2 w-full border rounded-md "
-                  />
-                </div>
-              </div>
-            </div>
-            <div>
-              <label className="block font-medium text-neutral/70">
-                Foto Buku Tabungan
-              </label>
-              <div className="mt-1 relative w-full h-80 flex items-center justify-center rounded-lg overflow-hidden">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChangeBukuTabungan} // Gunakan fungsi handleFileChangeBukuTabungan untuk foto buku tabungan
-                  className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-                />
-                {formState.fotoBukuTabungan && (
-                  <img
-                    src={URL.createObjectURL(formState.fotoBukuTabungan)}
-                    alt="Foto Buku Tabungan"
-                    className="object-cover w-full h-full"
-                  />
-                )}
-                {!formState.fotoBukuTabungan && (
-                  <div className="bg-neutral/5 w-full h-full flex items-center justify-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      className="h-12 w-12 text-neutral/50"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                      />
-                    </svg>
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="flex flex-row gap-4 space-x-8">
-              <div className="w-1/2 relative">
-                <label className="block font-medium text-neutral/70">
-                  Apakah Memiliki NPWP?
-                </label>
-                <div className="flex mt-1 relative">
-                  <select
-                    onChange={handleChange}
-                    className="bg-base mt-1 p-2 w-full border rounded-md"
-                    name="memilikiNPWP"
-                    value={formState.memilikiNPWP}
-                  >
-                    <option value="">Pilih</option>
-                    <option value="Ya">Ya</option>
-                    <option value="Tidak">Tidak</option>
-                  </select>
-                </div>
-              </div>
-              {formState.memilikiNPWP === "Ya" && (
+              <div className="flex flex-row gap-4 space-x-8">
                 <div className="w-1/2 relative">
                   <label className="block font-medium text-neutral/70">
-                    NPWP
+                    Nama Lengkap
                   </label>
                   <div className="flex mt-1 relative">
                     <input
                       type="text"
-                      value={formState.npwp}
+                      name="nama"
                       onChange={handleChange}
-                      className="bg-base mt-1 p-2 w-full border rounded-md"
-                      name="npwp"
+                      placeholder="Nama Lengkap"
+                      className="bg-base mt-1 p-2 w-full border rounded-md "
+                      value={formState.nama == null ? "" : formState.nama}
                     />
                   </div>
                 </div>
-              )}
-            </div>
-            <div>
-              <label className="block font-medium text-neutral/70">
-                Foto NPWP
-              </label>
-              <div className="mt-1 relative w-full h-80 flex items-center justify-center rounded-lg overflow-hidden">
+                <div className="w-1/2 relative">
+                  <label className="block font-medium text-neutral/70">
+                    NIK
+                  </label>
+                  <div
+                    className={`flex mt-1 relative ${
+                      formState.nikError ? "border-red-500" : ""
+                    }`}
+                  >
+                    <input
+                      type="text"
+                      name="nik"
+                      value={formState.nik == null ? "" : formState.nik}
+                      onChange={handleChange}
+                      className="bg-base mt-1 p-2 w-full border rounded-md"
+                      ref={nikRef}
+                      placeholder="NIK"
+                    />
+                  </div>
+                  {formState.nikError && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {formState.nikError}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-medium text-neutral/70">
+                  Alamat KTP
+                </label>
                 <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChangeNPWP}
-                  className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                  type="text"
+                  name="alamatKTP"
+                  value={formState.alamatKTP == null ? "" : formState.alamatKTP}
+                  onChange={handleChange}
+                  placeholder="Alamat KTP"
+                  className="bg-base mt-1 p-2 w-full border rounded-md"
                 />
-                {formState.fotoNpwp && (
-                  <img
-                    src={URL.createObjectURL(formState.fotoNpwp)}
-                    alt="Foto NPWP"
-                    className="object-cover w-full h-full"
-                  />
-                )}
-                {!formState.fotoNpwp && (
-                  <div className="bg-neutral/5 w-full h-full flex items-center justify-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      className="h-12 w-12 text-neutral/50"
+              </div>
+
+              <div className="flex flex-row gap-4 space-x-8">
+                <div className="w-1/2 relative">
+                  <label className="block font-medium text-neutral/70">
+                    Email Pribadi
+                  </label>
+                  <div className="flex mt-1 relative">
+                    <input
+                      type="email"
+                      value={
+                        formState.emailPribadi == null
+                          ? ""
+                          : formState.emailPribadi
+                      }
+                      name="emailPribadi"
+                      onChange={handleChange}
+                      placeholder="Email Pribadi"
+                      className="bg-base mt-1 p-2 w-full border rounded-md "
+                    />
+                  </div>
+                </div>
+
+                <div className="w-1/2 relative">
+                  <label className="block font-medium text-neutral/70">
+                    Domisili Kota
+                  </label>
+                  <div className="flex mt-1 relative">
+                    <input
+                      type="text"
+                      name="domisiliKota"
+                      value={
+                        formState.domisiliKota == null
+                          ? ""
+                          : formState.domisiliKota
+                      }
+                      onChange={handleChange}
+                      placeholder="Domisili Kota"
+                      className="bg-base mt-1 p-2 w-full border rounded-md "
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-row gap-4 space-x-8">
+                <div className="w-1/2 relative">
+                  <label className="block font-medium text-neutral/70">
+                    No. Telpon
+                  </label>
+                  <div className="flex mt-1 relative">
+                    <input
+                      type="number"
+                      value={formState.noTelp == null ? "" : formState.noTelp}
+                      name="noTelp"
+                      onChange={handleChange}
+                      placeholder="No. Telpon"
+                      className="bg-base mt-1 p-2 w-full border rounded-md "
+                    />
+                  </div>
+                </div>
+
+                <div className="w-1/2 relative">
+                  <label className="block font-medium text-neutral/70">
+                    No. Telpon Alternatif
+                  </label>
+                  <div className="flex mt-1 relative">
+                    <input
+                      type="number"
+                      name="backupPhoneNum"
+                      placeholder="No. Telpon Alternatif"
+                      value={
+                        formState.backupPhoneNum == null
+                          ? ""
+                          : formState.backupPhoneNum
+                      }
+                      onChange={handleChange}
+                      className="bg-base mt-1 p-2 w-full border rounded-md "
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-row gap-4 space-x-8">
+                <div className="w-1/2 relative">
+                  <label className="block font-medium text-neutral/70">
+                    Nama Kontak Darurat
+                  </label>
+                  <div className="flex mt-1 relative">
+                    <input
+                      type="text"
+                      value={
+                        formState.namaKontakDarurat == null
+                          ? ""
+                          : formState.namaKontakDarurat
+                      }
+                      name="namaKontakDarurat"
+                      placeholder="Nama Kontak Darurat"
+                      onChange={handleChange}
+                      className="bg-base mt-1 p-2 w-full border rounded-md "
+                    />
+                  </div>
+                </div>
+
+                <div className="w-1/2 relative">
+                  <label className="block font-medium text-neutral/70">
+                    No. Telpon Kontak Darurat
+                  </label>
+                  <div className="flex mt-1 relative">
+                    <input
+                      type="text"
+                      name="noTelpDarurat"
+                      placeholder="No. Telpon Kontak Darurat"
+                      value={
+                        formState.noTelpDarurat == null
+                          ? ""
+                          : formState.noTelpDarurat
+                      }
+                      onChange={handleChange}
+                      className="bg-base mt-1 p-2 w-full border rounded-md "
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-row gap-4 space-x-8">
+                <div className="w-1/2 relative">
+                  <label className="block font-medium text-neutral/70">
+                    Pendidikan Terakhir
+                  </label>
+                  <div className="mt-1 relative">
+                    <select
+                      value={
+                        formState.pendidikanTerakhir == null
+                          ? ""
+                          : formState.pendidikanTerakhir
+                      }
+                      name="pendidikanTerakhir"
+                      onChange={handleChange}
+                      className="bg-base p-2 w-full border rounded-md"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                      <option value="">Pilih Pendidikan Terakhir</option>
+                      <option value="SMP">SMP</option>
+                      <option value="SMA">SMA</option>
+                      <option value="S1">S1</option>
+                      <option value="S2">S2</option>
+                      <option value="S3">S3</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="w-1/2 relative">
+                  <label className="block font-medium text-neutral/70">
+                    Pekerjaan Lainnya
+                  </label>
+                  <div className="flex mt-1 relative">
+                    <input
+                      type="text"
+                      name="pekerjaanLainnya"
+                      placeholder="Pekerjaan Lainnya"
+                      value={
+                        formState.pekerjaanLainnya == null
+                          ? ""
+                          : formState.pekerjaanLainnya
+                      }
+                      onChange={handleChange}
+                      className="bg-base mt-1 p-2 w-full border rounded-md "
+                    />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label className="block font-medium text-neutral/70">
+                  Foto KTP
+                </label>
+                <div className="mt-1 relative w-full h-80 flex items-center justify-center rounded-lg overflow-hidden">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    value={""}
+                    onChange={handleFotoKtpChange} // Gunakan fungsi handleFileChangeKTP untuk foto KTP
+                    className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                  />
+                  {formState.fotoKtp && (
+                    <img
+                      src={formState.fotoKtp}
+                      alt="Foto KTP"
+                      className="object-cover w-full h-full"
+                    />
+                  )}
+                  {!formState.fotoKtp && (
+                    <div className="bg-neutral/5 w-full h-full flex items-center justify-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        className="h-12 w-12 text-neutral/50"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                        />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <h1 className=" flex text-3xl pt-12 font-bold text-neutral/100 ">
+                Data Pengajar
+              </h1>
+              <div className="flex flex-row gap-4 space-x-8">
+                <div className="w-1/2 relative">
+                  <label className="block font-medium text-neutral/70">
+                    Tanggal Masuk Kontrak
+                  </label>
+                  <div className="flex mt-1 relative">
+                    <input
+                      type="date"
+                      value={
+                        formState.tglMasukKontrak == null
+                          ? ""
+                          : formState.tglMasukKontrak
+                      }
+                      name="tglMasukKontrak"
+                      onChange={handleChange}
+                      className="bg-base mt-1 p-2 w-full border rounded-md "
+                    />
+                  </div>
+                </div>
+
+                <div className="w-1/2 relative">
+                  <label className="block font-medium text-neutral/70">
+                    Nama Bank Penerima
+                  </label>
+                  <div className="flex mt-1 relative">
+                    <input
+                      type="text"
+                      name="namaBank"
+                      placeholder="Nama Bank Penerima"
+                      value={
+                        formState.namaBank == null ? "" : formState.namaBank
+                      }
+                      onChange={handleChange}
+                      className="bg-base mt-1 p-2 w-full border rounded-md "
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-row gap-4 space-x-8">
+                <div className="w-1/2 relative">
+                  <label className="block font-medium text-neutral/70">
+                    Nomor Rekening Bank
+                  </label>
+                  <div className="flex mt-1 relative">
+                    <input
+                      type="text"
+                      value={
+                        formState.noRekBank == null ? "" : formState.noRekBank
+                      }
+                      name="noRekBank"
+                      placeholder="Nomor Rekening Bank"
+                      onChange={handleChange}
+                      className="bg-base mt-1 p-2 w-full border rounded-md "
+                    />
+                  </div>
+                </div>
+                <div className="w-1/2 relative">
+                  <label className="block font-medium text-neutral/70">
+                    Nama Pemilik Rekening Bank
+                  </label>
+                  <div className="flex mt-1 relative">
+                    <input
+                      type="text"
+                      value={
+                        formState.namaPemilikRek == null
+                          ? ""
+                          : formState.namaPemilikRek
+                      }
+                      name="namaPemilikRek"
+                      placeholder="Nama Pemilik Rekening Bank"
+                      onChange={handleChange}
+                      className="bg-base mt-1 p-2 w-full border rounded-md "
+                    />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label className="block font-medium text-neutral/70">
+                  Foto Buku Tabungan
+                </label>
+                <div className="mt-1 relative w-full h-80 flex items-center justify-center rounded-lg overflow-hidden">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    value={""}
+                    onChange={handleFotoBukuTabunganChange} // Gunakan fungsi handleFileChangeBukuTabungan untuk foto buku tabungan
+                    className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                  />
+                  {formState.fotoBukuTabungan && (
+                    <img
+                      src={formState.fotoBukuTabungan}
+                      alt="Foto Buku Tabungan"
+                      className="object-cover w-full h-full"
+                    />
+                  )}
+                  {!formState.fotoBukuTabungan && (
+                    <div className="bg-neutral/5 w-full h-full flex items-center justify-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        className="h-12 w-12 text-neutral/50"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                        />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="flex flex-row gap-4 space-x-8">
+                <div className="w-1/2 relative">
+                  <label className="block font-medium text-neutral/70">
+                    Apakah Memiliki NPWP?
+                  </label>
+                  <div className="flex mt-1 relative">
+                    <select
+                      onChange={handleChange}
+                      className="bg-base mt-1 p-2 w-full border rounded-md"
+                      name="memilikiNPWP"
+                      value={
+                        formState.memilikiNPWP == null
+                          ? ""
+                          : formState.memilikiNPWP
+                      }
+                    >
+                      <option value="">Pilih</option>
+                      <option value="Ya">Ya</option>
+                      <option value="Tidak">Tidak</option>
+                    </select>
+                  </div>
+                </div>
+                {formState.memilikiNPWP === "Ya" && (
+                  <div className="w-1/2 relative">
+                    <label className="block font-medium text-neutral/70">
+                      NPWP
+                    </label>
+                    <div className="flex mt-1 relative">
+                      <input
+                        type="text"
+                        placeholder="NPWP"
+                        value={formState.npwp == null ? "" : formState.npwp}
+                        onChange={handleChange}
+                        className="bg-base mt-1 p-2 w-full border rounded-md"
+                        name="npwp"
                       />
-                    </svg>
+                    </div>
                   </div>
                 )}
               </div>
+              <div>
+                <label className="block font-medium text-neutral/70">
+                  Foto NPWP
+                </label>
+                <div className="mt-1 relative w-full h-80 flex items-center justify-center rounded-lg overflow-hidden">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    value={""}
+                    onChange={handleFotoNPWPChange}
+                    className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                  />
+                  {formState.fotoNpwp && (
+                    <img
+                      src={formState.fotoNpwp}
+                      alt="Foto NPWP"
+                      className="object-cover w-full h-full"
+                    />
+                  )}
+                  {!formState.fotoNpwp && (
+                    <div className="bg-neutral/5 w-full h-full flex items-center justify-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        className="h-12 w-12 text-neutral/50"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                        />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <h1 className=" flex text-3xl pt-12 font-bold text-neutral/100 ">
+                Ubah Password
+              </h1>
+              <div className="flex flex-row gap-4 space-x-8">
+                <div className="w-1/2 relative">
+                  <label className="block font-medium text-neutral/70">
+                    Password Baru
+                  </label>
+                  <div className="flex mt-1 relative">
+                    <input
+                      type="password"
+                      name="password"
+                      placeholder="Password Baru"
+                      onChange={handleChange}
+                      className="bg-base mt-1 p-2 w-full border rounded-md "
+                    />
+                  </div>
+                </div>
+
+                <div className="w-1/2 relative">
+                  <label className="block font-medium text-neutral/70">
+                    Konfirmasi Password
+                  </label>
+                  <div className="flex mt-1 relative">
+                    <input
+                      type="password"
+                      name="konfirmasiPassword"
+                      placeholder="Konfirmasi Password"
+                      onChange={handleChange}
+                      ref={passReff}
+                      onBlur={handleConfirmPassword}
+                      className="bg-base mt-1 p-2 w-full border rounded-md "
+                    />
+                  </div>
+                  {!passwordsMatch && (
+                    <p className="text-red-500">Password tidak cocok</p>
+                  )}
+                </div>
+              </div>
+              <div className="flex justify-center py-7 gap-4">
+                <button
+                  type="submit"
+                  className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
+                >
+                  Ubah Detail Akun
+                </button>
+                <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
+                  Cancel
+                </button>
+              </div>
             </div>
-            <div className="flex justify-center py-7 gap-4">
-              <button
-                type="submit"
-                className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
-              >
-                Ubah Detail Akun
-              </button>
-              <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
-                Cancel
-              </button>
-            </div>
-          </div>
-        </form>
+          </form>
+        )}
+        {(pengguna.role === "akademik" ||
+          pengguna.role === "operasional") && (
+            <form onSubmit={handleSubmit}>
+              <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-md rounded-lg ">
+                <h1 className=" flex text-3xl font-bold text-neutral/100 ">
+                  Data Diri
+                </h1>
+                <div className="flex flex-row gap-4 space-x-8">
+                  <div className="w-1/2">
+                    <label className="block font-medium text-neutral/70">
+                      Email Kalananti
+                    </label>
+                    <input
+                      disabled
+                      type="text"
+                      name="email"
+                      value={formState.email == null ? "" : formState.email}
+                      className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
+                    />
+                  </div>
+                  <div className="w-1/2">
+                    <label className="block font-medium text-neutral/70">
+                      Jenis Kelamin
+                    </label>
+                    <div className="flex items-center mt-1">
+                      <input
+                        type="radio"
+                        id="laki-laki"
+                        name="jenisKelamin"
+                        value="laki-laki"
+                        onChange={handleChange}
+                        checked={formState.jenisKelamin == "laki-laki"}
+                        className="mr-2"
+                      />
+                      <label htmlFor="laki-laki" className="mr-4">
+                        Laki-laki
+                      </label>
+                      <input
+                        type="radio"
+                        id="perempuan"
+                        name="jenisKelamin"
+                        value="perempuan"
+                        onChange={handleChange}
+                        checked={formState.jenisKelamin === "perempuan"}
+                        className="mr-2"
+                      />
+                      <label htmlFor="perempuan">Perempuan</label>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <label className="block font-medium text-neutral/70">
+                    Nama Lengkap
+                  </label>
+                  <input
+                    type="text"
+                    name="nama"
+                    onChange={handleChange}
+                    placeholder="Nama Lengkap"
+                    className="bg-base mt-1 p-2 w-full border rounded-md "
+                    value={formState.nama == null ? "" : formState.nama}
+                  />
+                </div>
+                <div className="flex flex-row gap-4 space-x-8">
+                  <div className="w-1/2 relative">
+                    <label className="block font-medium text-neutral/70">
+                      Email Pribadi
+                    </label>
+                    <div className="flex mt-1 relative">
+                      <input
+                        type="email"
+                        value={
+                          formState.emailPribadi == null
+                            ? ""
+                            : formState.emailPribadi
+                        }
+                        name="emailPribadi"
+                        onChange={handleChange}
+                        placeholder="Email Pribadi"
+                        className="bg-base mt-1 p-2 w-full border rounded-md "
+                      />
+                    </div>
+                  </div>
+                  <div className="w-1/2 relative">
+                    <label className="block font-medium text-neutral/70">
+                      No. Telpon
+                    </label>
+                    <div className="flex mt-1 relative">
+                      <input
+                        type="number"
+                        value={formState.noTelp == null ? "" : formState.noTelp}
+                        name="noTelp"
+                        onChange={handleChange}
+                        placeholder="No. Telpon"
+                        className="bg-base mt-1 p-2 w-full border rounded-md "
+                      />
+                    </div>
+                  </div>
+                </div>
+                <h1 className=" flex text-3xl pt-12 font-bold text-neutral/100 ">
+                  Ubah Password
+                </h1>
+                <div className="flex flex-row gap-4 space-x-8">
+                  <div className="w-1/2 relative">
+                    <label className="block font-medium text-neutral/70">
+                      Password Baru
+                    </label>
+                    <div className="flex mt-1 relative">
+                      <input
+                        type="password"
+                        name="password"
+                        placeholder="Password Baru"
+                        onChange={handleChange}
+                        className="bg-base mt-1 p-2 w-full border rounded-md "
+                      />
+                    </div>
+                  </div>
+
+                  <div className="w-1/2 relative">
+                    <label className="block font-medium text-neutral/70">
+                      Konfirmasi Password
+                    </label>
+                    <div className="flex mt-1 relative">
+                      <input
+                        type="password"
+                        name="konfirmasiPassword"
+                        placeholder="Konfirmasi Password"
+                        onChange={handleChange}
+                        onBlur={handleConfirmPassword}
+                        className="bg-base mt-1 p-2 w-full border rounded-md "
+                      />
+                    </div>
+                    {!passwordsMatch && (
+                      <p className="text-red-500">Password tidak cocok</p>
+                    )}
+                  </div>
+                </div>
+                <div className="flex justify-center py-7 gap-4">
+                  <button
+                    type="submit"
+                    className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
+                  >
+                    Ubah Detail Akun
+                  </button>
+                  <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </form>
+          )}
       </div>
     </div>
   );
