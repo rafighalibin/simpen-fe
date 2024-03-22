@@ -9,6 +9,7 @@ import { useState } from "react";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import { json } from "stream/consumers";
 import { Lawyer } from "../../common/types/lawyer";
+import Link from "next/link";
 
 // example
 export const LawyerTable = () => {
@@ -55,9 +56,11 @@ export const LawyerTable = () => {
                 <td className="pr-20 table-cell">{lawyer.email_kalananti}</td>
                 <td className="pr-20 table-cell">{lawyer.backup_phone_num}</td>
                 <td className="pr-20 table-cell">
-                  <button className="rounded-full btn btn-outline  btn-primary shadow-md">
-                    <a href={`/lawyer/${index}`}>Detail</a>
-                  </button>
+                  <Link href={`/lawyer/${index}`}>
+                    <button className="rounded-full btn btn-outline  btn-primary shadow-md">
+                      Detail
+                    </button>
+                  </Link>
                 </td>
               </tr>
             ))}

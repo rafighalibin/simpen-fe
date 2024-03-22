@@ -6,11 +6,11 @@ import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import { PengajarSelect } from "../../common/types/pengajar";
 import React from "react";
 import Select from "react-select";
-import { MuridSelect } from "../../common/types/murid";
+import { MuridDetail, MuridSelect } from "../../common/types/murid";
 import useFetchPengajar from "../../common/hooks/user/useFetchPengajar";
 import { set } from "react-hook-form";
 import Loading from "../../common/components/Loading";
-
+import Link from "next/link";
 const hoursList = Array.from({ length: 24 }, (_, i) => {
   const hour = i < 10 ? `0${i}` : i;
   return `${hour}:00`;
@@ -26,28 +26,10 @@ const daysOfWeek = [
   "Saturday",
 ];
 
-const listMuridExistingTemp: MuridSelect[] = [
-  {
-    value: "Student1",
-    label: "Student1",
-  },
-  {
-    value: "Student2",
-    label: "Student2",
-  },
-  {
-    value: "Student3",
-    label: "Student3",
-  },
-  {
-    value: "Student4",
-    label: "Student4",
-  },
-];
-
 const UpdateForm = () => {
   const fetchWithToken = useFetchWithToken();
   const { id } = useParams();
+  const queryClient = useQueryClient();
 
   const { isLoading: listUserLoading, listPengajarExisting } =
     useFetchPengajar();
@@ -75,7 +57,8 @@ const UpdateForm = () => {
 
   const {
     isLoading: detailKelasLoading,
-    error: detailKelasError,
+    error: fetchDataError,
+    isSuccess: fetchDataSuccess,
     data: detailKelas,
   } = useQuery({
     queryKey: ["detailKelas"],
@@ -83,30 +66,32 @@ const UpdateForm = () => {
     onSuccess: (detailKelas) => {
       setFormState((prev) => ({
         ...prev,
+        programName: detailKelas.content.programName,
+        jenisKelasName: detailKelas.content.jenisKelasName,
         tanggalMulai: new Date(detailKelas.content.tanggalMulai)
           .toISOString()
           .split("T")[0],
         tanggalSelesai: new Date(detailKelas.content.tanggalSelesai)
           .toISOString()
           .split("T")[0],
+        jam: new Date(detailKelas.content.tanggalMulai)
+          .toISOString()
+          .split("T")[1]
+          .substring(0, 5),
         pengajarId: detailKelas.content.pengajarId,
         namaPengajar: detailKelas.content.namaPengajar,
         linkGroup: detailKelas.content.linkGroup,
         level: detailKelas.content.level,
         platform: detailKelas.content.platform,
-        listMurid: detailKelas.content.listMurid,
-        programName: detailKelas.content.programName,
-        jenisKelasName: detailKelas.content.jenisKelasName,
-        jam: new Date(detailKelas.content.tanggalMulai)
-          .toISOString()
-          .split("T")[1]
-          .substring(0, 5),
+        listMurid: detailKelas.content.listMurid.map(
+          (murid: MuridDetail) => murid.id
+        ),
       }));
 
-      detailKelas.content.listMurid.forEach((e) => {
+      detailKelas.content.listMurid.forEach((murid: MuridDetail) => {
         muridSelected.push({
-          value: e,
-          label: e,
+          value: murid.id,
+          label: murid.nama,
         });
       });
 
@@ -114,20 +99,35 @@ const UpdateForm = () => {
         value: detailKelas.content.pengajarId,
         label: detailKelas.content.namaPengajar,
       });
+    },
+  });
 
-      setListMuridExisting(listMuridExistingTemp);
+  const {} = useQuery({
+    queryKey: ["listMurid"],
+    queryFn: () => fetchWithToken("/murid").then((res) => res.json()),
+    onSuccess: (listMurid) => {
+      let murid = listMurid.content.map((murid: MuridDetail) => ({
+        value: murid.id,
+        label: murid.nama,
+      }));
+      setListMuridExisting(murid);
     },
   });
 
   const {
     mutateAsync: editKelasMutation,
     data: editResponse,
-    isSuccess,
+    isSuccess: editKelasSuccess,
+    isError: editKelasError,
   } = useMutation({
     mutationFn: () =>
       fetchWithToken(`/kelas/${id}`, "PUT", formState).then((res) =>
         res.json()
       ),
+    onSuccess: () => {
+      queryClient.invalidateQueries("kelasDetail");
+      queryClient.invalidateQueries("DetailKelas");
+    },
   });
 
   const handleChange = (e) => {
@@ -156,9 +156,13 @@ const UpdateForm = () => {
     }
   }, [muridSelected]);
 
+  useEffect(() => {
+    queryClient.invalidateQueries("detailKelas");
+  }, []);
+
   if (detailKelasLoading || listUserLoading) return <Loading />;
 
-  if (isSuccess) redirect(`/kelas/${id}`);
+  // if (editKelasSuccess) redirect(`/kelas/${id}`);
 
   return (
     <div>
@@ -194,21 +198,21 @@ const UpdateForm = () => {
                 styles={{
                   control: (provided, state) => ({
                     ...provided,
-                    border: "none", // Remove border
-                    boxShadow: "none", // Remove box shadow
-                    backgroundColor: "none", // Match platform input background color
+                    border: "none",
+                    boxShadow: "none",
+                    backgroundColor: "none",
                   }),
                   multiValue: (provided) => ({
                     ...provided,
-                    backgroundColor: "#EDF6FF", // Match platform input background color
+                    backgroundColor: "#EDF6FF",
                   }),
                   option: (provided, state) => ({
                     ...provided,
                     backgroundColor: state.isSelected
                       ? "#215E9B"
-                      : provided.backgroundColor, // Change background color for selected option
-                    color: state.isSelected ? "white" : provided.color, // Change text color for selected option
-                    fontWeight: state.isSelected ? "bold" : provided.fontWeight, // Change font weight for selected option
+                      : provided.backgroundColor,
+                    color: state.isSelected ? "white" : provided.color,
+                    fontWeight: state.isSelected ? "bold" : provided.fontWeight,
                   }),
                 }}
               />
@@ -329,13 +333,13 @@ const UpdateForm = () => {
                 styles={{
                   control: (provided) => ({
                     ...provided,
-                    border: "none", // Remove border
-                    boxShadow: "none", // Remove box shadow
-                    backgroundColor: "none", // Match platform input background color
+                    border: "none",
+                    boxShadow: "none",
+                    backgroundColor: "none",
                   }),
                   multiValue: (provided) => ({
                     ...provided,
-                    backgroundColor: "#EDF6FF", // Match platform input background color
+                    backgroundColor: "#EDF6FF",
                   }),
                 }}
               />
@@ -354,17 +358,36 @@ const UpdateForm = () => {
               className=" bg-base mt-1 p-2 w-full border rounded-md"
             />
           </div>
-
+          <div className="mt-5">
+            {editKelasSuccess && (
+              <div className="bg-[#DAF8E6] text-[#004434] text-sm px-4 py-2">
+                Berhasil update absen
+              </div>
+            )}
+            {editKelasError && (
+              <div className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2">
+                Gagal update absen
+              </div>
+            )}
+            {fetchDataError && (
+              <div className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2">
+                gagal mengambil data sesi
+              </div>
+            )}
+          </div>
           <div className="flex justify-center py-7 gap-4">
             <button
-              type="submit"
+              onClick={handleSubmit}
               className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
             >
               Ubah Kelas
             </button>
-            <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
-              Cancel
-            </button>
+
+            <Link href={`/kelas/${id}`}>
+              <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
+                Back
+              </button>
+            </Link>
           </div>
         </div>
       </form>

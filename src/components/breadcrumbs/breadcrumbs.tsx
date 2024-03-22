@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import styles from "./breadcurmbs.module.css";
 import { usePathname } from "next/navigation";
 import { InterMedium } from "../../font/font";
@@ -17,7 +17,10 @@ export const Breadcrumbs = () => {
   const path = usePathname();
   const pathArr = getPath(path);
   return (
-    <div className={`${styles.card_breadcrumbs} md:px-7 px-5 md:py-4 py-2`}>
+    <div
+      key={`RiArrowRightSLine`}
+      className={`${styles.card_breadcrumbs} md:px-7 px-5 md:py-4 py-2`}
+    >
       <a
         className={`${styles.home_tx} text-xl ${
           path === "/dashboard" ? styles.current : styles.home
@@ -30,8 +33,9 @@ export const Breadcrumbs = () => {
       {pathArr.map((item, index) => {
         const currentPath = `/${pathArr.slice(0, index + 1).join("/")}`;
         return (
-          <>
+          <Fragment key={`breadcrumb-fragment-${index}`}>
             <RiArrowRightSLine
+              key={`RiArrowRightSLine-${index}`}
               className={`${styles.arrow} inline-block md:mx-2 mx-1`}
             />
             <a
@@ -45,7 +49,7 @@ export const Breadcrumbs = () => {
               {" "}
               {toPascalCase(item)}
             </a>
-          </>
+          </Fragment>
         );
       })}
     </div>
