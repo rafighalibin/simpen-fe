@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { SesiDetail } from "../../../common/types/sesi";
 import Loading from "../../../app/loading";
 import styles from "./SesiAbsen.module.css";
+import Link from "next/link";
 
 const SesiAbsen = () => {
   const fetchWithToken = useFetchWithToken();
@@ -196,11 +197,13 @@ const SesiAbsen = () => {
                       </td>
                       <td>
                         <div className="px-12"></div>
-                        <button
-                          className={`bg-transparent hover:bg-[#215E9B] text-[#215E9B]  hover:text-white py-2 px-4 border border-[#215E9B] hover:border-transparent rounded-full `}
-                        >
-                          <a href={`/murid/${murid.muridId}`}>Detail</a>
-                        </button>
+                        <Link href={`/murid/${murid.muridId}`}>
+                          <button
+                            className={`bg-transparent hover:bg-[#215E9B] text-[#215E9B]  hover:text-white py-2 px-4 border border-[#215E9B] hover:border-transparent rounded-full `}
+                          >
+                            Detail
+                          </button>
+                        </Link>
                       </td>
                     </tr>
                   ))}

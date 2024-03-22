@@ -7,6 +7,7 @@ import { useMutation, useQuery } from "react-query";
 import CalendarIcon from "../../../common/components/icons/CalendarIcon";
 import Loading from "../../../common/components/Loading";
 import SesiAbsen from "./SesiAbsen";
+import Link from "next/link";
 
 const Absen = () => {
   const fetchWithToken = useFetchWithToken();
@@ -118,15 +119,21 @@ const Absen = () => {
             Informasi Kelas
           </h1>
           <div className="flex justify-end gap-4">
-            <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
-              <a href={"/error/construction"}>Zoom Kelas</a>
-            </button>
-            <button className="bg-warning text-white px-4 py-2 rounded-md hover:bg-warningHover">
-              <a href={"/error/construction"}>Ubah Jadwal / Ganti Guru</a>
-            </button>
-            <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
-              <a href={`/kelas/${id}`}>Detail Kelas</a>
-            </button>
+            <Link href={"/error/construction"}>
+              <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
+                Zoom Kelas
+              </button>
+            </Link>
+            <Link href={"/error/construction"}>
+              <button className="bg-warning text-white px-4 py-2 rounded-md hover:bg-warningHover">
+                Ubah Jadwal / Ganti Guru
+              </button>
+            </Link>
+            <Link href={`/kelas/${id}`}>
+              <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
+                Detail Kelas
+              </button>
+            </Link>
           </div>
         </div>
 

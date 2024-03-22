@@ -1,5 +1,6 @@
 import React from "react";
 import { Background } from "../loginPage/background";
+import Link from "next/link";
 
 const Unauthorized = () => {
   return (
@@ -10,11 +11,11 @@ const Unauthorized = () => {
           <h2 className="text-white text-3xl font-bold mb-4">
             Anda tidak memiliki wewenang untuk membuka halaman ini
           </h2>
-          <button className="bg-base text-white px-4 py-2 rounded-md hover:bg-base/80">
-            <a href="/" className="text-primary underline">
+          <Link href="/">
+            <button className="bg-base text-primary underline px-4 py-2 rounded-md hover:bg-base/80">
               Kembali Ke Beranda
-            </a>
-          </button>
+            </button>
+          </Link>
         </div>
       </div>
     </div>

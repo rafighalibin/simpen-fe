@@ -11,6 +11,7 @@ import styles from "./addForm.module.css";
 //import component
 import useFetchWithToken from "../../../common/hooks/fetchWithToken";
 import Loading from "../../../app/loading";
+import Link from "next/link";
 
 export const DetailMurid = () => {
   const { id } = useParams();
@@ -161,12 +162,14 @@ export const DetailMurid = () => {
         </div>
 
         <div className="flex justify-center mt-9">
-          <button
-            className={`${styles.button_tx} ${styles.btn} `}
-            style={InterMedium.style}
-          >
-            <a href={`/murid/${id}/edit`}>Edit Murid</a>
-          </button>
+          <Link href={`/murid/${id}/edit`}>
+            <button
+              className={`${styles.button_tx} ${styles.btn} `}
+              style={InterMedium.style}
+            >
+              Edit Murid
+            </button>
+          </Link>
         </div>
       </div>
     </div>

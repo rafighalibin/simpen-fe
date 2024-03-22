@@ -1,6 +1,7 @@
 import { ColumnDef, RowData } from "@tanstack/react-table";
 
 import { MuridRead } from "../../../common/types/murid";
+import Link from "next/link";
 
 declare module "@tanstack/react-table" {
   interface ColumnMeta<TData extends RowData, TValue> {
@@ -42,11 +43,13 @@ export const columns: ColumnDef<MuridRead>[] = [
     cell: ({ row }) => (
       <div className="flex justify-center">
         <div className="flex space-x-4">
-          <button
-            className={`bg-transparent hover:bg-primary text-primary  hover:text-white py-1 px-4 border border-primary hover:border-transparent rounded-full`}
-          >
-            <a href={`/murid/${row.original.id.toString()}`}>Detail</a>
-          </button>
+          <Link href={`/murid/${row.original.id.toString()}`}>
+            <button
+              className={`bg-transparent hover:bg-primary text-primary  hover:text-white py-1 px-4 border border-primary hover:border-transparent rounded-full`}
+            >
+              Detail
+            </button>
+          </Link>
         </div>
       </div>
     ),

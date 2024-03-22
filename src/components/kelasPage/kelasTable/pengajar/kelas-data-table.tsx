@@ -99,9 +99,9 @@ export function DataTable<TData, TValue>({
           placeholder="Search Kelas..."
         />
         {table.getHeaderGroups().map((headerGroup) => (
-          <div key={headerGroup.id}>
+          <div key={headerGroup.id} className="flex row-span-2">
             {headerGroup.headers.map((header) => (
-              <th
+              <div
                 key={header.id}
                 className={` ${
                   header.index === 0
@@ -116,7 +116,7 @@ export function DataTable<TData, TValue>({
                     <Filter column={header.column} table={table} />
                   </div>
                 ) : null}
-              </th>
+              </div>
             ))}
           </div>
         ))}
