@@ -51,17 +51,19 @@ export const AddForm = () => {
   return (
     <div className="">
       <div
-        className={`${styles.heading} text-center my-10`}
+        className={`${styles.heading} text-center md:my-10 my-6`}
         style={PoppinsBold.style}
       >
         Register Akun
       </div>
-      <div className={`${styles.card_form} px-7 py-8 mb-12`}>
+      <div
+        className={`${styles.card_form} sm:px-7 sm:py-8 sm:mb-12 px-5 py-4 mb-8`}
+      >
         <form onSubmit={handleSubmit}>
           <div>
             <div
               style={InterMedium.style}
-              className={`${styles.form_title} mb-3`}
+              className={`${styles.form_title} mb-3 sm:ml-0 ml-1`}
             >
               Email
             </div>
@@ -71,7 +73,7 @@ export const AddForm = () => {
               type="email"
               autoComplete="email"
               required
-              className={`${styles.form_placeholder} appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
+              className={`${styles.form_placeholder} appearance-none relative block w-full px-3 sm:py-3 py-1 border border-gray-300 placeholder-gray-500  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
               placeholder="email"
               onChange={(e) =>
                 setFormState({ ...formState, email: e.target.value })
@@ -81,7 +83,7 @@ export const AddForm = () => {
             />
             <div
               style={InterReguler.style}
-              className={`${styles.form_paragraph} mt-2`}
+              className={`${styles.form_paragraph} mt-2 sm:ml-0 ml-1`}
             >
               Email yang akan digunakan selama akun ini ada untuk login.
             </div>
@@ -89,7 +91,7 @@ export const AddForm = () => {
           <div className="mt-8">
             <div
               style={InterMedium.style}
-              className={`${styles.form_title} mb-3`}
+              className={`${styles.form_title} mb-3 sm:ml-0 ml-1`}
             >
               Nama Lengkap
             </div>
@@ -99,7 +101,7 @@ export const AddForm = () => {
               type="name"
               autoComplete="name"
               required
-              className={`${styles.form_placeholder} appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
+              className={`${styles.form_placeholder} appearance-none relative block w-full px-3 sm:py-3 py-1 border border-gray-300 placeholder-gray-500  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
               placeholder="Nama Lengkap"
               onChange={(e) =>
                 setFormState({ ...formState, nama: e.target.value })
@@ -109,7 +111,7 @@ export const AddForm = () => {
             />
             <div
               style={InterReguler.style}
-              className={`${styles.form_paragraph} mt-2`}
+              className={`${styles.form_paragraph} mt-2 sm:ml-0 ml-1`}
             >
               Nama Lengkap ini digunakan sebagai pengidentifikasi selama akun
               ini ada.
@@ -118,7 +120,7 @@ export const AddForm = () => {
           <div className="mt-8">
             <div
               style={InterMedium.style}
-              className={`${styles.form_title} mb-3`}
+              className={`${styles.form_title} mb-3 sm:ml-0 ml-1`}
             >
               Role
             </div>
@@ -127,7 +129,7 @@ export const AddForm = () => {
               name="role"
               autoComplete="role"
               required
-              className={`${styles.form_placeholder} appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
+              className={`${styles.form_placeholder} appearance-none relative block w-full  px-3 sm:py-3 py-1 border border-gray-300 placeholder-gray-500 rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
               value={formState.role}
               onChange={(e) =>
                 setFormState({ ...formState, role: e.target.value })
@@ -163,7 +165,7 @@ export const AddForm = () => {
           <div className="flex justify-center mt-9">
             <button
               type="submit"
-              className={`${styles.button_tx} ${styles.btn} `}
+              className={`${styles.button_tx} ${styles.btn} hover:bg-[#215E9B] focus:bg-[#215E9B]`}
               style={InterMedium.style}
             >
               Tambah Akun

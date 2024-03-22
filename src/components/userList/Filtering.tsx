@@ -74,18 +74,21 @@ export const Filtering = (props) => {
 
   return (
     <div>
-      <div className={`flex items-center mb-6 w-full`}>
+      <div
+        className={`flex flex-wrap lg:flex-nowrap gap-2 items-center mb-6 w-full`}
+      >
         <input
           type="text"
-          placeholder="Cari"
+          placeholder=" Cari"
           value={searchQuery}
           onChange={handleSearchChange}
-          className={`flex-grow mr-4 px-2 py-2 ${styles.placeholder} ${styles.field}`}
+          className={`flex-grow sm:px-2 sm:py-2 p-1 ${styles.placeholder} ${styles.field}`}
+          style={InterReguler.style}
         />
         <select
           value={sortBy}
           onChange={handleSortChange}
-          className={`flex-grow mr-4 px-2 py-2 ${styles.placeholder} ${styles.field} `}
+          className={`flex-grow sm:px-2 sm:py-2  p-1 ${styles.placeholder} ${styles.field} `}
           style={InterReguler.style}
         >
           <option value="" disabled>
@@ -94,26 +97,26 @@ export const Filtering = (props) => {
           <option value="operasional">Operasional</option>
           <option value="pengajar">Pengajar</option>
           <option value="akademik">Akademik</option>
-          <option value="">None</option>
+          <option value="">Semua</option>
         </select>
         <select
           value={filterBy}
           onChange={handleFilterChange}
-          className={`flex-grow mr-4 px-2 py-2  ${styles.placeholder} ${styles.field}`}
+          className={`flex-grow sm:px-2 sm:py-2 p-1  ${styles.placeholder} ${styles.field}`}
           style={InterReguler.style}
         >
           <option value="" disabled>
             Filter
           </option>
-          <option value="nama-asc">Nama Ascending</option>
-          <option value="nama-desc">Nama Descending</option>
-          <option value="email-asc">Email Ascending</option>
-          <option value="email-desc">Email Descending</option>
-          <option value="">None</option>
+          <option value="nama-asc">Nama Asc</option>
+          <option value="nama-desc">Nama Desc</option>
+          <option value="email-asc">Email Asc</option>
+          <option value="email-desc">Email Desc</option>
+          <option value="">Semua</option>
         </select>
         <button
           onClick={handleAddUser}
-          className={`px-4 py-2 ${styles.btn} ${styles.btn_tx} text-white rounded hover:bg-[#215E9B] focus:bg-[#215E9B] `}
+          className={`sm:px-4 sm:py-2 px-2 py-1 ${styles.btn} ${styles.btn_tx} text-white rounded hover:bg-[#215E9B] focus:bg-[#215E9B] `}
           style={InterReguler.style}
         >
           + Tambah Akun
