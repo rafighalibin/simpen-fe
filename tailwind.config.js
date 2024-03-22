@@ -19,6 +19,7 @@ module.exports = {
         accent: "#F87E0D",
         neutral: "#1E1E1E",
         base: "#FFFFFF",
+        baseForeground: "#F9FAFB",
         info: "#66A2DC",
         infoHover: "#4C8CB8", 
         success: "#22AD5C",

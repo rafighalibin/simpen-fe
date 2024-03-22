@@ -1,11 +1,20 @@
 "use client";
 import React from "react";
-import { AddKelas } from "../../../components/kelasPage/addKelas";
+import AddKelas from "../../../components/kelasPage/kelasTable/operasional/addKelas";
+import { useAuthContext } from "../../../common/utils/authContext";
+import { useRouter } from "next/navigation";
+import IsLoggedIn from "../../../common/utils/IsLoggedIn";
 
-export default function Page() {
+function Page() {
+  const { checkPermission } = useAuthContext();
+
   return (
-    <div>
-      <AddKelas />
-    </div>
+    checkPermission(true, true, false) && (
+      <div className="px-[8vw] py-8">
+        <AddKelas />
+      </div>
+    )
   );
 }
+
+export default IsLoggedIn(Page);

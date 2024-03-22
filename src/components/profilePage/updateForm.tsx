@@ -1,17 +1,12 @@
 "use client";
-import { redirect} from "next/navigation";
+import { redirect, useParams } from "next/navigation";
 import { useMutation, useQuery } from "react-query";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
-import { useQueryClient } from "react-query";
-
 
 export const UpdateForm = () => {
   const fetchWithToken = useFetchWithToken();
-  const queryClient = useQueryClient();
-  const nikRef = useRef(null);
   const [formState, setFormState] = useState({
-    id: "",
     alamatKTP: "",
     domisiliKota: "",
     nama: "",
@@ -35,7 +30,6 @@ export const UpdateForm = () => {
     fotoNpwp: null,
     namaKontakDarurat: "",
     noTelpDarurat: "",
-    nikError: "",
   });
 
   const { isLoading, error, data } = useQuery({
@@ -45,7 +39,6 @@ export const UpdateForm = () => {
       console.log(detailAkun);
       setFormState((prev) => ({
         ...prev,
-        id: detailAkun.content.id,
         alamatKTP: detailAkun.content.alamatKTP,
         nama: detailAkun.content.nama,
         domisiliKota: detailAkun.content.domisiliKota,
@@ -61,7 +54,7 @@ export const UpdateForm = () => {
         fotoBukuTabungan: detailAkun.content.fotoBukuTabungan,
         pendidikanTerakhir: detailAkun.content.pendidikanTerakhir,
         pekerjaanLainnya: detailAkun.content.pekerjaanLainnya,
-        tglMasukKontrak: detailAkun.content.tglMasukKontrak,
+        tglMasukKontrak: new Date(detailAkun.content.tglMasukKontrak).toISOString().split("T")[0],
         nik: detailAkun.content.nik,
         fotoKtp: detailAkun.content.fotoKtp,
         npwp: detailAkun.content.npwp,
@@ -79,10 +72,7 @@ export const UpdateForm = () => {
     isSuccess,
   } = useMutation({
     mutationFn: () =>
-      fetchWithToken(`/user`, "PUT", formState).then((res) => res.json()),
-      onSuccess: () => {
-        console.log(formState);
-      }
+      fetchWithToken("/user", "PUT", formState).then((res) => res.json()),
   });
 
   const handleChange = (e) => {
@@ -111,76 +101,87 @@ export const UpdateForm = () => {
       }));
     }
   };
-  
+
+  const handleChangePendidikanTerakhir = (e) => {
+    const { value } = e;
+    setFormState((prev) => ({ ...prev, pendidikanTerakhir: value }));
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]; // Ambil file yang dipilih oleh pengguna
+    if (file) {
+      // Jika ada file yang dipilih
+      const reader = new FileReader(); // Buat objek FileReader
+      reader.onloadend = () => {
+        // Saat selesai membaca file
+        setFormState((prev) => ({
+          // Update state formState dengan file gambar yang dipilih
+          ...prev,
+          fotoDiri: file,
+        }));
+      };
+      reader.readAsDataURL(file); // Baca file sebagai data URL
+    }
+  };
+
+  const handleFileChangeKTP = (e) => {
+    const file = e.target.files[0]; // Ambil file yang dipilih oleh pengguna
+    if (file) {
+      // Jika ada file yang dipilih
+      const reader = new FileReader(); // Buat objek FileReader
+      reader.onloadend = () => {
+        // Saat selesai membaca file
+        setFormState((prev) => ({
+          // Update state formState dengan file gambar yang dipilih
+          ...prev,
+          fotoKtp: file,
+        }));
+      };
+      reader.readAsDataURL(file); // Baca file sebagai data URL
+    }
+  };
+
+  const handleFileChangeBukuTabungan = (e) => {
+    const file = e.target.files[0]; // Ambil file yang dipilih oleh pengguna
+    if (file) {
+      // Jika ada file yang dipilih
+      const reader = new FileReader(); // Buat objek FileReader
+      reader.onloadend = () => {
+        // Saat selesai membaca file
+        setFormState((prev) => ({
+          // Update state formState dengan file gambar buku tabungan yang dipilih
+          ...prev,
+          fotoBukuTabungan: file,
+        }));
+      };
+      reader.readAsDataURL(file); // Baca file sebagai data URL
+    }
+  };
+
+  const handleFileChangeNPWP = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormState((prev) => ({
+          ...prev,
+          fotoNpwp: file,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formState.nik.length !== 16 || !/^\d+$/.test(formState.nik)) {
-      setFormState({
-        ...formState,
-        nikError: "NIK harus terdiri dari 16 digit angka",
-      });
-      // Setelah menetapkan pesan kesalahan, fokuskan kembali ke input NIK
-      nikRef.current.focus();
-      return; // Menghentikan proses submit jika terdapat kesalahan
-    }
-    updateProfileMutation()
-    console.log(formState)
+    updateProfileMutation();
   };
-
-  const handleFileInputChange = (e) => {
-    formState.fotoDiri = e.target.files[0];
-
-    getBase64(formState.fotoDiri)
-      .then(result => {
-        setFormState(prevState => ({
-          ...prevState,
-          fotoDiri: result,
-        }));
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
-
-  function getBase64(file) {
-    return new Promise(resolve => {
-      let fileInfo;
-      let baseURL = "";
-      // Make new FileReader
-      let reader = new FileReader();
-
-      // Convert the file to base64 text
-      reader.readAsDataURL(file);
-
-      // on reader load somthing...
-      reader.onload = () => {
-        // Make a fileInfo Object
-        console.log("Called", reader);
-        baseURL = reader.result as string; // Explicitly cast reader.result to string
-        resolve(baseURL);
-      };
-      console.log(fileInfo);
-    });
-  };
-
-  function arrayBufferToBase64(buffer) {
-    let binary = "";
-    const bytes = new Uint8Array(buffer);
-    const len = bytes.byteLength;
-    for (let i = 0; i < len; i++) {
-      binary += String.fromCharCode(bytes[i]);
-    }
-    return window.btoa(binary);
-  }
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  if (isSuccess) {
-    queryClient.invalidateQueries("detailAkun");
-    redirect(`/user/profile`);
-  }
+  if (isSuccess) redirect(`/user`);
 
   return (
     <div>
@@ -197,37 +198,36 @@ export const UpdateForm = () => {
               <div className="mt-1 relative w-48 h-48 flex items-center justify-center rounded-full overflow-hidden">
                 <input
                   type="file"
-                  name="image"
                   accept="image/*"
-                  value={""}
-                  onChange={handleFileInputChange}
+                  onChange={handleFileChange}
                   className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                 />
-                {formState.fotoDiri ? (
-                <img
-                  src={formState.fotoDiri}
-                  alt="Foto Diri"
-                  className="object-cover w-full h-full"
-                  style={{ borderRadius: "50%" }}
-                />
-              ) : (
-                <div className="bg-neutral/5 rounded-full flex items-center justify-center w-full h-full">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    className="h-12 w-12 text-neutral/50"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                    />
-                  </svg>
-                </div>
-              )}
+                {formState.fotoDiri && (
+                  <img
+                    src={URL.createObjectURL(formState.fotoDiri)}
+                    alt="Foto Diri"
+                    className="object-cover w-full h-full"
+                    style={{ borderRadius: "50%" }}
+                  />
+                )}
+                {!formState.fotoDiri && (
+                  <div className="bg-neutral/5 rounded-full flex items-center justify-center w-full h-full">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      className="h-12 w-12 text-neutral/50"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                      />
+                    </svg>
+                  </div>
+                )}
               </div>
             </div>
             <h1 className=" flex text-3xl font-bold text-neutral/100 ">
@@ -243,7 +243,7 @@ export const UpdateForm = () => {
                   readOnly
                   type="text"
                   name="email"
-                  value={formState.email == null ? "" : formState.email}
+                  value={formState.email}
                   className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                 />
               </div>
@@ -259,7 +259,7 @@ export const UpdateForm = () => {
                     name="jenisKelamin"
                     value="laki-laki"
                     onChange={handleChange}
-                    checked={formState.jenisKelamin == "laki-laki"}
+                    checked={formState.jenisKelamin === "laki-laki"}
                     className="mr-2"
                   />
                   <label htmlFor="laki-laki" className="mr-4">
@@ -286,36 +286,25 @@ export const UpdateForm = () => {
                 <div className="flex mt-1 relative">
                   <input
                     type="text"
+                    value={formState.nama}
                     name="nama"
                     onChange={handleChange}
-                    placeholder="Nama Lengkap"
                     className="bg-base mt-1 p-2 w-full border rounded-md "
-                    value={formState.nama == null ? "" : formState.nama}
                   />
                 </div>
               </div>
+
               <div className="w-1/2 relative">
                 <label className="block font-medium text-neutral/70">NIK</label>
-                <div
-                  className={`flex mt-1 relative ${
-                    formState.nikError ? "border-red-500" : ""
-                  }`}
-                >
+                <div className="flex mt-1 relative">
                   <input
                     type="text"
                     name="nik"
-                    value={formState.nik == null ? "" : formState.nik}
+                    value={formState.nik}
                     onChange={handleChange}
-                    className="bg-base mt-1 p-2 w-full border rounded-md"
-                    ref={nikRef}
-                    placeholder="NIK"
+                    className="bg-base mt-1 p-2 w-full border rounded-md "
                   />
                 </div>
-                {formState.nikError && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {formState.nikError}
-                  </p>
-                )}
               </div>
             </div>
 
@@ -326,9 +315,8 @@ export const UpdateForm = () => {
               <input
                 type="text"
                 name="alamatKTP"
-                value={formState.alamatKTP == null ? "" : formState.alamatKTP}
+                value={formState.alamatKTP}
                 onChange={handleChange}
-                placeholder="Alamat KTP"
                 className="bg-base mt-1 p-2 w-full border rounded-md"
               />
             </div>
@@ -340,11 +328,10 @@ export const UpdateForm = () => {
                 </label>
                 <div className="flex mt-1 relative">
                   <input
-                    type="email"
-                    value={formState.emailPribadi == null ? "" : formState.emailPribadi}
+                    type="text"
+                    value={formState.emailPribadi}
                     name="emailPribadi"
                     onChange={handleChange}
-                    placeholder="Email Pribadi"
                     className="bg-base mt-1 p-2 w-full border rounded-md "
                   />
                 </div>
@@ -358,9 +345,8 @@ export const UpdateForm = () => {
                   <input
                     type="text"
                     name="domisiliKota"
-                    value={formState.domisiliKota == null ? "" : formState.domisiliKota}
+                    value={formState.domisiliKota}
                     onChange={handleChange}
-                    placeholder="Domisili Kota"
                     className="bg-base mt-1 p-2 w-full border rounded-md "
                   />
                 </div>
@@ -373,11 +359,10 @@ export const UpdateForm = () => {
                 </label>
                 <div className="flex mt-1 relative">
                   <input
-                    type="number"
-                    value={formState.noTelp == null ? "" : formState.noTelp}
+                    type="text"
+                    value={formState.noTelp}
                     name="noTelp"
                     onChange={handleChange}
-                    placeholder="No. Telpon"
                     className="bg-base mt-1 p-2 w-full border rounded-md "
                   />
                 </div>
@@ -389,10 +374,9 @@ export const UpdateForm = () => {
                 </label>
                 <div className="flex mt-1 relative">
                   <input
-                    type="number"
+                    type="text"
                     name="backupPhoneNum"
-                    placeholder="No. Telpon Alternatif"
-                    value={formState.backupPhoneNum == null ? "" : formState.backupPhoneNum}
+                    value={formState.backupPhoneNum}
                     onChange={handleChange}
                     className="bg-base mt-1 p-2 w-full border rounded-md "
                   />
@@ -407,9 +391,8 @@ export const UpdateForm = () => {
                 <div className="flex mt-1 relative">
                   <input
                     type="text"
-                    value={formState.namaKontakDarurat == null ? "" : formState.namaKontakDarurat}
+                    value={formState.namaKontakDarurat}
                     name="namaKontakDarurat"
-                    placeholder="Nama Kontak Darurat"
                     onChange={handleChange}
                     className="bg-base mt-1 p-2 w-full border rounded-md "
                   />
@@ -424,8 +407,7 @@ export const UpdateForm = () => {
                   <input
                     type="text"
                     name="noTelpDarurat"
-                    placeholder="No. Telpon Kontak Darurat"
-                    value={formState.noTelpDarurat == null ? "" : formState.noTelpDarurat}
+                    value={formState.noTelpDarurat}
                     onChange={handleChange}
                     className="bg-base mt-1 p-2 w-full border rounded-md "
                   />
@@ -439,7 +421,7 @@ export const UpdateForm = () => {
                 </label>
                 <div className="mt-1 relative">
                   <select
-                    value={formState.pendidikanTerakhir == null ? "" : formState.pendidikanTerakhir}
+                    value={formState.pendidikanTerakhir}
                     name="pendidikanTerakhir"
                     onChange={handleChange}
                     className="bg-base p-2 w-full border rounded-md"
@@ -461,8 +443,7 @@ export const UpdateForm = () => {
                   <input
                     type="text"
                     name="pekerjaanLainnya"
-                    placeholder="Pekerjaan Lainnya"
-                    value={formState.pekerjaanLainnya== null ? "": formState.pekerjaanLainnya}
+                    value={formState.pekerjaanLainnya}
                     onChange={handleChange}
                     className="bg-base mt-1 p-2 w-full border rounded-md "
                   />
@@ -477,15 +458,12 @@ export const UpdateForm = () => {
                 <input
                   type="file"
                   accept="image/*"
-                  value={""}
-                  onChange={handleFileInputChange} // Gunakan fungsi handleFileChangeKTP untuk foto KTP
+                  onChange={handleFileChangeKTP} // Gunakan fungsi handleFileChangeKTP untuk foto KTP
                   className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                 />
                 {formState.fotoKtp && (
                   <img
-                    src={`data:image/jpeg;base64,${arrayBufferToBase64(
-                      formState.fotoKtp
-                    )}`}
+                    src={URL.createObjectURL(formState.fotoKtp)}
                     alt="Foto KTP"
                     className="object-cover w-full h-full"
                   />
@@ -521,8 +499,8 @@ export const UpdateForm = () => {
                 <div className="flex mt-1 relative">
                   <input
                     type="date"
-                    value={formState.tglMasukKontrak == null ? "" : formState.tglMasukKontrak}
-                    name="tglMasukKontrak"
+                    value={formState.tglMasukKontrak}
+                    name="tanggalMasukKontrak"
                     onChange={handleChange}
                     className="bg-base mt-1 p-2 w-full border rounded-md "
                   />
@@ -537,8 +515,7 @@ export const UpdateForm = () => {
                   <input
                     type="text"
                     name="namaBank"
-                    placeholder="Nama Bank Penerima"
-                    value={formState.namaBank == null ? "" : formState.namaBank}
+                    value={formState.namaBank}
                     onChange={handleChange}
                     className="bg-base mt-1 p-2 w-full border rounded-md "
                   />
@@ -553,9 +530,8 @@ export const UpdateForm = () => {
                 <div className="flex mt-1 relative">
                   <input
                     type="text"
-                    value={formState.noRekBank == null ? "" : formState.noRekBank}
+                    value={formState.noRekBank}
                     name="noRekBank"
-                    placeholder="Nomor Rekening Bank"
                     onChange={handleChange}
                     className="bg-base mt-1 p-2 w-full border rounded-md "
                   />
@@ -568,9 +544,8 @@ export const UpdateForm = () => {
                 <div className="flex mt-1 relative">
                   <input
                     type="text"
-                    value={formState.namaPemilikRek == null ? "" : formState.namaPemilikRek}
+                    value={formState.namaPemilikRek}
                     name="namaPemilikRek"
-                    placeholder="Nama Pemilik Rekening Bank"
                     onChange={handleChange}
                     className="bg-base mt-1 p-2 w-full border rounded-md "
                   />
@@ -585,15 +560,12 @@ export const UpdateForm = () => {
                 <input
                   type="file"
                   accept="image/*"
-                  value={""}
-                  onChange={handleFileInputChange} // Gunakan fungsi handleFileChangeBukuTabungan untuk foto buku tabungan
+                  onChange={handleFileChangeBukuTabungan} // Gunakan fungsi handleFileChangeBukuTabungan untuk foto buku tabungan
                   className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                 />
                 {formState.fotoBukuTabungan && (
                   <img
-                    src={`data:image/jpeg;base64,${arrayBufferToBase64(
-                      formState.fotoBukuTabungan
-                    )}`}
+                    src={URL.createObjectURL(formState.fotoBukuTabungan)}
                     alt="Foto Buku Tabungan"
                     className="object-cover w-full h-full"
                   />
@@ -628,7 +600,7 @@ export const UpdateForm = () => {
                     onChange={handleChange}
                     className="bg-base mt-1 p-2 w-full border rounded-md"
                     name="memilikiNPWP"
-                    value={formState.memilikiNPWP == null ? "" : formState.memilikiNPWP}
+                    value={formState.memilikiNPWP}
                   >
                     <option value="">Pilih</option>
                     <option value="Ya">Ya</option>
@@ -644,8 +616,7 @@ export const UpdateForm = () => {
                   <div className="flex mt-1 relative">
                     <input
                       type="text"
-                      placeholder="NPWP"
-                      value={formState.npwp == null ? "" : formState.npwp}
+                      value={formState.npwp}
                       onChange={handleChange}
                       className="bg-base mt-1 p-2 w-full border rounded-md"
                       name="npwp"
@@ -662,15 +633,12 @@ export const UpdateForm = () => {
                 <input
                   type="file"
                   accept="image/*"
-                  value={""}
-                  onChange={handleFileInputChange}
+                  onChange={handleFileChangeNPWP}
                   className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                 />
                 {formState.fotoNpwp && (
                   <img
-                    src={`data:image/jpeg;base64,${arrayBufferToBase64(
-                      formState.fotoNpwp
-                    )}`}
+                    src={URL.createObjectURL(formState.fotoNpwp)}
                     alt="Foto NPWP"
                     className="object-cover w-full h-full"
                   />

@@ -1,23 +1,26 @@
 "use client";
 import { useParams } from "next/navigation";
 
-import DetailKelas from "../../../components/DetailKelas/DetailKelas";
-import { useToken } from "../../../common/hooks/useToken";
+import DetailKelas from "../../../components/kelasPage/DetailKelas";
 import IsLoggedIn from "../../../common/utils/IsLoggedIn";
 import useFetchWithToken from "../../../common/hooks/fetchWithToken";
 import { useMutation } from "react-query";
 import { useAuthContext } from "../../../common/utils/authContext";
-import { useEffect } from "react";
+import { Breadcrumbs } from "../../../components/breadcrumbs/breadcrumbs";
 
 const Page = () => {
   const { id } = useParams();
-  const { pengguna, isAuthenticated } = useAuthContext();
+  const { pengguna } = useAuthContext();
 
   const fetchWithToken = useFetchWithToken();
 
   const { mutateAsync: deleteMutation } = useMutation({
     mutationFn: () =>
       fetchWithToken(`/kelas/${id}`, "DELETE").then((res) => res.json()),
+    onSuccess: () => {
+      alert("Kelas berhasil dihapus");
+      window.location.href = "/kelas";
+    },
   });
 
   const handleDelete = async () => {
@@ -26,12 +29,9 @@ const Page = () => {
     }
   };
 
-  if (!isAuthenticated) {
-    return null;
-  }
-
   return (
-    <div>
+    <div className="px-[8vw] py-8">
+      <Breadcrumbs />
       {(pengguna.role === "superadmin" ||
         pengguna.role === "akademik" ||
         pengguna.role === "operasional") && (
@@ -72,4 +72,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default IsLoggedIn(Page);
