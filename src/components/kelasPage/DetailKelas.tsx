@@ -5,8 +5,10 @@ import { useMutation, useQuery } from "react-query";
 import { useEffect, useState } from "react";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import CalendarIcon from "../../common/components/icons/CalendarIcon";
-import { MuridSelect } from "../../common/types/murid";
+import { MuridRead, MuridSelect } from "../../common/types/murid";
 import Loading from "../../common/components/Loading";
+import { DataTable as DataTableMurid } from "../muridPage/muridTable/murid-data-table";
+import { columns as ColumnsMurid } from "../muridPage/muridTable/columns";
 
 const daysOfWeek = [
   "Sunday",
@@ -68,6 +70,8 @@ const DetailKelas = ({ buttons }) => {
     platform,
     namaPengajar,
   } = data.content;
+
+  const listMuridShow: MuridRead[] = listMurid;
 
   // Function to convert timestamps to readable dates
   const formatDate = (timestamp) => {
@@ -201,87 +205,13 @@ const DetailKelas = ({ buttons }) => {
           />
         </div>
 
-        <div className="flex flex-row gap-4">
-          {!muridRendered &&
-            (muridSelected.length > 2 ? (
-              <>
-                <div className="w-1/2">
-                  <label className="block font-medium text-neutral/70">
-                    Murid Kelas
-                  </label>
-                  <div className="mt-1">
-                    {/* Distribute elements between both columns */}
-                    {muridSelected
-                      .slice(0, Math.ceil(muridSelected.length / 2))
-                      .map((murid, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center py-2 border-b"
-                        >
-                          <div className="w-8 h-8 rounded-full bg-neutral/5 mr-4"></div>
-                          <input
-                            key={index}
-                            type="text"
-                            value={murid.label}
-                            className="flex-1 bg-transparent border-none cursor-not-allowed"
-                            disabled
-                          />
-                        </div>
-                      ))}
-                  </div>
-                </div>
-                <div className="w-1/2">
-                  <label className="block font-medium text-neutral/70">
-                    <br />
-                  </label>
-                  <div className="mt-1">
-                    {/* Distribute elements between both columns */}
-                    {muridSelected
-                      .slice(Math.ceil(muridSelected.length / 2))
-                      .map((murid, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center py-2 border-b"
-                        >
-                          <div className="w-8 h-8 rounded-full bg-neutral/5 mr-4"></div>
-                          <input
-                            key={index}
-                            type="text"
-                            value={murid.label}
-                            className="flex-1 bg-transparent border-none cursor-not-allowed"
-                            disabled
-                          />
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              </>
-            ) : (
-              <div className="w-1/2">
-                <label className="block font-medium text-neutral/70">
-                  Murid Kelas
-                </label>
-                <div className="mt-1">
-                  {/* Display all elements in the first column */}
-
-                  {muridSelected.map((murid, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center py-2 border-b"
-                    >
-                      <div className="w-8 h-8 rounded-full bg-neutral/5 mr-4"></div>
-                      <input
-                        key={index}
-                        type="text"
-                        value={murid.label}
-                        className="flex-1 bg-transparent border-none cursor-not-allowed"
-                        disabled
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
+        <div className="p-2">
+          <DataTableMurid
+            columns={ColumnsMurid}
+            data={listMuridShow}
+            enableFilters={false}
+            enablePagination={false}
+          />
         </div>
 
         <div>

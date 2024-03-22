@@ -19,11 +19,15 @@ import styles from "./MuridTable.module.css"; // Assuming the same CSS module is
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  enablePagination?: boolean; // Optional prop for enabling pagination
+  enableFilters?: boolean; // Optional prop for enabling filters
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  enablePagination = true,
+  enableFilters = true,
 }: DataTableProps<TData, TValue>) {
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -37,11 +41,13 @@ export function DataTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
-    onPaginationChange: setPagination,
-    onGlobalFilterChange: setGlobalFilter,
-    onColumnFiltersChange: setColumnFilters,
+    onPaginationChange: enablePagination ? setPagination : undefined,
+    onGlobalFilterChange: enableFilters ? setGlobalFilter : undefined,
+    onColumnFiltersChange: enableFilters ? setColumnFilters : undefined,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    getPaginationRowModel: enablePagination
+      ? getPaginationRowModel()
+      : undefined,
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
@@ -82,50 +88,52 @@ export function DataTable<TData, TValue>({
 
   // Update pagination when data changes
   useEffect(() => {
-    if (table.getFilteredRowModel().rows.length) {
+    if (enablePagination && table.getFilteredRowModel().rows.length) {
       setTotalPages(
         Math.ceil(table.getFilteredRowModel().rows.length / pagination.pageSize)
       );
     }
-  }, [getFilteredRowModel()]);
+  }, [getFilteredRowModel(), enablePagination]);
 
   return (
     <div>
-      <div className="flex items-center mb-6 w-full space-x-2">
-        <DebouncedInput
-          value={globalFilter ?? ""}
-          onChange={(value) => setGlobalFilter(String(value))}
-          className="flex-grow px-2 py-2 border border-[#DFE4EA] text-[#637381] rounded"
-          placeholder="Search Murid..."
-        />
-        {table.getHeaderGroups().map((headerGroup) => (
-          <div key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <th
-                key={header.id}
-                className={` ${
-                  header.index === 0
-                    ? "rounded-tl-lg"
-                    : header.index + 1 === headerGroup.headers.length
-                    ? "rounded-tr-lg"
-                    : ""
-                }`}
-              >
-                {header.column.getCanFilter() ? (
-                  <div>
-                    <Filter column={header.column} table={table} />
-                  </div>
-                ) : null}
-              </th>
-            ))}
-          </div>
-        ))}
-        <button
-          className={`px-4 py-2 bg-primary/80 hover:bg-primary text-white rounded`}
-        >
-          <a href="/murid/add">+ Tambah Murid</a>
-        </button>
-      </div>
+      {enableFilters && (
+        <div className="flex items-center mb-6 w-full space-x-2">
+          <DebouncedInput
+            value={globalFilter ?? ""}
+            onChange={(value) => setGlobalFilter(String(value))}
+            className="flex-grow px-2 py-2 border border-[#DFE4EA] text-[#637381] rounded"
+            placeholder="Search Murid..."
+          />
+          {table.getHeaderGroups().map((headerGroup) => (
+            <div key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <th
+                  key={header.id}
+                  className={` ${
+                    header.index === 0
+                      ? "rounded-tl-lg"
+                      : header.index + 1 === headerGroup.headers.length
+                      ? "rounded-tr-lg"
+                      : ""
+                  }`}
+                >
+                  {header.column.getCanFilter() && enableFilters ? (
+                    <div>
+                      <Filter column={header.column} table={table} />
+                    </div>
+                  ) : null}
+                </th>
+              ))}
+            </div>
+          ))}
+          <button
+            className={`px-4 py-2 bg-primary/80 hover:bg-primary text-white rounded`}
+          >
+            <a href="/murid/add">+ Tambah Murid</a>
+          </button>
+        </div>
+      )}
 
       <div className="shadow-lg rounded-lg ">
         <table data-testid="" className="table-auto w-full">
@@ -179,37 +187,39 @@ export function DataTable<TData, TValue>({
         </table>
       </div>
 
-      <div className="flex justify-center my-4">
-        <div className={`${styles.pagination_container} p-2`}>
-          {
-            <button
-              disabled={!table.getCanPreviousPage()}
-              onClick={() => table.previousPage()}
-              className={`px-3 py-1 mx-1 bg-white border border-[#DFE4EA] text-[#637381] rounded ${
-                table.getCanPreviousPage()
-                  ? "hover:bg-[#A8D4FF]"
-                  : "hover:bg-[#DFE4EA]"
-              } hover:text-white`}
-            >
-              {"<"}
-            </button>
-          }
-          {renderPageNumbers()}
-          {
-            <button
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-              className={`px-3 py-1 mx-1 bg-white border border-[#DFE4EA] text-[#637381] rounded ${
-                table.getCanNextPage()
-                  ? "hover:bg-[#A8D4FF]"
-                  : "hover:bg-[#DFE4EA]"
-              } hover:text-white`}
-            >
-              {">"}
-            </button>
-          }
+      {enablePagination && (
+        <div className="flex justify-center my-4">
+          <div className={`${styles.pagination_container} p-2`}>
+            {
+              <button
+                disabled={!table.getCanPreviousPage()}
+                onClick={() => table.previousPage()}
+                className={`px-3 py-1 mx-1 bg-white border border-[#DFE4EA] text-[#637381] rounded ${
+                  table.getCanPreviousPage()
+                    ? "hover:bg-[#A8D4FF]"
+                    : "hover:bg-[#DFE4EA]"
+                } hover:text-white`}
+              >
+                {"<"}
+              </button>
+            }
+            {renderPageNumbers()}
+            {
+              <button
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+                className={`px-3 py-1 mx-1 bg-white border border-[#DFE4EA] text-[#637381] rounded ${
+                  table.getCanNextPage()
+                    ? "hover:bg-[#A8D4FF]"
+                    : "hover:bg-[#DFE4EA]"
+                } hover:text-white`}
+              >
+                {">"}
+              </button>
+            }
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
