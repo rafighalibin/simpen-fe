@@ -9,21 +9,21 @@ import { useParams, usePathname, useRouter } from "next/navigation";
 import { PoppinsBold, InterMedium } from "../../font/font";
 import styles from "./DetailUser.module.css";
 import { useEffect, useState } from "react";
+import useFetchPengajarDetail from "../../common/hooks/user/useFetchPengajarDetail";
 
-const DetailAkun = ({ buttons }) => {
-  const fetchWithToken = useFetchWithToken();
+const DetailPengajar = ({ buttons }) => {
 
+  const {id} = useParams();
   const { pengguna, isAuthenticated } = useAuthContext();
   const path = usePathname();
   const [showSuccessAlert, setShowSuccessAlert] = useState(false); 
 
-  const { isLoading, error, data } = useQuery({
-    queryKey: ["detailAkun"],
-    queryFn: () => fetchWithToken(`/auth/login`).then((res) => res.json()),
-    onSuccess: (data) => {
-      console.log(data);
-    },
-  });
+  const {
+    isLoading: PengajarLoading,
+    listPengajarExisting: pengajar,
+  } = useFetchPengajarDetail();
+
+  console.log(pengajar)
 
   useEffect(() => {
     // Check if localStorage is available
@@ -41,33 +41,23 @@ const DetailAkun = ({ buttons }) => {
     }
   }, []);
 
-  if (isLoading) return <Loading />;
+  if (PengajarLoading) return <Loading />;
 
-  const {
-    alamatKTP,
-    domisiliKota,
-    nama,
-    fotoDiri,
-    emailPribadi,
-    email,
-    jenisKelamin,
-    noTelp,
-    backupPhoneNum,
-    noRekBank,
-    namaBank,
-    namaPemilikRek,
-    fotoBukuTabungan,
-    pendidikanTerakhir,
-    pekerjaanLainnya,
-    tglMasukKontrak,
-    nik,
-    fotoKtp,
-    npwp,
-    fotoNpwp,
-    namaKontakDarurat,
-    noTelpDarurat,
-    role
-  } = data.content;
+  const cariIdSama = (data: any[], idYangDicari) => {
+    const hasilPencarian = [];
+    
+    // Loop melalui setiap objek dalam data
+    for (let i = 0; i < data.length; i++) {
+      // Mengecek jika objek memiliki properti id dan nilai id yang sama dengan id yang dicari
+      if (data[i].id === idYangDicari) {
+        // Menyimpan objek yang cocok ke dalam array hasilPencarian
+        hasilPencarian.push(data[i]);
+        console.log(data);
+      }
+    }
+    return hasilPencarian;
+  }
+  const specificUser = cariIdSama(pengajar, id);
 
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
@@ -76,7 +66,7 @@ const DetailAkun = ({ buttons }) => {
 
   return (
     <div>
-      <div className=" px-48 py-12 space-y-10 flex-grow flex flex-col justify-center">
+      <div className=" px-48 py-20 space-y-10 flex-grow flex flex-col justify-center">
         <h1 className=" flex justify-center text-6xl font-bold text-neutral/100 ">
           Detail Akun
         </h1>
@@ -113,7 +103,7 @@ const DetailAkun = ({ buttons }) => {
         </div>
         </div>
       )}
-        {pengguna.role === "pengajar" && (
+        { (
           <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-md rounded-lg ">
             <div className="flex flex-col items-center pb-16">
               <label className="block font-medium text-neutral/70">
@@ -127,15 +117,15 @@ const DetailAkun = ({ buttons }) => {
                   accept="image/*"
                   className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                 />
-                {fotoDiri && (
+                {specificUser[0].fotoDiri && (
                   <img
-                    src={fotoDiri}
+                    src={specificUser[0].fotoDiri}
                     alt="Foto Diri"
                     className="object-cover w-full h-full"
                     style={{ borderRadius: "50%" }}
                   />
                 )}
-                {!fotoDiri && (
+                {!specificUser[0].fotoDiri && (
                   <div className="bg-neutral/5 rounded-full flex items-center justify-center w-full h-full">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -167,7 +157,7 @@ const DetailAkun = ({ buttons }) => {
                   disabled
                   type="text"
                   name="email"
-                  value={email == null ? "" : email}
+                  value={specificUser[0].email == null ? "" : specificUser[0].email}
                   className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                 />
               </div>
@@ -182,7 +172,7 @@ const DetailAkun = ({ buttons }) => {
                     id="laki-laki"
                     name="jenisKelamin"
                     value="laki-laki"
-                    checked={jenisKelamin === "laki-laki"}
+                    checked={specificUser[0].jenisKelamin === "laki-laki"}
                     className="mr-2"
                   />
                   <label htmlFor="laki-laki" className="mr-4">
@@ -194,7 +184,7 @@ const DetailAkun = ({ buttons }) => {
                     id="perempuan"
                     name="jenisKelamin"
                     value="perempuan"
-                    checked={jenisKelamin === "perempuan"}
+                    checked={specificUser[0].jenisKelamin === "perempuan"}
                     className="mr-2"
                   />
                   <label htmlFor="perempuan">Perempuan</label>
@@ -211,7 +201,7 @@ const DetailAkun = ({ buttons }) => {
                     disabled
                     readOnly
                     type="text"
-                    value={nama == null ? "" : nama}
+                    value={specificUser[0].nama == null ? "" : specificUser[0].nama}
                     name="nama"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md "
                   />
@@ -226,7 +216,7 @@ const DetailAkun = ({ buttons }) => {
                     disabled
                     type="text"
                     name="nik"
-                    value={nik == null ? "" : nik}
+                    value={specificUser[0].nik == null ? "" : specificUser[0].nik}
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
                 </div>
@@ -242,7 +232,7 @@ const DetailAkun = ({ buttons }) => {
                 readOnly
                 type="text"
                 name="alamatKTP"
-                value={alamatKTP == null ? "" : alamatKTP}
+                value={specificUser[0].alamatKTP == null ? "" : specificUser[0].alamatKTP}
                 className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
               />
             </div>
@@ -257,7 +247,7 @@ const DetailAkun = ({ buttons }) => {
                     readOnly
                     disabled
                     type="text"
-                    value={emailPribadi == null ? "" : emailPribadi}
+                    value={specificUser[0].emailPribadi == null ? "" : specificUser[0].emailPribadi}
                     name="emailPribadi"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
@@ -274,7 +264,7 @@ const DetailAkun = ({ buttons }) => {
                     disabled
                     type="text"
                     name="domisiliKota"
-                    value={domisiliKota == null ? "" : domisiliKota}
+                    value={specificUser[0].domisiliKota == null ? "" :specificUser[0].domisiliKota}
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
                 </div>
@@ -290,7 +280,7 @@ const DetailAkun = ({ buttons }) => {
                     readOnly
                     disabled
                     type="text"
-                    value={noTelp == null ? "" : noTelp}
+                    value={specificUser[0].noTelp == null ? "" : specificUser[0].noTelp}
                     name="noTelp"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
@@ -307,7 +297,7 @@ const DetailAkun = ({ buttons }) => {
                     disabled
                     type="text"
                     name="backupPhoneNum"
-                    value={backupPhoneNum == null ? "" : backupPhoneNum}
+                    value={specificUser[0].backupPhoneNum == null ? "" : specificUser[0].backupPhoneNum}
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
                 </div>
@@ -323,7 +313,7 @@ const DetailAkun = ({ buttons }) => {
                     readOnly
                     disabled
                     type="text"
-                    value={namaKontakDarurat == null ? "" : namaKontakDarurat}
+                    value={specificUser[0].namaKontakDarurat == null ? "" : specificUser[0].namaKontakDarurat}
                     name="namaKontakDarurat"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
@@ -340,7 +330,7 @@ const DetailAkun = ({ buttons }) => {
                     disabled
                     type="text"
                     name="noTelpDarurat"
-                    value={noTelpDarurat == null ? "" : noTelpDarurat}
+                    value={specificUser[0].noTelpDarurat == null ? "" :specificUser[0].noTelpDarurat}
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
                 </div>
@@ -355,7 +345,7 @@ const DetailAkun = ({ buttons }) => {
                   <input
                     aria-readonly
                     disabled
-                    value={pendidikanTerakhir == null ? "" : pendidikanTerakhir}
+                    value={specificUser[0].pendidikanTerakhir == null ? "" : specificUser[0].pendidikanTerakhir}
                     name="pendidikanTerakhir"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
@@ -371,7 +361,7 @@ const DetailAkun = ({ buttons }) => {
                     disabled
                     type="text"
                     name="pekerjaanLainnya"
-                    value={pekerjaanLainnya == null ? "" : pekerjaanLainnya}
+                    value={specificUser[0].pekerjaanLainnya == null ? "" : specificUser[0].pekerjaanLainnya}
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
                 </div>
@@ -389,14 +379,14 @@ const DetailAkun = ({ buttons }) => {
                   value={""}
                   className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                 />
-                {fotoKtp && (
+                {specificUser[0].fotoKtp && (
                   <img
-                    src={fotoKtp}
+                    src={specificUser[0].fotoKtp}
                     alt="Foto KTP"
                     className="object-cover w-full h-full"
                   />
                 )}
-                {!fotoKtp && (
+                {!specificUser[0].fotoKtp && (
                   <div className="bg-neutral/5 w-full h-full flex items-center justify-center">
                     <svg
                       data-slot="icon"
@@ -432,7 +422,7 @@ const DetailAkun = ({ buttons }) => {
                     disabled
                     type="text"
                     value={
-                      tglMasukKontrak == null ? "" : formatDate(tglMasukKontrak)
+                      specificUser[0].tglMasukKontrak == null ? "" : formatDate(specificUser[0].tglMasukKontrak)
                     }
                     name="tglMasukKontrak"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
@@ -450,7 +440,7 @@ const DetailAkun = ({ buttons }) => {
                     disabled
                     type="text"
                     name="namaBank"
-                    value={namaBank == null ? "" : namaBank}
+                    value={specificUser[0].namaBank == null ? "" :specificUser[0].namaBank}
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
                 </div>
@@ -466,7 +456,7 @@ const DetailAkun = ({ buttons }) => {
                     readOnly
                     disabled
                     type="text"
-                    value={noRekBank == null ? "" : noRekBank}
+                    value={specificUser[0].noRekBank == null ? "" : specificUser[0].noRekBank}
                     name="noRekBank"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
@@ -481,7 +471,7 @@ const DetailAkun = ({ buttons }) => {
                     readOnly
                     disabled
                     type="text"
-                    value={namaPemilikRek == null ? "" : namaPemilikRek}
+                    value={specificUser[0].namaPemilikRek == null ? "" : specificUser[0].namaPemilikRek}
                     name="namaPemilikRek"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
@@ -501,14 +491,14 @@ const DetailAkun = ({ buttons }) => {
                   // Gunakan fungsi handleFileChangeBukuTabungan untuk foto buku tabungan
                   className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                 />
-                {fotoBukuTabungan && (
+                {specificUser[0].fotoBukuTabungan && (
                   <img
-                    src={fotoBukuTabungan}
+                    src={specificUser[0].fotoBukuTabungan}
                     alt="Foto Buku Tabungan"
                     className="object-cover w-full h-full"
                   />
                 )}
-                {!fotoBukuTabungan && (
+                {!specificUser[0].fotoBukuTabungan && (
                   <div className="bg-neutral/5 w-full h-full flex items-center justify-center">
                     <svg
                       data-slot="icon"
@@ -537,7 +527,7 @@ const DetailAkun = ({ buttons }) => {
                 readOnly
                 type="text"
                 name="npwp"
-                value={npwp == null ? "" : npwp}
+                value={specificUser[0].npwp == null ? "" : specificUser[0].npwp}
                 className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
               />
             </div>
@@ -553,14 +543,14 @@ const DetailAkun = ({ buttons }) => {
                   value={""}
                   className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                 />
-                {fotoNpwp && (
+                {specificUser[0].fotoNpwp && (
                   <img
-                    src={fotoNpwp}
+                    src={specificUser[0].fotoNpwp}
                     alt="Foto NPWP"
                     className="object-cover w-full h-full"
                   />
                 )}
-                {!fotoNpwp && (
+                {!specificUser[0].fotoNpwp && (
                   <div className="bg-neutral/5 w-full h-full flex items-center justify-center">
                     <svg
                       data-slot="icon"
@@ -585,7 +575,7 @@ const DetailAkun = ({ buttons }) => {
             {buttons}
           </div>
         )}
-        {(pengguna.role === "akademik" || pengguna.role ==="operasional") && (
+        {/* {(pengguna.role === "akademik" || pengguna.role ==="operasional") && (
             <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-md rounded-lg">
               <div className="grid grid-cols-2 gap-8">
                 <div>
@@ -696,10 +686,10 @@ const DetailAkun = ({ buttons }) => {
               </div>
               {buttons}
             </div>
-          )}
+          )} */}
       </div>
     </div>
   );
 };
 
-export default DetailAkun;
+export default DetailPengajar;
