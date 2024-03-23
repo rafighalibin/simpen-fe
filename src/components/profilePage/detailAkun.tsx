@@ -74,9 +74,14 @@ const DetailAkun = ({ buttons }) => {
 
 
   return (
-    <div className="pb-12">
-      {/* Success Alert */}
+    <div>
+      <div className=" px-48 py-20 space-y-10 flex-grow flex flex-col justify-center">
+        <h1 className=" flex justify-center text-6xl font-bold text-neutral/100 ">
+          Detail Akun
+        </h1>
+        {/* Success Alert */}
       {showSuccessAlert && (
+        <div className="pb-2">
         <div
           className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
           role="alert"
@@ -105,11 +110,8 @@ const DetailAkun = ({ buttons }) => {
             </svg>
           </span>
         </div>
+        </div>
       )}
-      <div className=" px-80 py-20 space-y-10 flex-grow flex flex-col justify-center">
-        <h1 className=" flex justify-center text-5xl font-bold text-neutral/100 pb-16">
-          Detail Akun
-        </h1>
         {pengguna.role === "pengajar" && (
           <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-md rounded-lg ">
             <div className="flex flex-col items-center pb-16">
@@ -583,7 +585,7 @@ const DetailAkun = ({ buttons }) => {
           </div>
         )}
         {(pengguna.role === "akademik" || pengguna.role ==="operasional") && (
-            <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-md rounded-lg ">
+            <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-md rounded-lg">
               <div className="grid grid-cols-2 gap-8">
                 <div>
                   <div

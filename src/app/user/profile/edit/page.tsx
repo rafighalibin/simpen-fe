@@ -8,8 +8,6 @@ export default function EditProfilePage(){
   const { checkPermission } = useAuthContext();
 
   return (
-    checkPermission(true, true, true) &&(
-      <UpdateForm/>
-    )
+    <UpdateForm/>
   )
 }

@@ -248,12 +248,12 @@ export const UpdateForm = () => {
   return (
     <div>
       <div className=" px-80 py-20 space-y-10 flex-grow flex flex-col justify-center">
-        <h1 className=" flex justify-center text-5xl font-bold text-neutral/100 ">
+        <h1 className=" flex justify-center text-6xl pb-4 font-bold text-neutral/100 ">
           Detail Akun
         </h1>
         {pengguna.role === "pengajar" && (
           <form onSubmit={handleSubmit}>
-            <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-md rounded-lg ">
+            <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-lg rounded-lg ">
               <div className="flex flex-col items-center pb-16">
                 <label className="block font-medium text-neutral/70">
                   Foto Diri
@@ -838,7 +838,10 @@ export const UpdateForm = () => {
                   )}
                 </div>
               </div>
-              <div className="flex justify-center py-7 gap-4">
+              <p className="text-sm text-neutral/50">
+                  Jika tidak ingin mengubah password, kosongkan field ini.
+                </p>
+              <div className="flex justify-center py-4 gap-4">
                 <button
                   type="submit"
                   className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
@@ -855,7 +858,7 @@ export const UpdateForm = () => {
         {(pengguna.role === "akademik" ||
           pengguna.role === "operasional") && (
             <form onSubmit={handleSubmit}>
-              <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-md rounded-lg ">
+              <div className="bg-base flex flex-col space-y-4 px-8 py-4 shadow-md rounded-lg">
                 <h1 className=" flex text-3xl font-bold text-neutral/100 ">
                   Data Diri
                 </h1>
@@ -969,7 +972,6 @@ export const UpdateForm = () => {
                       />
                     </div>
                   </div>
-
                   <div className="w-1/2 relative">
                     <label className="block font-medium text-neutral/70">
                       Konfirmasi Password
@@ -989,7 +991,10 @@ export const UpdateForm = () => {
                     )}
                   </div>
                 </div>
-                <div className="flex justify-center py-7 gap-4">
+                <p className="text-sm text-neutral/50">
+                  Jika tidak ingin mengubah password, kosongkan field ini.
+                </p>
+                <div className="flex justify-center py-4 gap-4">
                   <button
                     type="submit"
                     className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"

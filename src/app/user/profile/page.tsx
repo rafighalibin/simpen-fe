@@ -11,12 +11,11 @@ const Page= () =>{
   const fetchWithToken = useFetchWithToken();
   const { checkPermission } = useAuthContext();
   return (
-    checkPermission(true, true, true) && (
       <div className="px-[8vw] py-8">
       <Breadcrumbs/>
     <DetailAkun
     buttons={
-      <div className="flex justify-center py-7 gap-4">
+      <div className="flex justify-center pt-7 pb-2 gap-4">
         <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
           <a href={`/user/profile/edit`}> Ubah Detail Akun </a>
         </button>
@@ -24,7 +23,7 @@ const Page= () =>{
     }
   />
   </div>
-  ))
+  )
 }
 
 export default Page;
