@@ -1,18 +1,20 @@
 "use client";
 
-// import component
-import { DetailUser } from "../../../components/DetailUser/DetailUser";
-import { Breadcrumbs } from "../../../components/breadcrumbs/breadcrumbs";
+import { useRouter } from "next/navigation";
+import Loading from "../../loading";
 
-const UserDetailsPage = ({ searchParams }) => {
-  const user = JSON.parse(searchParams.user);
+const DetailPage = () => {
+  const router = useRouter();
+
+  setTimeout(() => {
+    router.replace("/user");
+  }, 1000);
 
   return (
-    <div className="px-[8vw] py-8">
-      <Breadcrumbs />
-      <DetailUser data={user} />
+    <div>
+      <Loading />
     </div>
   );
 };
 
-export default UserDetailsPage;
+export default DetailPage;

@@ -51,3 +51,36 @@
   font-style: normal;
   line-height: 24px; /* 150% */
 }
+
+@media (max-width: 767px) {
+  .heading {
+    font-size: 38px;
+    line-height: 100%;
+  }
+}
+
+@media (max-width: 639px) {
+  .form_title {
+    font-size: 13px;
+    line-height: 23px; /* 150% */
+  }
+
+  .form_placeholder {
+    font-size: 12px;
+    line-height: 22px; /* 150% */
+  }
+
+  .form_paragraph {
+    font-size: 11px;
+    line-height: 16px; /* 157.143% */
+  }
+
+  .button_tx {
+    font-size: 13px;
+    line-height: 23px; /* 150% */
+  }
+
+  .btn {
+    padding: 6px 12px;
+  }
+}
