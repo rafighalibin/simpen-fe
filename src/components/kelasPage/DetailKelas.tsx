@@ -9,6 +9,7 @@ import { MuridRead, MuridSelect } from "../../common/types/murid";
 import Loading from "../../common/components/Loading";
 import { DataTable as DataTableMurid } from "../muridPage/muridTable/murid-data-table";
 import { columns as ColumnsMurid } from "../muridPage/muridTable/columns";
+import { useAuthContext } from "../../common/utils/authContext";
 
 const daysOfWeek = [
   "Sunday",
@@ -20,9 +21,10 @@ const daysOfWeek = [
   "Saturday",
 ];
 
-const DetailKelas = ({ buttons }) => {
+const DetailKelas = () => {
   const fetchWithToken = useFetchWithToken();
   const { id } = useParams();
+  const { pengguna: userLoggedIn } = useAuthContext();
   const router = useRouter();
   const [muridRendered, setMuridRendered] = useState(false);
   const { isLoading, error, data } = useQuery({
@@ -40,6 +42,15 @@ const DetailKelas = ({ buttons }) => {
           label: e,
         });
       });
+    },
+  });
+
+  const { mutateAsync: deleteMutation } = useMutation({
+    mutationFn: () =>
+      fetchWithToken(`/kelas/${id}`, "DELETE").then((res) => res.json()),
+    onSuccess: () => {
+      alert("Kelas berhasil dihapus");
+      window.location.href = "/kelas";
     },
   });
 
@@ -69,6 +80,7 @@ const DetailKelas = ({ buttons }) => {
     level,
     platform,
     namaPengajar,
+    status,
   } = data.content;
 
   const listMuridShow: MuridRead[] = listMurid;
@@ -79,6 +91,11 @@ const DetailKelas = ({ buttons }) => {
     return date.toLocaleDateString("en-US");
   };
 
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this class?")) {
+      await deleteMutation();
+    }
+  };
   return (
     <div>
       <h1 className=" flex justify-center text-5xl font-bold text-neutral/100 my-10">
@@ -223,7 +240,47 @@ const DetailKelas = ({ buttons }) => {
             className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full rounded-md"
           />
         </div>
-        {buttons}
+        <div>
+          {!(userLoggedIn.role === "pengajar") && (
+            <div className="flex justify-center py-7 gap-4">
+              <a href={`/kelas/${id}/absen`}>
+                <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
+                  Absensi Kelas
+                </button>
+              </a>
+              {status === "Scheduled" && (
+                <div className="flex justify-center gap-4">
+                  <a href={`/kelas/${id}/edit`}>
+                    <button className="bg-warning text-white px-4 py-2 rounded-md hover:bg-warningHover">
+                      Ubah Detail Kelas
+                    </button>
+                  </a>
+                  <button
+                    onClick={handleDelete}
+                    className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover"
+                  >
+                    Hapus Kelas
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {userLoggedIn.role === "pengajar" && (
+            <div className="flex justify-center py-7 gap-4">
+              <a href={`/error/construction`}>
+                <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
+                  Zoom Kelas
+                </button>
+              </a>
+              <a href={`/kelas/${id}/absen`}>
+                <button className="bg-warning text-white px-4 py-2 rounded-md hover:bg-warningHover">
+                  Absensi Kelas
+                </button>
+              </a>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

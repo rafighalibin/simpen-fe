@@ -15,6 +15,7 @@ import {
 import { Filter, fuzzyFilter } from "../../../../common/utils/table/filter";
 import { DebouncedInput } from "../../../../common/utils/table/debounceInput";
 import styles from "../KelasTable.module.css"; // Assuming the same CSS module is applicable
+import Link from "next/link";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -99,9 +100,9 @@ export function DataTable<TData, TValue>({
           placeholder="Search Kelas..."
         />
         {table.getHeaderGroups().map((headerGroup) => (
-          <div key={headerGroup.id}>
+          <div key={headerGroup.id} className="flex row-span-2">
             {headerGroup.headers.map((header) => (
-              <th
+              <div
                 key={header.id}
                 className={` ${
                   header.index === 0
@@ -116,15 +117,17 @@ export function DataTable<TData, TValue>({
                     <Filter column={header.column} table={table} />
                   </div>
                 ) : null}
-              </th>
+              </div>
             ))}
           </div>
         ))}
-        <button
-          className={`px-4 py-2 bg-primary/80 hover:bg-primary text-white rounded`}
-        >
-          <a href="/kelas/add">+ Tambah Kelas</a>
-        </button>
+        <Link href="/kelas/add">
+          <button
+            className={`px-4 py-2 bg-primary/80 hover:bg-primary text-white rounded`}
+          >
+            + Tambah Kelas
+          </button>
+        </Link>
       </div>
 
       <div className="shadow-lg rounded-lg ">

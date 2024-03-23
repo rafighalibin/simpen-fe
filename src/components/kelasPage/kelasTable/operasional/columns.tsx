@@ -2,6 +2,7 @@
 import { ColumnDef, RowData } from "@tanstack/react-table";
 
 import { KelasRead } from "../../../../common/types/kelas";
+import Link from "next/link";
 
 declare module "@tanstack/react-table" {
   interface ColumnMeta<TData extends RowData, TValue> {
@@ -47,17 +48,21 @@ export const columns: ColumnDef<KelasRead>[] = [
       <div className="flex justify-center">
         <div className="flex space-x-4">
           {row.original.status != "Canceled" && (
-            <button
-              className={`bg-transparent hover:bg-accent text-accent  hover:text-white py-1 px-4 border border-accent hover:border-transparent rounded-full`}
-            >
-              <a href={`/kelas/${row.original.id.toString()}/absen`}>Absen</a>
-            </button>
+            <Link href={`/kelas/${row.original.id.toString()}/absen`}>
+              <button
+                className={`bg-transparent hover:bg-accent text-accent  hover:text-white py-1 px-4 border border-accent hover:border-transparent rounded-full`}
+              >
+                Absen
+              </button>
+            </Link>
           )}
-          <button
-            className={`bg-transparent hover:bg-primary text-primary  hover:text-white py-1 px-4 border border-primary hover:border-transparent rounded-full`}
-          >
-            <a href={`/kelas/${row.original.id.toString()}`}>Detail</a>
-          </button>
+          <Link href={`/kelas/${row.original.id.toString()}`}>
+            <button
+              className={`bg-transparent hover:bg-primary text-primary  hover:text-white py-1 px-4 border border-primary hover:border-transparent rounded-full`}
+            >
+              Detail
+            </button>
+          </Link>
         </div>
       </div>
     ),

@@ -35,7 +35,7 @@ export const AuthContextProvider = ({ children }) => {
       setPengguna(undefined);
       setIsAuthenticated(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, getPenggunaToken()]);
 
   const checkPermission = (
     operasional: boolean,

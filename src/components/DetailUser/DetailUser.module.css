@@ -65,3 +65,44 @@
   font-style: normal;
   line-height: 22px; /* 157.143% */
 }
+
+@media (max-width: 767px) {
+  .heading {
+    font-size: 38px;
+    line-height: 100%;
+  }
+}
+
+@media (max-width: 639px) {
+  .title {
+    font-size: 13px;
+    line-height: 23px; /* 150% */
+  }
+
+  .placeholder {
+    font-size: 12px;
+    line-height: 22px; /* 150% */
+  }
+
+  .put_btn {
+    padding: 6px 12px;
+  }
+
+  .del_btn {
+    padding: 6px 12px;
+  }
+
+  .button_tx {
+    font-size: 13px;
+    line-height: 23px; /* 150% */
+  }
+
+  .edit_btn {
+    padding: 6px 12px;
+  }
+
+  .form_paragraph {
+    font-size: 11px;
+    line-height: 16px;
+  }
+}

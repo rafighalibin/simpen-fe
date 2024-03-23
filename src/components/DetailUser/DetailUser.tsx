@@ -28,54 +28,67 @@ export const DetailUser = ({ data }) => {
   };
 
   const handleEdit = async () => {
-    const queryString = encodeURIComponent(JSON.stringify(data));
-    router.push(`/user/edit?user=${queryString}`);
+    router.push(`/user/detail/edit/${data.id}`);
   };
 
   return (
     <div>
       <div
-        className={`${styles.heading} text-center my-10`}
+        className={`${styles.heading} text-center md:my-10 my-6`}
         style={PoppinsBold.style}
       >
         Detail Akun Pengguna
       </div>
-      <div className="grid grid-cols-2 gap-8">
+      <div className="md:grid md:grid-cols-2 md:grid-rows-none grid-rows-6 gap-8 sm:space-y-0 space-y-3">
         <div>
-          <div style={InterMedium.style} className={`${styles.title} mb-3`}>
+          <div
+            style={InterMedium.style}
+            className={`${styles.title} mb-3 sm:ml-0 ml-1`}
+          >
             Nama
           </div>
           <input
             disabled
             placeholder={data.nama}
-            className={`${styles.placeholder} appearance-none relative block w-full px-3 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
+            className={`${styles.placeholder} appearance-none relative block w-full px-3 sm:py-3 py-1 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
           />
         </div>
         <div>
-          <div style={InterMedium.style} className={`${styles.title}  mb-3`}>
+          <div
+            style={InterMedium.style}
+            className={`${styles.title}  mb-3 sm:ml-0 ml-1`}
+          >
             Email
           </div>
           <input
             disabled
             placeholder={data.email}
-            className={`${styles.placeholder} appearance-none relative block w-full px-3 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
+            className={`${styles.placeholder} appearance-none relative block w-full px-3 sm:py-3 py-1 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
           />
         </div>
         <div>
-          <div style={InterMedium.style} className={`${styles.title}  mb-3`}>
+          <div
+            style={InterMedium.style}
+            className={`${styles.title}  mb-3 sm:ml-0 ml-1`}
+          >
             Email Pribadi
           </div>
           <input
             disabled
             placeholder={data.emailPribadi}
-            className={`${styles.placeholder} appearance-none relative block w-full px-3 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
+            className={`${styles.placeholder} appearance-none relative block w-full px-3 sm:py-3 py-1 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
           />
         </div>
         <div>
-          <div style={InterMedium.style} className={`${styles.title} mb-3`}>
+          <div
+            style={InterMedium.style}
+            className={`${styles.title} mb-3 sm:ml-0 ml-1`}
+          >
             Jenis Kelamin
           </div>
-          <div className="flex items-center text-[#9CA3AF] pr-3 py-3">
+          <div
+            className={`${styles.placeholder} flex items-center text-[#9CA3AF] pr-3 sm:py-3 py-1 sm:ml-0 ml-1`}
+          >
             <input
               disabled
               type="radio"
@@ -101,17 +114,23 @@ export const DetailUser = ({ data }) => {
           </div>
         </div>
         <div>
-          <div style={InterMedium.style} className={`${styles.title}  mb-3`}>
+          <div
+            style={InterMedium.style}
+            className={`${styles.title}  mb-3 sm:ml-0 ml-1`}
+          >
             No. Telpon
           </div>
           <input
             disabled
             placeholder={data.noTelp}
-            className={`${styles.placeholder} appearance-none relative block w-full px-3 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
+            className={`${styles.placeholder} appearance-none relative block w-full px-3 sm:py-3 py-1 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
           />
         </div>
         <div>
-          <div style={InterMedium.style} className={`${styles.title} mb-3`}>
+          <div
+            style={InterMedium.style}
+            className={`${styles.title} mb-3 sm:ml-0 ml-1`}
+          >
             Role
           </div>
           <input
@@ -125,21 +144,21 @@ export const DetailUser = ({ data }) => {
                 ? "Operasional"
                 : ""
             }
-            className={`${styles.placeholder} appearance-none relative block w-full px-3 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
+            className={`${styles.placeholder} appearance-none relative block w-full px-3 sm:py-3 py-1 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
           />
         </div>
       </div>
-      <div className="flex justify-center gap-4 mt-16 mb-24">
+      <div className="flex justify-center gap-4 sm:mt-16 sm:mb-24 mt-10 mb-8">
         <button
           onClick={handleEdit}
-          className={`${styles.button_tx} ${styles.put_btn}`}
+          className={`${styles.button_tx} ${styles.put_btn} hover:bg-[#A46B14] focus:bg-[#A46B14]`}
           style={InterMedium.style}
         >
           Ubah Detail Akun
         </button>
         <button
           onClick={handleDelete}
-          className={`${styles.button_tx} ${styles.del_btn}`}
+          className={`${styles.button_tx} ${styles.del_btn} hover:bg-[#a00e0e] focus:bg-[#a00e0e]`}
           style={InterMedium.style}
         >
           Hapus Akun
