@@ -45,3 +45,28 @@
   border: 1px solid var(--Stroke, #dfe4ea);
   background: var(--White, #fff);
 }
+
+@media (max-width: 767px) {
+  .heading {
+    font-size: 38px;
+    line-height: 100%;
+  }
+}
+
+@media (max-width: 639px) {
+  .table_heading_text {
+    font-size: 12px;
+    line-height: 22px; /* 173.333% */
+  }
+
+  .table_items_text {
+    font-size: 11px;
+    line-height: 18px; /* 157.143% */
+  }
+
+  .pagination_tx {
+    text-align: center;
+    font-size: 13px;
+    line-height: 16px; /* 112.5% */
+  }
+}

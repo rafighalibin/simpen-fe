@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMutation } from "react-query";
 import { useRouter } from "next/navigation";
 
@@ -17,10 +17,20 @@ export const EditUserForm = ({ data }) => {
   const [succces, setSuccess] = useState("");
   const router = useRouter();
   const [formState, setFormState] = useState({
-    email: data.email,
-    id: data.id,
-    nama: data.nama,
+    email: "",
+    id: "",
+    nama: "",
   });
+
+  useEffect(() => {
+    if (data) {
+      setFormState({
+        email: data.email || "",
+        id: data.id || "",
+        nama: data.nama || "",
+      });
+    }
+  }, [data]);
 
   const { mutateAsync: editUserMutation, data: response } = useMutation({
     mutationFn: () =>
@@ -40,19 +50,26 @@ export const EditUserForm = ({ data }) => {
     await editUserMutation();
   };
 
+  const handleCancel = async () => {
+    router.push(`/user/detail/${data.id}`);
+  };
+
   console.log(formState);
 
   return (
     <div>
       <div
-        className={`${styles.heading} text-center my-10`}
+        className={`${styles.heading} text-center  md:my-10 my-6`}
         style={PoppinsBold.style}
       >
         Detail Akun Pengguna
       </div>
       <div className="">
         <div>
-          <div style={InterMedium.style} className={`${styles.title} mb-3`}>
+          <div
+            style={InterMedium.style}
+            className={`${styles.title} mb-3 sm:ml-0 ml-1`}
+          >
             Email
           </div>
           <input
@@ -61,7 +78,7 @@ export const EditUserForm = ({ data }) => {
             type="email"
             autoComplete="email"
             required
-            className={`${styles.placeholder} appearance-none relative block w-full px-3 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:text-black focus:z-10`}
+            className={`${styles.placeholder} appearance-none relative block w-full px-3 sm:py-3 py-1 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:text-black focus:z-10`}
             onChange={(e) =>
               setFormState({ ...formState, email: e.target.value })
             }
@@ -70,7 +87,7 @@ export const EditUserForm = ({ data }) => {
           />
           <div
             style={InterReguler.style}
-            className={`${styles.form_paragraph} mt-2`}
+            className={`${styles.form_paragraph} mt-2 sm:ml-0 ml-1`}
           >
             Email yang akan digunakan selama akun ini ada untuk login.
           </div>
@@ -78,7 +95,7 @@ export const EditUserForm = ({ data }) => {
         <div>
           <div
             style={InterMedium.style}
-            className={`${styles.title}  mb-3 mt-8`}
+            className={`${styles.title}  mb-3 mt-8 sm:ml-0 ml-1`}
           >
             Nama
           </div>
@@ -88,7 +105,7 @@ export const EditUserForm = ({ data }) => {
             type="name"
             autoComplete="name"
             required
-            className={`${styles.placeholder} appearance-none relative block w-full px-3 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC]  focus:text-black focus:z-10`}
+            className={`${styles.placeholder} appearance-none relative block w-full px-3 sm:py-3 py-1 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC]  focus:text-black focus:z-10`}
             onChange={(e) =>
               setFormState({ ...formState, nama: e.target.value })
             }
@@ -97,7 +114,7 @@ export const EditUserForm = ({ data }) => {
           />
           <div
             style={InterReguler.style}
-            className={`${styles.form_paragraph} mt-2`}
+            className={`${styles.form_paragraph} mt-2 sm:ml-0 ml-1`}
           >
             Nama Lengkap ini digunakan sebagai pengidentifikasi selama akun ini
             ada.
@@ -122,13 +139,20 @@ export const EditUserForm = ({ data }) => {
           </div>
         )}
       </div>
-      <div className="flex justify-center gap-4 mt-16 mb-24">
+      <div className="flex justify-center gap-4 sm:mt-16 sm:mb-24 mt-12 mb-8">
         <button
           onClick={handleSubmit}
-          className={`${styles.button_tx} ${styles.edit_btn}`}
+          className={`${styles.button_tx} ${styles.edit_btn} hover:bg-[#215E9B] focus:bg-[#215E9B]`}
           style={InterMedium.style}
         >
           Konfirmasi Ubah
+        </button>
+        <button
+          onClick={handleCancel}
+          className={`${styles.button_tx} ${styles.del_btn} hover:bg-[#a00e0e] focus:bg-[#a00e0e]`}
+          style={InterMedium.style}
+        >
+          Batalkan
         </button>
       </div>
     </div>
