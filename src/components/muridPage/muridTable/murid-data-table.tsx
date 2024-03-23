@@ -15,6 +15,7 @@ import {
 import { Filter, fuzzyFilter } from "../../../common/utils/table/filter";
 import { DebouncedInput } from "../../../common/utils/table/debounceInput";
 import styles from "./MuridTable.module.css"; // Assuming the same CSS module is applicable
+import Link from "next/link";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -127,11 +128,13 @@ export function DataTable<TData, TValue>({
               ))}
             </div>
           ))}
-          <button
-            className={`px-4 py-2 bg-primary/80 hover:bg-primary text-white rounded`}
-          >
-            <a href="/murid/add">+ Tambah Murid</a>
-          </button>
+          <Link href="/murid/add">
+            <button
+              className={`px-4 py-2 bg-primary/80 hover:bg-primary text-white rounded`}
+            >
+              + Tambah Murid
+            </button>
+          </Link>
         </div>
       )}
 

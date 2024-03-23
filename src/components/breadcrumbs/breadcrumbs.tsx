@@ -1,5 +1,5 @@
-import React from "react";
-import styles from "./breadcrumbs.module.css";
+import React, { Fragment } from "react";
+import styles from "./breadcurmbs.module.css";
 import { usePathname } from "next/navigation";
 import { InterMedium } from "../../font/font";
 import { RiArrowRightSLine } from "react-icons/ri";
@@ -17,7 +17,10 @@ export const Breadcrumbs = ({ excludeId = false }) => {
   const path = usePathname();
   const pathArr = getPath(path);
   return (
-    <div className={`${styles.card_breadcrumbs} md:px-7 px-5 md:py-4 py-2`}>
+    <div
+      key={`RiArrowRightSLine`}
+      className={`${styles.card_breadcrumbs} md:px-7 px-5 md:py-4 py-2`}
+    >
       <a
         className={`${styles.home_tx} text-xl ${
           path === "/dashboard" ? styles.current : styles.home
@@ -31,8 +34,9 @@ export const Breadcrumbs = ({ excludeId = false }) => {
         if (excludeId && index === pathArr.length - 1) return null; // Exclude ID
         const currentPath = `/${pathArr.slice(0, index + 1).join("/")}`;
         return (
-          <React.Fragment key={index}>
+          <Fragment key={`breadcrumb-fragment-${index}`}>
             <RiArrowRightSLine
+              key={`RiArrowRightSLine-${index}`}
               className={`${styles.arrow} inline-block md:mx-2 mx-1`}
             />
             <a
@@ -44,7 +48,7 @@ export const Breadcrumbs = ({ excludeId = false }) => {
             >
               {toPascalCase(item)}
             </a>
-          </React.Fragment>
+          </Fragment>
         );
       })}
     </div>
