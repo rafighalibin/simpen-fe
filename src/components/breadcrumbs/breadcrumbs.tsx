@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import styles from "./breadcurmbs.module.css";
+import styles from "./breadcrumbs.module.css";
 import { usePathname } from "next/navigation";
 import { InterMedium } from "../../font/font";
 import { RiArrowRightSLine } from "react-icons/ri";
