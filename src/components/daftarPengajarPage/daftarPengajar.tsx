@@ -27,26 +27,30 @@ export const DaftarPengajar = () => {
   const [selectedPage, setSelectedPage] = useState(1);
   const [sortBy, setSortBy] = useState("");
   const [sortDirection, setSortDirection] = useState("");
-  const [listPengajarExisting, setListPengajarExisting] = useState<PengajarDetail[]>(
-    []
-  );
-  const { isLoading, error, data, refetch} = useQuery({
+  const [listPengajarExisting, setListPengajarExisting] = useState<
+    PengajarDetail[]
+  >([]);
+  const { isLoading, error, data, refetch } = useQuery({
     queryKey: ["listUser"],
     queryFn: () => fetchWithToken(`/user`).then((res) => res.json()),
     onSuccess(data) {
-      if(data){
-        data.content[2].user.forEach((element: PengajarDetail) => {
-          listPengajarExisting.push(element);
-        });
+      if (data) {
+        for (let i = 0; i < data.content.length; i++) {
+          if (data.content[i].role === "pengajar") {
+            data.content[i].user.forEach((element: PengajarDetail) => {
+              listPengajarExisting.push(element);
+            });
+          }
+        }
         console.log(listPengajarExisting);
       }
     },
   });
-  
+
   if (isLoading) {
     return <Loading />;
   }
-  
+
   const filteredPengajar: PengajarDetail[] = listPengajarExisting.filter(
     (pengajar: PengajarDetail) =>
       pengajar.nama.toLowerCase().includes(searchKeyword.toLowerCase())
@@ -148,36 +152,46 @@ export const DaftarPengajar = () => {
                     className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                   />
                   {pengajar.fotoDiri && (
-                  <img
-                    src={pengajar.fotoDiri}
-                    alt="Foto Diri"
-                    className="object-cover w-full h-full"
-                    style={{ borderRadius: "50%" }}
-                  />
-                )}
-                {!pengajar.fotoDiri && (
-                  <div className="bg-neutral/5 rounded-full flex items-center justify-center w-full h-full">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-12 h-12"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
-                      />
-                    </svg>
-                  </div>
-                )}
+                    <img
+                      src={pengajar.fotoDiri}
+                      alt="Foto Diri"
+                      className="object-cover w-full h-full"
+                      style={{ borderRadius: "50%" }}
+                    />
+                  )}
+                  {!pengajar.fotoDiri && (
+                    <div className="bg-neutral/5 rounded-full flex items-center justify-center w-full h-full">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-12 h-12"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                        />
+                      </svg>
+                    </div>
+                  )}
                 </div>
                 <div className="p-4 text-center">
                   <p className="font-medium">{startIndex + index + 1}</p>
-                  <p className="mt-2">{pengajar.nama}</p> 
+                  <p className="mt-2">{pengajar.nama}</p>
                   {/* <p>{pengajar.jumlahKelas}</p> */}
+                  <div className="flex flex-wrap justify-center gap-1 pt-4">
+                    {pengajar.listTag.map((tag) => (
+                      <div
+                        key={tag.id}
+                        className="flex items-center bg-gray-200 rounded-md p-1 mr-1 mb-1"
+                      >
+                        <span className="text-sm">{tag.nama}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
                 <div className="flex justify-end p-4">
                   <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">

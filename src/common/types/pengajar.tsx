@@ -1,3 +1,5 @@
+import { TagDetail, TagRead } from "./tag";
+
 export type Pengajar = {
   id: string;
   nama: string;
@@ -33,5 +35,6 @@ export type PengajarDetail = {
   namaKontakDarurat: string,
   noTelpDarurat: string,
   role: string
+  listTag: TagRead[],
   // Add more fields if needed
 };

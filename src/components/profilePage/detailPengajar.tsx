@@ -12,31 +12,28 @@ import { useEffect, useState } from "react";
 import useFetchPengajarDetail from "../../common/hooks/user/useFetchPengajarDetail";
 
 const DetailPengajar = ({ buttons }) => {
-
-  const {id} = useParams();
+  const { id } = useParams();
   const { pengguna, isAuthenticated } = useAuthContext();
   const path = usePathname();
-  const [showSuccessAlert, setShowSuccessAlert] = useState(false); 
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
-  const {
-    isLoading: PengajarLoading,
-    listPengajarExisting: pengajar,
-  } = useFetchPengajarDetail();
+  const { isLoading: PengajarLoading, listPengajarExisting: pengajar } =
+    useFetchPengajarDetail();
 
-  console.log(pengajar)
+  console.log(pengajar);
 
   useEffect(() => {
     // Check if localStorage is available
     if (typeof localStorage !== "undefined") {
       // Check success status in localStorage
-      const updateSuccess = localStorage.getItem("updateSuccess");
+      const updateSuccess = localStorage.getItem("addTagSuccess");
 
       // Show Success Alert if tag is successfully created
       if (updateSuccess === "true") {
         setShowSuccessAlert(true);
 
         // Remove success status from localStorage after displaying
-        localStorage.removeItem("updateSuccess");
+        localStorage.removeItem("addTagSuccess");
       }
     }
   }, []);
@@ -45,19 +42,19 @@ const DetailPengajar = ({ buttons }) => {
 
   const cariIdSama = (data: any[], idYangDicari) => {
     const hasilPencarian = [];
-    
+
     // Loop melalui setiap objek dalam data
     for (let i = 0; i < data.length; i++) {
       // Mengecek jika objek memiliki properti id dan nilai id yang sama dengan id yang dicari
       if (data[i].id === idYangDicari) {
         // Menyimpan objek yang cocok ke dalam array hasilPencarian
         hasilPencarian.push(data[i]);
-        console.log(data);
+        console.log(data[i]);
       }
     }
     return hasilPencarian;
-  }
-  const specificUser = cariIdSama(pengajar, id);
+  };
+  const specificUser = cariIdSama(pengajar, id)[0];
 
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
@@ -71,41 +68,44 @@ const DetailPengajar = ({ buttons }) => {
           Detail Akun
         </h1>
         {/* Success Alert */}
-      {showSuccessAlert && (
-        <div className="pb-2">
-        <div
-          className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
-          role="alert"
-        >
-          <strong className="font-bold">Success!</strong>
-          <span className="block sm:inline"> Profile successfully Updated.</span>
-          <span
-            className="absolute top-0 bottom-0 right-0 px-4 py-3"
-            onClick={() => setShowSuccessAlert(false)}
-          >
-            <svg
-              className="fill-current h-6 w-6 text-green-500"
-              role="button"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
+        {showSuccessAlert && (
+          <div className="pb-2">
+            <div
+              className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
+              role="alert"
             >
-              <title>Close</title>
-              <path
-                fillRule="evenodd"
-                d="M14.348 5.652a.5.5 0 0 1 0 .707l-8 8a.5.5 0 1 1-.707-.707l8-8a.5.5 0 0 1 .707 0z"
-              />
-              <path
-                fillRule="evenodd"
-                d="M5.652 5.652a.5.5 0 0 0-.707 0l-8 8a.5.5 0 0 0 .707.707l8-8a.5.5 0 0 0 0-.707z"
-              />
-            </svg>
-          </span>
-        </div>
-        </div>
-      )}
-        { (
+              <strong className="font-bold">Success!</strong>
+              <span className="block sm:inline">
+                {" "}
+                Tag successfully added.
+              </span>
+              <span
+                className="absolute top-0 bottom-0 right-0 px-4 py-3"
+                onClick={() => setShowSuccessAlert(false)}
+              >
+                <svg
+                  className="fill-current h-6 w-6 text-green-500"
+                  role="button"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                >
+                  <title>Close</title>
+                  <path
+                    fillRule="evenodd"
+                    d="M14.348 5.652a.5.5 0 0 1 0 .707l-8 8a.5.5 0 1 1-.707-.707l8-8a.5.5 0 0 1 .707 0z"
+                  />
+                  <path
+                    fillRule="evenodd"
+                    d="M5.652 5.652a.5.5 0 0 0-.707 0l-8 8a.5.5 0 0 0 .707.707l8-8a.5.5 0 0 0 0-.707z"
+                  />
+                </svg>
+              </span>
+            </div>
+          </div>
+        )}
+        {
           <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-md rounded-lg ">
-            <div className="flex flex-col items-center pb-16">
+            <div className="flex justify-between flex-col items-center pb-8">
               <label className="block font-medium text-neutral/70">
                 Foto Diri
               </label>
@@ -117,33 +117,46 @@ const DetailPengajar = ({ buttons }) => {
                   accept="image/*"
                   className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                 />
-                {specificUser[0].fotoDiri && (
+                  {!specificUser.fotoDiri && (
+                    <div className="bg-neutral/5 rounded-full flex items-center justify-center w-full h-full">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-12 h-12"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                        />
+                      </svg>
+                    </div>
+                  )}
+                {specificUser.fotoDiri && (
                   <img
-                    src={specificUser[0].fotoDiri}
+                    src={specificUser.fotoDiri}
                     alt="Foto Diri"
                     className="object-cover w-full h-full"
                     style={{ borderRadius: "50%" }}
                   />
                 )}
-                {!specificUser[0].fotoDiri && (
-                  <div className="bg-neutral/5 rounded-full flex items-center justify-center w-full h-full">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-12 h-12"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
-                      />
-                    </svg>
-                  </div>
-                )}
               </div>
+              <div className="flex flex-wrap gap-3 pt-8">
+                {specificUser.listTag.map((tag) => (
+                  <div
+                    key={tag.id}
+                    className="flex items-center space-x-2 bg-gray-200 rounded-md p-2"
+                  >
+                    <span>{tag.nama}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+              <div className="flex justify-end">
+              {buttons}
             </div>
             <h1 className=" flex text-3xl font-bold text-neutral/100 ">
               Data Diri
@@ -157,7 +170,7 @@ const DetailPengajar = ({ buttons }) => {
                   disabled
                   type="text"
                   name="email"
-                  value={specificUser[0].email == null ? "" : specificUser[0].email}
+                  value={specificUser.email == null ? "" : specificUser.email}
                   className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                 />
               </div>
@@ -172,7 +185,7 @@ const DetailPengajar = ({ buttons }) => {
                     id="laki-laki"
                     name="jenisKelamin"
                     value="laki-laki"
-                    checked={specificUser[0].jenisKelamin === "laki-laki"}
+                    checked={specificUser.jenisKelamin === "laki-laki"}
                     className="mr-2"
                   />
                   <label htmlFor="laki-laki" className="mr-4">
@@ -184,7 +197,7 @@ const DetailPengajar = ({ buttons }) => {
                     id="perempuan"
                     name="jenisKelamin"
                     value="perempuan"
-                    checked={specificUser[0].jenisKelamin === "perempuan"}
+                    checked={specificUser.jenisKelamin === "perempuan"}
                     className="mr-2"
                   />
                   <label htmlFor="perempuan">Perempuan</label>
@@ -201,7 +214,7 @@ const DetailPengajar = ({ buttons }) => {
                     disabled
                     readOnly
                     type="text"
-                    value={specificUser[0].nama == null ? "" : specificUser[0].nama}
+                    value={specificUser.nama == null ? "" : specificUser.nama}
                     name="nama"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md "
                   />
@@ -216,7 +229,7 @@ const DetailPengajar = ({ buttons }) => {
                     disabled
                     type="text"
                     name="nik"
-                    value={specificUser[0].nik == null ? "" : specificUser[0].nik}
+                    value={specificUser.nik == null ? "" : specificUser.nik}
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
                 </div>
@@ -232,7 +245,9 @@ const DetailPengajar = ({ buttons }) => {
                 readOnly
                 type="text"
                 name="alamatKTP"
-                value={specificUser[0].alamatKTP == null ? "" : specificUser[0].alamatKTP}
+                value={
+                  specificUser.alamatKTP == null ? "" : specificUser.alamatKTP
+                }
                 className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
               />
             </div>
@@ -247,7 +262,11 @@ const DetailPengajar = ({ buttons }) => {
                     readOnly
                     disabled
                     type="text"
-                    value={specificUser[0].emailPribadi == null ? "" : specificUser[0].emailPribadi}
+                    value={
+                      specificUser.emailPribadi == null
+                        ? ""
+                        : specificUser.emailPribadi
+                    }
                     name="emailPribadi"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
@@ -264,7 +283,11 @@ const DetailPengajar = ({ buttons }) => {
                     disabled
                     type="text"
                     name="domisiliKota"
-                    value={specificUser[0].domisiliKota == null ? "" :specificUser[0].domisiliKota}
+                    value={
+                      specificUser.domisiliKota == null
+                        ? ""
+                        : specificUser.domisiliKota
+                    }
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
                 </div>
@@ -280,7 +303,9 @@ const DetailPengajar = ({ buttons }) => {
                     readOnly
                     disabled
                     type="text"
-                    value={specificUser[0].noTelp == null ? "" : specificUser[0].noTelp}
+                    value={
+                      specificUser.noTelp == null ? "" : specificUser.noTelp
+                    }
                     name="noTelp"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
@@ -297,7 +322,11 @@ const DetailPengajar = ({ buttons }) => {
                     disabled
                     type="text"
                     name="backupPhoneNum"
-                    value={specificUser[0].backupPhoneNum == null ? "" : specificUser[0].backupPhoneNum}
+                    value={
+                      specificUser.backupPhoneNum == null
+                        ? ""
+                        : specificUser.backupPhoneNum
+                    }
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
                 </div>
@@ -313,7 +342,11 @@ const DetailPengajar = ({ buttons }) => {
                     readOnly
                     disabled
                     type="text"
-                    value={specificUser[0].namaKontakDarurat == null ? "" : specificUser[0].namaKontakDarurat}
+                    value={
+                      specificUser.namaKontakDarurat == null
+                        ? ""
+                        : specificUser.namaKontakDarurat
+                    }
                     name="namaKontakDarurat"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
@@ -330,7 +363,11 @@ const DetailPengajar = ({ buttons }) => {
                     disabled
                     type="text"
                     name="noTelpDarurat"
-                    value={specificUser[0].noTelpDarurat == null ? "" :specificUser[0].noTelpDarurat}
+                    value={
+                      specificUser.noTelpDarurat == null
+                        ? ""
+                        : specificUser.noTelpDarurat
+                    }
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
                 </div>
@@ -345,7 +382,11 @@ const DetailPengajar = ({ buttons }) => {
                   <input
                     aria-readonly
                     disabled
-                    value={specificUser[0].pendidikanTerakhir == null ? "" : specificUser[0].pendidikanTerakhir}
+                    value={
+                      specificUser.pendidikanTerakhir == null
+                        ? ""
+                        : specificUser.pendidikanTerakhir
+                    }
                     name="pendidikanTerakhir"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
@@ -361,7 +402,11 @@ const DetailPengajar = ({ buttons }) => {
                     disabled
                     type="text"
                     name="pekerjaanLainnya"
-                    value={specificUser[0].pekerjaanLainnya == null ? "" : specificUser[0].pekerjaanLainnya}
+                    value={
+                      specificUser.pekerjaanLainnya == null
+                        ? ""
+                        : specificUser.pekerjaanLainnya
+                    }
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
                 </div>
@@ -379,14 +424,14 @@ const DetailPengajar = ({ buttons }) => {
                   value={""}
                   className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                 />
-                {specificUser[0].fotoKtp && (
+                {specificUser.fotoKtp && (
                   <img
-                    src={specificUser[0].fotoKtp}
+                    src={specificUser.fotoKtp}
                     alt="Foto KTP"
                     className="object-cover w-full h-full"
                   />
                 )}
-                {!specificUser[0].fotoKtp && (
+                {!specificUser.fotoKtp && (
                   <div className="bg-neutral/5 w-full h-full flex items-center justify-center">
                     <svg
                       data-slot="icon"
@@ -422,7 +467,9 @@ const DetailPengajar = ({ buttons }) => {
                     disabled
                     type="text"
                     value={
-                      specificUser[0].tglMasukKontrak == null ? "" : formatDate(specificUser[0].tglMasukKontrak)
+                      specificUser.tglMasukKontrak == null
+                        ? ""
+                        : formatDate(specificUser.tglMasukKontrak)
                     }
                     name="tglMasukKontrak"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
@@ -440,7 +487,9 @@ const DetailPengajar = ({ buttons }) => {
                     disabled
                     type="text"
                     name="namaBank"
-                    value={specificUser[0].namaBank == null ? "" :specificUser[0].namaBank}
+                    value={
+                      specificUser.namaBank == null ? "" : specificUser.namaBank
+                    }
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
                 </div>
@@ -456,7 +505,11 @@ const DetailPengajar = ({ buttons }) => {
                     readOnly
                     disabled
                     type="text"
-                    value={specificUser[0].noRekBank == null ? "" : specificUser[0].noRekBank}
+                    value={
+                      specificUser.noRekBank == null
+                        ? ""
+                        : specificUser.noRekBank
+                    }
                     name="noRekBank"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
@@ -471,7 +524,11 @@ const DetailPengajar = ({ buttons }) => {
                     readOnly
                     disabled
                     type="text"
-                    value={specificUser[0].namaPemilikRek == null ? "" : specificUser[0].namaPemilikRek}
+                    value={
+                      specificUser.namaPemilikRek == null
+                        ? ""
+                        : specificUser.namaPemilikRek
+                    }
                     name="namaPemilikRek"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
@@ -491,14 +548,14 @@ const DetailPengajar = ({ buttons }) => {
                   // Gunakan fungsi handleFileChangeBukuTabungan untuk foto buku tabungan
                   className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                 />
-                {specificUser[0].fotoBukuTabungan && (
+                {specificUser.fotoBukuTabungan && (
                   <img
-                    src={specificUser[0].fotoBukuTabungan}
+                    src={specificUser.fotoBukuTabungan}
                     alt="Foto Buku Tabungan"
                     className="object-cover w-full h-full"
                   />
                 )}
-                {!specificUser[0].fotoBukuTabungan && (
+                {!specificUser.fotoBukuTabungan && (
                   <div className="bg-neutral/5 w-full h-full flex items-center justify-center">
                     <svg
                       data-slot="icon"
@@ -527,7 +584,7 @@ const DetailPengajar = ({ buttons }) => {
                 readOnly
                 type="text"
                 name="npwp"
-                value={specificUser[0].npwp == null ? "" : specificUser[0].npwp}
+                value={specificUser.npwp == null ? "" : specificUser.npwp}
                 className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
               />
             </div>
@@ -543,14 +600,14 @@ const DetailPengajar = ({ buttons }) => {
                   value={""}
                   className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                 />
-                {specificUser[0].fotoNpwp && (
+                {specificUser.fotoNpwp && (
                   <img
-                    src={specificUser[0].fotoNpwp}
+                    src={specificUser.fotoNpwp}
                     alt="Foto NPWP"
                     className="object-cover w-full h-full"
                   />
                 )}
-                {!specificUser[0].fotoNpwp && (
+                {!specificUser.fotoNpwp && (
                   <div className="bg-neutral/5 w-full h-full flex items-center justify-center">
                     <svg
                       data-slot="icon"
@@ -572,121 +629,8 @@ const DetailPengajar = ({ buttons }) => {
                 )}
               </div>
             </div>
-            {buttons}
           </div>
-        )}
-        {/* {(pengguna.role === "akademik" || pengguna.role ==="operasional") && (
-            <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-md rounded-lg">
-              <div className="grid grid-cols-2 gap-8">
-                <div>
-                  <div
-                    style={InterMedium.style}
-                    className={`${styles.title} mb-3`}
-                  >
-                    Nama
-                  </div>
-                  <input
-                    disabled
-                    placeholder={nama}
-                    className={`${styles.placeholder} appearance-none relative block w-full px-3 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
-                  />
-                </div>
-                <div>
-                  <div
-                    style={InterMedium.style}
-                    className={`${styles.title}  mb-3`}
-                  >
-                    Email
-                  </div>
-                  <input
-                    disabled
-                    placeholder={email}
-                    className={`${styles.placeholder} appearance-none relative block w-full px-3 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
-                  />
-                </div>
-                <div>
-                  <div
-                    style={InterMedium.style}
-                    className={`${styles.title}  mb-3`}
-                  >
-                    Email Pribadi
-                  </div>
-                  <input
-                    disabled
-                    placeholder={emailPribadi}
-                    className={`${styles.placeholder} appearance-none relative block w-full px-3 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
-                  />
-                </div>
-                <div>
-                  <div
-                    style={InterMedium.style}
-                    className={`${styles.title} mb-3`}
-                  >
-                    Jenis Kelamin
-                  </div>
-                  <div className="flex items-center text-[#9CA3AF] pr-3 py-3">
-                    <input
-                      disabled
-                      type="radio"
-                      id="laki-laki"
-                      name="jenisKelamin"
-                      value="laki-laki"
-                      checked={jenisKelamin === "laki-laki"}
-                      className="mr-2"
-                    />
-                    <label htmlFor="laki-laki" className="mr-4">
-                      Laki-laki
-                    </label>
-                    <input
-                      disabled
-                      type="radio"
-                      id="perempuan"
-                      name="jenisKelamin"
-                      value="perempuan"
-                      checked={jenisKelamin === "perempuan"}
-                      className="mr-2"
-                    />
-                    <label htmlFor="perempuan">Perempuan</label>
-                  </div>
-                </div>
-                <div>
-                  <div
-                    style={InterMedium.style}
-                    className={`${styles.title}  mb-3`}
-                  >
-                    No. Telpon
-                  </div>
-                  <input
-                    disabled
-                    placeholder={noTelp}
-                    className={`${styles.placeholder} appearance-none relative block w-full px-3 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
-                  />
-                </div>
-                <div>
-                  <div
-                    style={InterMedium.style}
-                    className={`${styles.title} mb-3`}
-                  >
-                    Role
-                  </div>
-                  <input
-                    disabled
-                    placeholder={
-                      role === "pengajar"
-                        ? "Pengajar"
-                        : role === "akademik"
-                        ? "Akademik"
-                        : role === "operasional"
-                        ? "Operasional"
-                        : ""
-                    }
-                    className={`${styles.placeholder} appearance-none relative block w-full px-3 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
-                  />
-                </div>
-              </div>
-              {buttons}
-            </div>
-          )} */}
+        }
       </div>
     </div>
   );
