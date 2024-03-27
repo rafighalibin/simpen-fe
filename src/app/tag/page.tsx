@@ -35,21 +35,55 @@ export default function TagPage() {
     queryFn: () => fetchWithToken(`/tag`).then((res) => res.json()),
   });
 
+  const {
+    mutateAsync: deleteTagMutation,
+    data: Tag,
+    isSuccess,
+  } = useMutation({
+    mutationFn: (id: number) =>
+      fetchWithToken(`/tag/${id}`, "DELETE").then((res) => res.json()),
+    onSuccess: () => {
+      queryClient.invalidateQueries("tags");
+      setShowSuccessAlert(true);
+      setTimeout(() => {
+        setShowSuccessAlert(false);
+      }, 3000);
+      // window.location.reload();
+    },
+  });
+
   useEffect(() => {
     // Check if localStorage is available
     if (typeof localStorage !== "undefined") {
       // Check success status in localStorage
       const tagSuccess = localStorage.getItem("tagSuccess");
+      const updateTagSuccess = localStorage.getItem("UpdateTagSuccess");
 
-      // Show Success Alert if tag is successfully created
+      // Remove success status from localStorage after displaying
       if (tagSuccess === "true") {
         setShowSuccessAlert(true);
-
-        // Remove success status from localStorage after displaying
-        localStorage.removeItem("tagSuccess");
+      } else if (updateTagSuccess === "true") {
+        setShowSuccessAlert(true);
       }
     }
   }, []);
+  // Remove success status from localStorage after displaying
+  useEffect(() => {
+    if (showSuccessAlert) {
+      // Check if localStorage is available
+      if (typeof localStorage !== "undefined") {
+        // Check success status in localStorage
+        const tagSuccess = localStorage.getItem("tagSuccess");
+        const updateTagSuccess = localStorage.getItem("UpdateTagSuccess");
+
+        if (tagSuccess === "true") {
+          localStorage.removeItem("tagSuccess");
+        } else if (updateTagSuccess === "true") {
+          localStorage.removeItem("UpdateTagSuccess");
+        }
+      }
+    }
+  }, [showSuccessAlert]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -90,6 +124,13 @@ export default function TagPage() {
     }
   };
 
+  const handleDeleteTag = async (id: number) => {
+    try {
+      await deleteTagMutation(id);
+    } catch (error) {
+      console.error("Failed to delete tag:", error);
+    }
+  };
   const handleNextPage = () => {
     setSelectedPage((prevPage) =>
       Math.min(prevPage + 1, Math.ceil(sortedTags.length / itemsPerPage))
@@ -112,7 +153,13 @@ export default function TagPage() {
               role="alert"
             >
               <strong className="font-bold">Success!</strong>
-              <span className="block sm:inline"> Tag successfully added.</span>
+              <span className="block sm:inline">
+                {localStorage.getItem("tagSuccess") === "true"
+                  ? " Tag successfully added."
+                  : localStorage.getItem("UpdateTagSuccess") === "true"
+                  ? " Tag successfully updated."
+                  : " Tag successfully deleted."}
+              </span>
               <span
                 className="absolute top-0 bottom-0 right-0 px-4 py-3"
                 onClick={() => setShowSuccessAlert(false)}
@@ -136,7 +183,7 @@ export default function TagPage() {
               </span>
             </div>
           )}
-          <h1 className="text-5xl font-bold mb-6">Daftar Tag</h1>
+          <h1 className="text-6xl font-bold mb-6">Daftar Tag</h1>
           <div className="mt-4 flex items-center">
             <input
               type="text"
@@ -198,12 +245,19 @@ export default function TagPage() {
                         {tag.jumlahPengajar}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <Link
-                          href={`/tag/assign/${tag.id}`}
-                          className="text-indigo-600 hover:text-indigo-900"
-                        >
-                          Assign
-                        </Link>
+                        <div className="gap-8">
+                          <Link href={`/tag/edit/${tag.id}`}>
+                            <button className="bg-transparent hover:bg-infoHover text-blue-500 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded-full">
+                              Ubah
+                            </button>
+                          </Link>
+                          <button
+                            onClick={() => handleDeleteTag(tag.id)}
+                            className="bg-transparent hover:bg-red-500 text-red-500 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded-full"
+                          >
+                            Hapus
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

@@ -5,29 +5,71 @@ import { useState, useRef, useEffect } from "react";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import { useQueryClient } from "react-query";
 import { useAuthContext } from "../../common/utils/authContext";
-import useFetchPengajarDetail from "../../common/hooks/user/useFetchPengajarDetail";
 import Loading from "../../common/components/Loading";
 import { TagDetail, TagSelect } from "../../common/types/tag";
 import { PoppinsBold, InterMedium } from "../../font/font";
 import Select from "react-select";
 import styles from "./DetailUser.module.css";
+import { PengajarDetail } from "../../common/types/pengajar";
 
 export const UpdateTagPengajar = () => {
   const { id } = useParams();
   const fetchWithToken = useFetchWithToken();
   const queryClient = useQueryClient();
   const { pengguna, isAuthenticated } = useAuthContext();
-  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [listTagExisting, setListTagExisting] = useState<TagSelect[]>([]);
+  const [TagSelected, setTagSelected] = useState<TagSelect[]>([]);
+  const [TagRendered, setTagRendered] = useState(false);
+  const [listPengajarExisting, setListPengajarExisting] = useState<
+    PengajarDetail[]
+  >([]);
 
   const [formState, setFormState] = useState({
     id: id,
     listIdTag: [],
   });
-  const [listTagExisting, setListTagExisting] = useState<TagSelect[]>([]);
-  const [TagSelected, setTagSelected] = useState<TagSelect[]>([]);
-  const [TagValues, setTagValues] = useState([]);
-  const { isLoading: PengajarLoading, listPengajarExisting: pengajar } =
-    useFetchPengajarDetail();
+
+  const { isLoading: detailPengajarLoading, refetch } = useQuery({
+    queryKey: ["listUser"],
+    queryFn: () => fetchWithToken(`/user`).then((res) => res.json()),
+    onSuccess(data) {
+      if (data) {
+        for (let i = 0; i < data.content.length; i++) {
+          if (data.content[i].role === "pengajar") {
+            data.content[i].user.forEach((element: PengajarDetail) => {
+              listPengajarExisting.push(element);
+            });
+          }
+        }
+        for(let i = 0; i < listPengajarExisting.length; i++){
+          if(listPengajarExisting[i].id === id){
+            setFormState((prev) => ({
+              ...prev,
+              listIdTag: listPengajarExisting[i].listTag.map((tag: TagDetail) => tag.id),
+            }));
+            listPengajarExisting[i].listTag.forEach((tag: TagDetail) => {
+              TagSelected.push({ value: tag.id, label: tag.nama });
+            });
+          }
+          console.log("listPengajarExisting[i].listTag:", listPengajarExisting[i].listTag);
+        }
+        }
+      }
+    });
+
+  const { isLoading, error, data } = useQuery({
+    queryKey: ["tags"],
+    queryFn: () => fetchWithToken(`/tag`).then((res) => res.json()),
+    onSuccess(data) {
+      if (data) {
+        let tags = data.content.map((element: TagDetail) => ({
+          value: element.id,
+          label: element.nama,
+        }));
+        setListTagExisting(tags);
+      }
+    },
+  });
 
   const {
     mutateAsync: addTagPengajarMutation,
@@ -39,66 +81,40 @@ export const UpdateTagPengajar = () => {
         res.json()
       ),
     onSuccess: () => {
+      // queryClient.invalidateQueries("listUser");
       console.log(formState);
     },
   });
 
-  const {
-    mutateAsync: deleteTagPengajarMutation,
-    data: deleteResponse,
-    isSuccess : deleteSuccess,
-  } = useMutation({
-    mutationFn: () =>
-      fetchWithToken(`/tag/assign`, "DELETE", formState).then((res) =>
-        res.json()
-      ),
-    onSuccess: () => {
-      console.log(formState);
-    },
-  });
-
-  const { isLoading, error, data } = useQuery({
-    queryKey: ["tags"],
-    queryFn: () => fetchWithToken(`/tag`).then((res) => res.json()),
-    onSuccess(data) {
-      if (data) {
-        const tags = data.content.map((element: TagDetail) => ({
-            value: element.id,
-            label: element.nama,
-          }));
-          setListTagExisting(tags);
-  
-          // Inisialisasi TagSelected dengan tag yang sudah ada dalam formState.listTag
-          const selectedTagsFromStorage = JSON.parse(localStorage.getItem("selectedTags"));
-          if (selectedTagsFromStorage && selectedTagsFromStorage.length > 0) {
-            setTagSelected(selectedTagsFromStorage);
-          } else {
-            // Otherwise, set TagSelected with tags from formState.listIdTag
-            const initialSelectedTags = tags.filter((tag) => formState.listIdTag.includes(tag.value));
-            setTagSelected(initialSelectedTags);
-          }
-      }
-    },
-  });
-
-  useEffect(() => {
-    setFormState((prevState) => ({
-      ...prevState,
-      listIdTag: TagSelected.map((tag) => tag.value),
-    }));
-  }, [TagSelected]);
+  // const {
+  //   mutateAsync: deleteTagPengajarMutation,
+  //   data: deleteResponse,
+  //   isSuccess: deleteSuccess,
+  // } = useMutation({
+  //   mutationFn: () =>
+  //     fetchWithToken(`/tag/assign`, "DELETE", formState).then((res) =>
+  //       res.json()
+  //     ),
+  //   onSuccess: () => {
+  //     console.log(formState);
+  //   },
+  // });
 
   const handleChangeTag = (selectedTags) => {
-    setTagSelected(selectedTags);
-  };
+    const newTagIds = selectedTags.map(tag => tag.value);
+    setFormState(prevState => ({
+        ...prevState,
+        listIdTag: newTagIds
+    })); // Perbarui TagSelected dengan nilai tag yang dipilih
+};
 
-  //   const handleChangeTag = (e) => {
-  //     const Tag = e.map((e) => e.value);
-  //     setTagSelected(e);
-  //     setTagSelected(Tag);
-  //   };
+  useEffect(() => {
+    if (TagSelected.length > 0) {
+      setTagRendered(true);
+    }
+  }, [TagSelected]);
 
-  if (PengajarLoading) return <Loading />;
+  if (detailPengajarLoading) return <Loading />;
 
   const cariIdSama = (data: any[], idYangDicari) => {
     const hasilPencarian = [];
@@ -109,22 +125,17 @@ export const UpdateTagPengajar = () => {
       if (data[i].id === idYangDicari) {
         // Menyimpan objek yang cocok ke dalam array hasilPencarian
         hasilPencarian.push(data[i]);
-        console.log(data);
       }
     }
     return hasilPencarian;
   };
 
-  const formatDate = (timestamp) => {
-    const date = new Date(timestamp);
-    return date.toLocaleDateString("en-US");
-  };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    addTagPengajarMutation();
-  };
+    await addTagPengajarMutation();
+  }
 
-  const specificUser = cariIdSama(pengajar, id);
+  const specificUser = cariIdSama(listPengajarExisting, id);
   if (isSuccess) {
     localStorage.setItem("addTagSuccess", "true");
     redirect(`/user/profile/${id}`);
@@ -183,35 +194,30 @@ export const UpdateTagPengajar = () => {
                     Assign Tag
                   </label>
 
-                  <Select
-                    defaultValue={TagSelected}
-                    isMulti
-                    name="colors"
-                    onChange={handleChangeTag}
-                    options={listTagExisting}
-                    className="bg-base mt-1 p-2 w-full border rounded-md"
-                    classNamePrefix="select"
-                    styles={{
-                      control: (provided) => ({
-                        ...provided,
-                        border: "none", // Remove border
-                        boxShadow: "none", // Remove box shadow
-                        backgroundColor: "none", // Match platform input background color
-                        minHeight: "44px", // Set minimum height
-                        width: "100%", // Set width to 100%
-                      }),
-                      multiValue: (provided) => ({
-                        ...provided,
-                        backgroundColor: "#EDF6FF", // Match platform input background color
-                      }),
-                      input: (provided) => ({
-                        ...provided,
-                        minHeight: "44px", // Set minimum height for input
-                      }),
-                    }}
-                  />
+                  {!TagRendered && (
+                    <Select
+                      defaultValue={TagSelected}
+                      isMulti
+                      name="colors"
+                      onChange={handleChangeTag}
+                      options={listTagExisting}
+                      className="bg-base mt-1 p-2 w-full border rounded-md"
+                      classNamePrefix="select"
+                      styles={{
+                        control: (provided) => ({
+                          ...provided,
+                          border: "none",
+                          boxShadow: "none",
+                          backgroundColor: "none",
+                        }),
+                        multiValue: (provided) => ({
+                          ...provided,
+                          backgroundColor: "#EDF6FF",
+                        }),
+                      }}
+                    />
+                  )}
                 </div>
-                
               </div>
               <h1 className=" flex text-3xl font-bold text-neutral/100 ">
                 Data Diri
