@@ -57,7 +57,6 @@ export default function TagDetail() {
 
   const handleCheckboxChange = (event, pengajarId) => {
     const isChecked = event.target.checked;
-
     setSelectedPengajar((prevSelected) => {
       if (isChecked) {
         console.log(selectedPengajar);
