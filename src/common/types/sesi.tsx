@@ -10,7 +10,7 @@ export type SesiSelect = {
 };
 
 export type SesiDetail = {
-  noSesi: number;
+  nomorPertemuan: number;
   sesi_id: string;
   waktuPelaksanaan: string;
   status: string;

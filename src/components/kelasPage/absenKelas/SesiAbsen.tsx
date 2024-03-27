@@ -162,12 +162,12 @@ const SesiAbsen = () => {
                         <input
                           type="checkbox"
                           checked={
-                            formState[sesi.noSesi - 1]?.[muridIndex]
+                            formState[sesi.nomorPertemuan - 1]?.[muridIndex]
                               ?.isPresent || false
                           }
                           onChange={(e) =>
                             handleInputChange(
-                              sesi.noSesi - 1,
+                              sesi.nomorPertemuan - 1,
                               muridIndex,
                               "isPresent",
                               e.target.checked
@@ -181,12 +181,12 @@ const SesiAbsen = () => {
                           min="0"
                           max="5"
                           value={
-                            formState[sesi.noSesi - 1]?.[muridIndex]?.rating ||
-                            0
+                            formState[sesi.nomorPertemuan - 1]?.[muridIndex]
+                              ?.rating || 0
                           }
                           onChange={(e) =>
                             handleInputChange(
-                              sesi.noSesi - 1,
+                              sesi.nomorPertemuan - 1,
                               muridIndex,
                               "rating",
                               Number(e.target.value)
