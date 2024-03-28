@@ -74,7 +74,7 @@ export const AddForm = () => {
               autoComplete="email"
               required
               className={`${styles.form_placeholder} appearance-none relative block w-full px-3 sm:py-3 py-1 border border-gray-300 placeholder-gray-500  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
-              placeholder="email"
+              placeholder="Email"
               onChange={(e) =>
                 setFormState({ ...formState, email: e.target.value })
               }

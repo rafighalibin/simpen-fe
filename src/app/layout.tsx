@@ -15,20 +15,19 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head />
-      <title>SIMPEN</title>
+      <title>Simpen</title>
       <Provider>
         <AuthContextProvider>
           <body className={inter.className}>
+          <div className="flex flex-col h-screen justify-between">
             {/* start excluded navbar */}
-            {path != "/login" && path != "/" && <Navbar />}
-            {children}
-            {/* start excluded footer */}
-            {path != "/login" && path != "/" && (
-              <div>
-                <Footer />
-              </div>
-            )}
-            {/* end excluded footer */}
+            {path != "/login" && <Navbar />}
+            {/* end excluded navbar */}
+            <main className="mb-auto h-10">
+              <div className="mb-4">{children}</div>
+              <Footer />
+            </main>
+          </div>
           </body>
         </AuthContextProvider>
       </Provider>
