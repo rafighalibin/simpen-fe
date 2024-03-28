@@ -8,3 +8,7 @@ export type Program ={
     listJenisKelas: JenisKelas[];
 };
 
+export type ProgramSelect = {
+    value: string;
+    label: string;
+  };
