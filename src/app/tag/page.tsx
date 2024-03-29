@@ -29,6 +29,7 @@ export default function TagPage() {
   const [selectedPage, setSelectedPage] = useState(1);
   const [sortBy, setSortBy] = useState("");
   const [sortDirection, setSortDirection] = useState("");
+  const [itemsPerPage, setItemsPerPage] = useState(4);
 
   const { isLoading, error, data } = useQuery({
     queryKey: ["tags"],
@@ -104,11 +105,33 @@ export default function TagPage() {
     }
     return 0;
   });
+  const totalPages = Math.ceil(sortedTags.length / itemsPerPage);
 
-  const itemsPerPage = 4;
-  const startIndex = (selectedPage - 1) * itemsPerPage;
-  const endIndex = Math.min(startIndex + itemsPerPage, sortedTags.length);
-  const displayedTags = sortedTags.slice(startIndex, endIndex);
+  const paginate = (pageNumber) => setSelectedPage(pageNumber);
+  
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pageNumbers.push(
+        <button
+          key={i}
+          onClick={() => paginate(i)}
+          className={`px-3 py-1 mx-1 ${
+            selectedPage === i
+              ? "bg-blue-700 text-white"
+              : "bg-white border border-[#DFE4EA] text-[#637381] hover:bg-[#A8D4FF] hover:text-white"
+          } rounded`}
+        >
+          {i}
+        </button>
+      );
+    }
+    return pageNumbers;
+  };
+  
+  const indexOfLastItem = selectedPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const displayedTags = sortedTags.slice(indexOfFirstItem, indexOfLastItem);
 
   const handleSortByChange = (e) => {
     const selectedSort = e.target.value;
@@ -209,12 +232,12 @@ export default function TagPage() {
             </Link>
           </div>
 
-          <div className="overflow-x-auto mt-4 rounded-lg shadow-md">
             {sortedTags.length === 0 ? (
-              <div className="text-center">
+              <div className="text-center text-gray-500">
                 Belum ada tag atau tag tidak ditemukan.
               </div>
             ) : (
+              <div className="overflow-x-auto mt-4 rounded-lg shadow-md">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
@@ -236,7 +259,7 @@ export default function TagPage() {
                   {displayedTags.map((tag, index) => (
                     <tr key={tag.id}>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {startIndex + index + 1}
+                        {indexOfFirstItem + index + 1}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {tag.nama}
@@ -263,43 +286,27 @@ export default function TagPage() {
                   ))}
                 </tbody>
               </table>
+          </div>
             )}
-          </div>
-          <div className="flex justify-center space-x-3 items-center">
-            <button
-              onClick={handlePrevPage}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Previous Page
-            </button>
-            {(() => {
-              const numPages = Math.ceil(sortedTags.length / itemsPerPage);
-              const startPage =
-                selectedPage <= 3
-                  ? 1
-                  : Math.min(selectedPage - 2, numPages - 3);
-              const endPage = Math.min(startPage + 3, numPages);
-              return [...Array(endPage - startPage + 1)].map((_, index) => (
-                <button
-                  key={startPage + index}
-                  onClick={() => setSelectedPage(startPage + index)}
-                  className={`${
-                    startPage + index === selectedPage
-                      ? "bg-blue-700 text-white"
-                      : "bg-blue-500 hover:bg-blue-700 text-white hover:text-white"
-                  } font-bold py-2 px-4 rounded`}
-                >
-                  {startPage + index}
-                </button>
-              ));
-            })()}
-            <button
-              onClick={handleNextPage}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Next Page
-            </button>
-          </div>
+          <div className="flex justify-center my-4">
+        <div className="p-2">
+          <button
+            onClick={handlePrevPage}
+            disabled={selectedPage === 1}
+            className="px-3 py-1 mx-1 bg-white border border-[#DFE4EA] text-[#637381] rounded hover:bg-[#A8D4FF] hover:text-white"
+          >
+            {"<"}
+          </button>
+          {renderPageNumbers()}
+          <button
+            onClick={handleNextPage}
+            disabled={selectedPage === totalPages}
+            className="px-3 py-1 mx-1 bg-white border border-[#DFE4EA] text-[#637381] rounded hover:bg-[#A8D4FF] hover:text-white"
+          >
+            {">"}
+          </button>
+        </div>
+      </div>
         </div>
       </div>
     )
