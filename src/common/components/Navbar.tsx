@@ -175,7 +175,7 @@ const Navbar = () => {
                 </li>
                 <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
                   <a
-                    href="/#"
+                    href="/pengajar"
                     className={`${
                       getRootPath(path) === "pengajar"
                         ? "md:text-primaryForeground"

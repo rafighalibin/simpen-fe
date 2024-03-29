@@ -8,22 +8,15 @@ import {
   useQuery,
   useMutation,
 } from "react-query";
-import { redirect, useRouter } from "next/navigation";
-import Link from "next/link";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import { PengajarDetail, PengajarSelect } from "../../common/types/pengajar";
-import useFetchPengajarDetail from "../../common/hooks/user/useFetchPengajarDetail";
 import Loading from "../../common/components/Loading";
-
-interface Pengajar {
-  id: number;
-  nama: string;
-  jumlahKelas: number;
-}
 
 export const DaftarPengajar = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [itemsPerPage, setItemsPerPage] = useState(8);
   const fetchWithToken = useFetchWithToken();
+  const [searchType, setSearchType] = useState("nama");
   const [selectedPage, setSelectedPage] = useState(1);
   const [sortBy, setSortBy] = useState("");
   const [sortDirection, setSortDirection] = useState("");
@@ -52,8 +45,13 @@ export const DaftarPengajar = () => {
   }
 
   const filteredPengajar: PengajarDetail[] = listPengajarExisting.filter(
-    (pengajar: PengajarDetail) =>
-      pengajar.nama.toLowerCase().includes(searchKeyword.toLowerCase())
+    (pengajar: PengajarDetail) => {
+      if (searchType === "nama") {
+        return pengajar.nama.toLowerCase().includes(searchKeyword.toLowerCase());
+      } else if (searchType === "tag") {
+        return pengajar.listTag.some(tag => tag.nama.toLowerCase().includes(searchKeyword.toLowerCase()));
+      }
+    }
   );
 
   const sortedPengajar = [...filteredPengajar].sort((a, b) => {
@@ -70,10 +68,37 @@ export const DaftarPengajar = () => {
     return 0;
   });
 
-  const itemsPerPage = 4;
-  const startIndex = (selectedPage - 1) * itemsPerPage;
-  const endIndex = Math.min(startIndex + itemsPerPage, sortedPengajar.length);
-  const displayedPengajar = sortedPengajar.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(sortedPengajar.length / itemsPerPage);
+
+const paginate = (pageNumber) => setSelectedPage(pageNumber);
+
+const renderPageNumbers = () => {
+  const pageNumbers = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pageNumbers.push(
+      <button
+        key={i}
+        onClick={() => paginate(i)}
+        className={`px-3 py-1 mx-1 ${
+          selectedPage === i
+            ? "bg-blue-700 text-white"
+            : "bg-white border border-[#DFE4EA] text-[#637381] hover:bg-[#A8D4FF] hover:text-white"
+        } rounded`}
+      >
+        {i}
+      </button>
+    );
+  }
+  return pageNumbers;
+};
+
+const indexOfLastItem = selectedPage * itemsPerPage;
+const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+const displayedPengajar = sortedPengajar.slice(indexOfFirstItem, indexOfLastItem);
+  // const itemsPerPage = 4;
+  // const startIndex = (selectedPage - 1) * itemsPerPage;
+  // const endIndex = Math.min(startIndex + itemsPerPage, sortedPengajar.length);
+  // const displayedPengajar = sortedPengajar.slice(startIndex, endIndex);
 
   const handleSortByChange = (e) => {
     const selectedSort = e.target.value;
@@ -99,6 +124,8 @@ export const DaftarPengajar = () => {
     setSelectedPage((prevPage) => Math.max(prevPage - 1, 1));
   };
 
+  const isSearchEmpty = filteredPengajar.length === 0 && searchKeyword !== '';
+
   return (
     <div className="px-2 py-16 space-y-10 flex-grow flex flex-col justify-center">
       <h1 className="text-5xl font-bold pb-2">Daftar Pengajar</h1>
@@ -121,14 +148,12 @@ export const DaftarPengajar = () => {
           <option value="jumlahPengajar">By Jumlah Kelas</option>
         </select>
         <select
-          value={sortBy}
-          onChange={handleSortByChange}
+          value={searchType}
+          onChange={(e) => setSearchType(e.target.value)}
           className="px-4 py-2 mr-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
         >
-          <option value="">Filter</option>
-          {/* <option value="nama_asc">By Name (Asc)</option>
-          <option value="nama_desc">By Name (Desc)</option> */}
-          <option value="jumlahPengajar">By Tag</option>
+          <option value="nama">Cari berdasarkan Nama</option>
+          <option value="tag">Cari berdasarkan Tag</option>
         </select>
         <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
           <a href={`/tag`}>Daftar Tag</a>
@@ -136,7 +161,11 @@ export const DaftarPengajar = () => {
       </div>
 
       <div className="overflow-x-auto mt-4">
-        {
+        {filteredPengajar.length === 0 && searchKeyword !== '' && searchType === 'nama' ? ( // Jika hasil pencarian nama kosong
+            <p className="text-red-500">Pengajar dengan nama "{searchKeyword}" tidak ditemukan.</p>
+          ) : filteredPengajar.length === 0 && searchKeyword !== '' && searchType === 'tag' ? ( // Jika hasil pencarian tag kosong
+            <p className="text-red-500">Pengajar dengan tag "{searchKeyword}" tidak ditemukan.</p>
+          ) : (
           <div className="grid grid-cols-4 gap-10 py-16 px-6">
             {displayedPengajar.map((pengajar, index) => (
               <div
@@ -179,7 +208,7 @@ export const DaftarPengajar = () => {
                   )}
                 </div>
                 <div className="p-4 text-center">
-                  <p className="font-medium">{startIndex + index + 1}</p>
+                  <p className="font-medium">{indexOfFirstItem + index + 1}</p>
                   <p className="mt-2">{pengajar.nama}</p>
                   {/* <p>{pengajar.jumlahKelas}</p> */}
                   <div className="flex flex-wrap justify-center gap-1 pt-4">
@@ -201,40 +230,26 @@ export const DaftarPengajar = () => {
               </div>
             ))}
           </div>
-        }
+        )}
       </div>
-      <div className="flex justify-center space-x-3 items-center">
-        <button
-          onClick={handlePrevPage}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Previous Page
-        </button>
-        {(() => {
-          const numPages = Math.ceil(sortedPengajar.length / itemsPerPage);
-          const startPage =
-            selectedPage <= 3 ? 1 : Math.min(selectedPage - 2, numPages - 3);
-          const endPage = Math.min(startPage + 3, numPages);
-          return [...Array(endPage - startPage + 1)].map((_, index) => (
-            <button
-              key={startPage + index}
-              onClick={() => setSelectedPage(startPage + index)}
-              className={`${
-                startPage + index === selectedPage
-                  ? "bg-blue-700 text-white"
-                  : "bg-blue-500 hover:bg-blue-700 text-white hover:text-white"
-              } font-bold py-2 px-4 rounded`}
-            >
-              {startPage + index}
-            </button>
-          ));
-        })()}
-        <button
-          onClick={handleNextPage}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Next Page
-        </button>
+      <div className="flex justify-center my-4">
+        <div className="p-2">
+          <button
+            onClick={handlePrevPage}
+            disabled={selectedPage === 1}
+            className="px-3 py-1 mx-1 bg-white border border-[#DFE4EA] text-[#637381] rounded hover:bg-[#A8D4FF] hover:text-white"
+          >
+            {"<"}
+          </button>
+          {renderPageNumbers()}
+          <button
+            onClick={handleNextPage}
+            disabled={selectedPage === totalPages}
+            className="px-3 py-1 mx-1 bg-white border border-[#DFE4EA] text-[#637381] rounded hover:bg-[#A8D4FF] hover:text-white"
+          >
+            {">"}
+          </button>
+        </div>
       </div>
     </div>
   );
