@@ -47,9 +47,13 @@ export const DaftarPengajar = () => {
   const filteredPengajar: PengajarDetail[] = listPengajarExisting.filter(
     (pengajar: PengajarDetail) => {
       if (searchType === "nama") {
-        return pengajar.nama.toLowerCase().includes(searchKeyword.toLowerCase());
+        return pengajar.nama
+          .toLowerCase()
+          .includes(searchKeyword.toLowerCase());
       } else if (searchType === "tag") {
-        return pengajar.listTag.some(tag => tag.nama.toLowerCase().includes(searchKeyword.toLowerCase()));
+        return pengajar.listTag.some((tag) =>
+          tag.nama.toLowerCase().includes(searchKeyword.toLowerCase())
+        );
       }
     }
   );
@@ -70,35 +74,34 @@ export const DaftarPengajar = () => {
 
   const totalPages = Math.ceil(sortedPengajar.length / itemsPerPage);
 
-const paginate = (pageNumber) => setSelectedPage(pageNumber);
+  const paginate = (pageNumber) => setSelectedPage(pageNumber);
 
-const renderPageNumbers = () => {
-  const pageNumbers = [];
-  for (let i = 1; i <= totalPages; i++) {
-    pageNumbers.push(
-      <button
-        key={i}
-        onClick={() => paginate(i)}
-        className={`px-3 py-1 mx-1 ${
-          selectedPage === i
-            ? "bg-blue-700 text-white"
-            : "bg-white border border-[#DFE4EA] text-[#637381] hover:bg-[#A8D4FF] hover:text-white"
-        } rounded`}
-      >
-        {i}
-      </button>
-    );
-  }
-  return pageNumbers;
-};
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pageNumbers.push(
+        <button
+          key={i}
+          onClick={() => paginate(i)}
+          className={`px-3 py-1 mx-1 ${
+            selectedPage === i
+              ? "bg-blue-700 text-white"
+              : "bg-white border border-[#DFE4EA] text-[#637381] hover:bg-[#A8D4FF] hover:text-white"
+          } rounded`}
+        >
+          {i}
+        </button>
+      );
+    }
+    return pageNumbers;
+  };
 
-const indexOfLastItem = selectedPage * itemsPerPage;
-const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-const displayedPengajar = sortedPengajar.slice(indexOfFirstItem, indexOfLastItem);
-  // const itemsPerPage = 4;
-  // const startIndex = (selectedPage - 1) * itemsPerPage;
-  // const endIndex = Math.min(startIndex + itemsPerPage, sortedPengajar.length);
-  // const displayedPengajar = sortedPengajar.slice(startIndex, endIndex);
+  const indexOfLastItem = selectedPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const displayedPengajar = sortedPengajar.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
   const handleSortByChange = (e) => {
     const selectedSort = e.target.value;
@@ -124,11 +127,16 @@ const displayedPengajar = sortedPengajar.slice(indexOfFirstItem, indexOfLastItem
     setSelectedPage((prevPage) => Math.max(prevPage - 1, 1));
   };
 
-  const isSearchEmpty = filteredPengajar.length === 0 && searchKeyword !== '';
+  const noPengajarMessage =
+    listPengajarExisting.length === 0 ? (
+      <p className="text-center text-gray-500">
+        Tidak ada pengajar ditemukan.
+      </p>
+    ) : null;
 
   return (
     <div className="px-2 py-16 space-y-10 flex-grow flex flex-col justify-center">
-      <h1 className="text-5xl font-bold pb-2">Daftar Pengajar</h1>
+      <h1 className="text-6xl font-bold pb-4">Daftar Pengajar</h1>
       <div className="mt-4 flex items-center">
         <input
           type="text"
@@ -161,11 +169,20 @@ const displayedPengajar = sortedPengajar.slice(indexOfFirstItem, indexOfLastItem
       </div>
 
       <div className="overflow-x-auto mt-4">
-        {filteredPengajar.length === 0 && searchKeyword !== '' && searchType === 'nama' ? ( // Jika hasil pencarian nama kosong
-            <p className="text-red-500">Pengajar dengan nama "{searchKeyword}" tidak ditemukan.</p>
-          ) : filteredPengajar.length === 0 && searchKeyword !== '' && searchType === 'tag' ? ( // Jika hasil pencarian tag kosong
-            <p className="text-red-500">Pengajar dengan tag "{searchKeyword}" tidak ditemukan.</p>
-          ) : (
+      {noPengajarMessage}
+        {filteredPengajar.length === 0 &&
+        searchKeyword !== "" &&
+        searchType === "nama" ? ( // Jika hasil pencarian nama kosong
+          <p className="text-red-500">
+            Pengajar dengan nama "{searchKeyword}" tidak ditemukan.
+          </p>
+        ) : filteredPengajar.length === 0 &&
+          searchKeyword !== "" &&
+          searchType === "tag" ? ( // Jika hasil pencarian tag kosong
+          <p className="text-red-500">
+            Pengajar dengan tag "{searchKeyword}" tidak ditemukan.
+          </p>
+        ) : (
           <div className="grid grid-cols-4 gap-10 py-16 px-6">
             {displayedPengajar.map((pengajar, index) => (
               <div
