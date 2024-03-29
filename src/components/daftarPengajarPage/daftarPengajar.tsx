@@ -174,13 +174,13 @@ export const DaftarPengajar = () => {
         searchKeyword !== "" &&
         searchType === "nama" ? ( // Jika hasil pencarian nama kosong
           <p className="text-red-500">
-            Pengajar dengan nama "{searchKeyword}" tidak ditemukan.
+            Pengajar dengan nama {searchKeyword} tidak ditemukan.
           </p>
         ) : filteredPengajar.length === 0 &&
           searchKeyword !== "" &&
           searchType === "tag" ? ( // Jika hasil pencarian tag kosong
           <p className="text-red-500">
-            Pengajar dengan tag "{searchKeyword}" tidak ditemukan.
+            Pengajar dengan tag {searchKeyword} tidak ditemukan.
           </p>
         ) : (
           <div className="grid grid-cols-4 gap-10 py-16 px-6">
