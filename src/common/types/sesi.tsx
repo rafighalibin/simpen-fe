@@ -15,6 +15,8 @@ export type SesiDetail = {
   waktuPelaksanaan: string;
   status: string;
   listMuridSesi: MuridSesi[];
+  persentaseKehadiran: number;
+  averageRating: number;
 };
 
 export type MuridSesi = {
