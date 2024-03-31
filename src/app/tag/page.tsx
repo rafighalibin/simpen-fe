@@ -13,6 +13,7 @@ import Link from "next/link";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import { useAuthContext } from "../../common/utils/authContext";
 import { Breadcrumbs } from "../../components/breadcrumbs/breadcrumbs";
+import Loading from "../../common/components/Loading";
 
 interface Tag {
   id: number;
@@ -87,7 +88,7 @@ export default function TagPage() {
   }, [showSuccessAlert]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   const filteredTags: Tag[] = data.content.filter((tag: Tag) =>

@@ -17,10 +17,15 @@ const DetailPengajar = ({ buttons }) => {
   const path = usePathname();
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
-  const { isLoading: PengajarLoading, listPengajarExisting: pengajar } =
+  const { isLoading: PengajarLoading, listPengajarExisting: pengajar, refetch } =
     useFetchPengajarDetail();
 
-  console.log(pengajar);
+    console.log(pengajar);
+
+    useEffect(() => {
+      // Refetch data whenever component mounts
+      refetch();
+    }, [refetch]);
 
   useEffect(() => {
     // Check if localStorage is available
@@ -55,6 +60,7 @@ const DetailPengajar = ({ buttons }) => {
     return hasilPencarian;
   };
   const specificUser = cariIdSama(pengajar, id)[0];
+  console.log(specificUser);
 
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
@@ -77,7 +83,7 @@ const DetailPengajar = ({ buttons }) => {
               <strong className="font-bold">Success!</strong>
               <span className="block sm:inline">
                 {" "}
-                Tag successfully added.
+                Tag successfully updated.
               </span>
               <span
                 className="absolute top-0 bottom-0 right-0 px-4 py-3"
@@ -103,7 +109,7 @@ const DetailPengajar = ({ buttons }) => {
             </div>
           </div>
         )}
-        {
+        { specificUser &&(
           <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-md rounded-lg ">
             <div className="flex justify-between flex-col items-center pb-8">
               <label className="block font-medium text-neutral/70">
@@ -630,7 +636,7 @@ const DetailPengajar = ({ buttons }) => {
               </div>
             </div>
           </div>
-        }
+        )}
       </div>
     </div>
   );
