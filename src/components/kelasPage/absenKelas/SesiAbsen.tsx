@@ -54,6 +54,25 @@ const SesiAbsen = () => {
     },
   });
 
+  const{
+    mutateAsync: absenPengajarMutation,
+    isLoading: absenPengajarIsLoading,
+    data: absenPengajarResponse,
+    isSuccess: absenPengajarSuccess,
+    isError: absenPengajarError,
+  } = useMutation({
+  mutationFn: (id) =>
+      fetchWithToken(
+        `/absen-pengajar`,
+        "POST",
+        { idSesiKelas: id }
+      ).then((res) => res.json()),
+    onSuccess: () => {
+      queryClient.invalidateQueries("sesiKelas");
+    },
+  });
+  
+
   if (fetchDataIsLoading) return <Loading />;
 
   if (fetchData.content.length === 0) redirect("/kelas");
@@ -107,6 +126,17 @@ const SesiAbsen = () => {
     setSesiChanged(sessionIndex);
   };
 
+  const handleButtonClick = (id) => { // Mengambil id sebagai parameter
+    // Panggil mutateAsync dengan menyertakan id
+    absenPengajarMutation(id)
+      .then((response) => {
+        // Handle respons jika diperlukan
+      })
+      .catch((error) => {
+        // Handle error jika diperlukan
+      });
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center my-5">
@@ -133,10 +163,20 @@ const SesiAbsen = () => {
           <div className="bg-[#DAF8E6] text-[#004434] text-sm px-4 py-2">
             Berhasil update absen
           </div>
+        )} 
+        {absenPengajarSuccess && (
+          <div className="bg-[#DAF8E6] text-[#004434] text-sm px-4 py-2">
+            Pengajar Berhasil Absen
+          </div>
         )}
         {editAbsenError && !isChanged && (
           <div className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2">
             Gagal update absen
+          </div>
+        )}
+        {absenPengajarError && (
+          <div className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2">
+            Pengajar Gagal Absen
           </div>
         )}
         {fetchDataError && !isChanged && (
@@ -145,6 +185,7 @@ const SesiAbsen = () => {
           </div>
         )}
       </div>
+      
       {listSesi
         .slice(indexOfFirstItem, indexOfLastItem)
         .map((sesi, sessionIndex) => (
@@ -176,6 +217,7 @@ const SesiAbsen = () => {
                         {sesi.status === "Scheduled" && (
                           <button
                             className={`bg-transparent hover:bg-warning text-warning  hover:text-white py-2 px-4 border border-warning hover:border-transparent rounded-full `}
+                            onClick={() => handleButtonClick(sesi.sesi_id)}
                           >
                             Selesai
                           </button>
