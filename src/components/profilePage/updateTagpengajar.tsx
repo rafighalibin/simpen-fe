@@ -125,7 +125,7 @@ export const UpdateTagPengajar = () => {
   const specificUser = cariIdSama(listPengajarExisting, id);
   if (isSuccess) {
     localStorage.setItem("addTagSuccess", "true");
-    redirect(`/user/profile/${id}`);
+    redirect(`/pengajar/${id}`);
   }
 
   return (
