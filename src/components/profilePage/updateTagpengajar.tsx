@@ -12,6 +12,7 @@ import Select from "react-select";
 import styles from "./DetailUser.module.css";
 import { PengajarDetail } from "../../common/types/pengajar";
 
+
 export const UpdateTagPengajar = () => {
   const { id } = useParams();
   const fetchWithToken = useFetchWithToken();
@@ -85,20 +86,6 @@ export const UpdateTagPengajar = () => {
       console.log(formState);
     },
   });
-
-  // const {
-  //   mutateAsync: deleteTagPengajarMutation,
-  //   data: deleteResponse,
-  //   isSuccess: deleteSuccess,
-  // } = useMutation({
-  //   mutationFn: () =>
-  //     fetchWithToken(`/tag/assign`, "DELETE", formState).then((res) =>
-  //       res.json()
-  //     ),
-  //   onSuccess: () => {
-  //     console.log(formState);
-  //   },
-  // });
 
   const handleChangeTag = (selectedTags) => {
     const newTagIds = selectedTags.map(tag => tag.value);
