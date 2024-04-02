@@ -241,7 +241,7 @@ export const DaftarPengajar = () => {
                 </div>
                 <div className="flex justify-end p-4">
                   <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
-                    <a href={`/user/profile/${pengajar.id}`}>Detail</a>
+                    <a href={`/pengajar/${pengajar.id}`}>Detail</a>
                   </button>
                 </div>
               </div>
