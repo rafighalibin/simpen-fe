@@ -67,7 +67,7 @@ const Navbar = () => {
                 <a href="/pengajar" className={`text-gray-300 hover:text-white ${pathName == "/pengajar" ? "text-white" : "text-gray-300"}`}>
                   Pengajar
                 </a>
-                <a href="/profil" className={`text-gray-300 hover:text-white ${pathName == "/profil" ? "text-white" : "text-gray-300"}`}>
+                <a href="/user/profile" className={`text-gray-300 hover:text-white ${pathName == "/profil" ? "text-white" : "text-gray-300"}`}>
                   Profil
                 </a>
               </div>
@@ -81,7 +81,7 @@ const Navbar = () => {
                 <a href="/pengajar" className="text-gray-300 hover:text-white">
                   Pengajar
                 </a>
-                <a href="/profil" className="text-gray-300">
+                <a href="/user/profile" className="text-gray-300">
                   Profil
                 </a>
               </div>
@@ -92,7 +92,7 @@ const Navbar = () => {
                 <a href="/kelas" className="text-gray-300">
                   Kelas
                 </a>
-                <a href="/profil" className="text-gray-300">
+                <a href="/user/profile" className="text-gray-300">
                   Profil
                 </a>
               </div>
