@@ -213,6 +213,12 @@ const SesiAbsen = () => {
                         </td>
                         <td className="border-b mx-4 px-4 py-5">
                           <input
+                            disabled={
+                              formState[sesi.nomorPertemuan - 1]?.[muridIndex]
+                                ?.isPresent
+                                ? false
+                                : true
+                            }
                             type="number"
                             min="0"
                             max="5"
@@ -228,7 +234,7 @@ const SesiAbsen = () => {
                                 Number(e.target.value)
                               )
                             }
-                            className={`${styles.placeholder} relative block px-5 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC]  focus:text-black focus:z-10`}
+                            className={`${styles.placeholder} relative block px-5 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC]  focus:text-black focus:z-10 disabled:opacity-50`}
                           />
                         </td>
                         <td className="border-b pl-8 px-6 py-6">

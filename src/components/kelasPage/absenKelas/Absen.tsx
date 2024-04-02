@@ -110,9 +110,14 @@ const Absen = () => {
                 Zoom Kelas
               </button>
             </Link>
+            <Link href={`reschedule`}>
+              <button className="bg-warning text-white px-4 py-2 rounded-md hover:bg-warningHover">
+                Ubah Jadwal
+              </button>
+            </Link>
             <Link href={"/error/construction"}>
               <button className="bg-warning text-white px-4 py-2 rounded-md hover:bg-warningHover">
-                Ubah Jadwal / Ganti Guru
+                Ganti Guru
               </button>
             </Link>
             <Link href={`/kelas/${id}`}>
@@ -224,7 +229,7 @@ const Absen = () => {
           <div className="flex space-x-4">
             <input
               type="search"
-              value={playlistKelas}
+              value={playlistKelas || ""}
               placeholder="LInk Playlist Rekaman Kelas"
               name="linkPlaylist"
               onChange={(e) => {
