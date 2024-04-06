@@ -4,20 +4,20 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import useFetchWithToken from "../../../common/hooks/fetchWithToken";
 import { useParams } from "next/navigation";
 import Loading from "../../../app/loading";
-import styles from "./SesiAbsen.module.css";
+import styles from "./GantiPengajar.module.css";
 import {
-  CreateRescheduleForm,
-  CreateReschedulePayload,
-  ReadReschedule,
-  ReadRescheduleSesi,
-} from "../../../common/types/reschedule";
+  ReadGantiPengajar,
+  ReadGantiPengajarSesi,
+  CreateGantiPengajarForm,
+  CreateGantiPengajarPayload,
+} from "../../../common/types/gantiPengajar";
 
-const SesiReschedule = () => {
+const SesiGantiPengajar = () => {
   const fetchWithToken = useFetchWithToken();
   const { id } = useParams();
   const [isChanged, setIsChanged] = useState(false);
-  const [formState, setFormState] = useState([] as CreateRescheduleForm[]);
-  const [payload, setPayload] = useState([] as CreateReschedulePayload[]);
+  const [formState, setFormState] = useState([] as CreateGantiPengajarForm[]);
+  const [payload, setPayload] = useState([] as CreateGantiPengajarPayload[]);
   const [alasan, setAlasan] = useState("");
   const [detailNumber, setDetailNumber] = useState(0);
   const queryClient = useQueryClient();
@@ -27,24 +27,22 @@ const SesiReschedule = () => {
     error: fetchDataError,
     data: fetchData,
   } = useQuery({
-    queryKey: ["rescheduleKelas"],
+    queryKey: ["gantiPengajarKelas"],
     queryFn: () =>
-      fetchWithToken(`/reschedule/${id}`).then((res) => res.json()),
+      fetchWithToken(`/ganti-pengajar/${id}`).then((res) => res.json()),
   });
 
   useEffect(() => {
     if (fetchData) {
       setFormState([]);
-      fetchData.content.listSesiReschedule.map(
-        (sesiReschedule: ReadRescheduleSesi) => {
-          let createRescheduletemp: CreateRescheduleForm = {
-            sesiKelasId: sesiReschedule.sesiKelas.sesi_id,
-            tanggalBaru: sesiReschedule.activeRescheduleDate,
-            waktuBaru: sesiReschedule.activeRescheduleTime,
+      fetchData.content.listSesiGantiPengajar.map(
+        (gantiPengajarSesi: ReadGantiPengajarSesi) => {
+          let createGantiPengajartemp: CreateGantiPengajarForm = {
+            sesiKelasId: gantiPengajarSesi.sesiKelas.sesi_id,
             alasan: "",
             ischanged: false,
           };
-          setFormState((prev) => [...prev, createRescheduletemp]);
+          setFormState((prev) => [...prev, createGantiPengajartemp]);
         }
       );
     }
@@ -60,85 +58,63 @@ const SesiReschedule = () => {
         return;
       }
     }
+    console.log(
+      "formState[sessionIndex][field]",
+      formState[sessionIndex][field]
+    );
     setIsChanged(false);
   };
 
   const {
-    mutateAsync: createRescheduleMutation,
-    isLoading: createRescheduleIsLoading,
-    data: createRescheduleResponse,
-    isSuccess: createRescheduleSuccess,
-    isError: createRescheduleError,
+    mutateAsync: createGantiPengajarMutation,
+    isLoading: createGantiPengajarIsLoading,
+    data: createGantiPengajarResponse,
+    isSuccess: createGantiPengajarSuccess,
+    isError: createGantiPengajarError,
   } = useMutation({
     mutationFn: () =>
-      fetchWithToken(`/reschedule/create/${id}`, "POST", payload).then((res) =>
-        res.json()
+      fetchWithToken(`/ganti-pengajar/create/${id}`, "POST", payload).then(
+        (res) => res.json()
       ),
     onSuccess: () => {
       setIsChanged(false);
-      queryClient.invalidateQueries("rescheduleKelas");
+      queryClient.invalidateQueries("gantiPengajarKelas");
     },
   });
 
   if (fetchDataIsLoading) return <Loading />;
 
-  const listSesiReschedule: ReadRescheduleSesi[] =
-    fetchData.content.listSesiReschedule;
+  const listSesiGantiPengajar: ReadGantiPengajarSesi[] =
+    fetchData.content.listSesiGantiPengajar;
 
   const handleSubmit = () => {
     setPayload([]);
-    let payloadListTemp: CreateReschedulePayload[] = [];
+    let payloadListTemp: CreateGantiPengajarPayload[] = [];
 
     formState.forEach((element) => {
       if (element.ischanged) {
-        let payloadTemp: CreateReschedulePayload = {
+        let payloadTemp: CreateGantiPengajarPayload = {
           sesiKelasId: element.sesiKelasId,
-          waktuBaru: combineDateTime(element.tanggalBaru, element.waktuBaru),
           alasan: alasan,
-          ischanged: element.ischanged,
         };
         payloadListTemp.push(payloadTemp);
       }
     });
     payload.push(...payloadListTemp);
-    createRescheduleMutation();
+    createGantiPengajarMutation();
   };
 
-  function combineDateTime(dateString, timeString) {
-    // Parse tanggalBaru into a Date object
-    const dateParts = dateString.split("-");
-    const year = parseInt(dateParts[0]);
-    const month = parseInt(dateParts[1]);
-    const day = parseInt(dateParts[2]);
-
-    // Parse waktuBaru into hours and minutes
-    const timeParts = timeString.split(":");
-    const hours = parseInt(timeParts[0]);
-    const minutes = parseInt(timeParts[1]);
-
-    // Format the components into the desired format
-    const formattedDateTime = `${pad(month, 2)}-${pad(day, 2)}-${year} ${pad(
-      hours,
-      2
-    )}:${pad(minutes, 2)}:00`;
-
-    return formattedDateTime;
-  }
-
-  function pad(number, length) {
-    return (number < 10 ? "0" : "") + number;
-  }
   return (
     <div>
       <div className="my-5">
-        {createRescheduleSuccess && !isChanged && (
+        {createGantiPengajarSuccess && !isChanged && (
           <div className="bg-[#DAF8E6] text-[#004434] text-sm px-4 py-2">
-            Berhasil membuat permintaan reschedule
+            Berhasil membuat permintaan ganti pengajar
           </div>
         )}
-        {createRescheduleError && !isChanged && (
+        {createGantiPengajarError && !isChanged && (
           <div className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2">
-            Gagal membuat permintaan reschedule
+            Gagal membuat permintaan ganti pengajar
           </div>
         )}
         {fetchDataError && !isChanged && (
@@ -163,22 +139,19 @@ const SesiReschedule = () => {
                     Pertemuan
                   </th>
                   <th className={`px-6 py-6 text-left bg-baseForeground `}>
-                    Tanggal Awal
+                    Tanggal
                   </th>
                   <th className={`px-6 py-6 text-left bg-baseForeground `}>
-                    Waktu Awal
+                    Waktu
                   </th>
                   <th className={`px-6 py-6 text-left bg-baseForeground `}>
                     Status
                   </th>
                   <th className={`px-6 py-6 text-left bg-baseForeground `}>
-                    Reschedule
+                    Ganti Pengajar
                   </th>
                   <th className={`px-6 py-6 text-left bg-baseForeground `}>
-                    Tanggal Baru
-                  </th>
-                  <th className={`px-6 py-6 text-left bg-baseForeground `}>
-                    Waktu Baru
+                    Pengajar Pengganti
                   </th>
                   <th className={`px-10 py-6 text-left bg-baseForeground `}>
                     Riwayat
@@ -186,33 +159,33 @@ const SesiReschedule = () => {
                 </tr>
               </thead>
 
-              {listSesiReschedule.map((sesiReschedule, sessionIndex) => (
+              {listSesiGantiPengajar.map((sesiGantiPengajar, sessionIndex) => (
                 <tbody
-                  key={`sesi-tbody-${sesiReschedule.sesiKelas.sesi_id}`}
+                  key={`sesi-tbody-${sesiGantiPengajar.sesiKelas.sesi_id}`}
                   className={styles.table_items_text}
                 >
-                  <tr key={`sesi-${sesiReschedule.sesiKelas.sesi_id}`}>
+                  <tr key={`sesi-${sesiGantiPengajar.sesiKelas.sesi_id}`}>
                     <td className="border-b pl-10 px-6 py-6">
                       {sessionIndex + 1}
                     </td>
                     <td className="border-b px-6 py-6">
                       {new Date(
-                        sesiReschedule.sesiKelas.waktuPelaksanaan
+                        sesiGantiPengajar.sesiKelas.waktuPelaksanaan
                       ).toLocaleDateString()}
                     </td>
                     <td className="border-b px-6 py-6">
                       {new Date(
-                        sesiReschedule.sesiKelas.waktuPelaksanaan
+                        sesiGantiPengajar.sesiKelas.waktuPelaksanaan
                       ).toLocaleTimeString([], { timeStyle: "short" })}
                     </td>
                     <td className="border-b px-6 py-6">
-                      {sesiReschedule.sesiKelas.status}
+                      {sesiGantiPengajar.sesiKelas.status}
                     </td>
                     <td className="border-b pl-16 px-6 py-6 ">
                       <input
                         type="checkbox"
                         disabled={
-                          sesiReschedule.sesiKelas.status !== "Scheduled"
+                          sesiGantiPengajar.sesiKelas.status !== "Scheduled"
                         }
                         checked={formState[sessionIndex]?.ischanged || false}
                         onChange={(e) => {
@@ -224,55 +197,26 @@ const SesiReschedule = () => {
                         }}
                       />
                     </td>
-                    <td className="border-b mx-4 px-4 py-5">
+
+                    <td className="border-b px-6 py-6">
                       <input
-                        type="date"
-                        required={formState[sessionIndex]?.ischanged}
-                        disabled={
-                          sesiReschedule.sesiKelas.status !== "Scheduled" ||
-                          !formState[sessionIndex]?.ischanged
-                        }
+                        disabled
+                        type="text"
                         value={
-                          formState[sessionIndex]?.tanggalBaru
-                            ? formState[sessionIndex].tanggalBaru
-                            : ""
+                          sesiGantiPengajar.activeGantiPengajarNamaPengajar ==
+                          ""
+                            ? "Tidak Ada"
+                            : sesiGantiPengajar.activeGantiPengajarNamaPengajar
                         }
-                        onChange={(e) =>
-                          handleInputChange(
-                            sessionIndex,
-                            "tanggalBaru",
-                            e.target.value
-                          )
-                        }
-                        className={`${styles.placeholder} relative block px-5 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC]  focus:text-black focus:z-10 disabled:opacity-50`}
+                        className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 rounded-md"
                       />
                     </td>
-                    <td className="border-b mx-4 px-4 py-5">
-                      <input
-                        required={formState[sessionIndex]?.ischanged}
-                        type="time"
-                        disabled={
-                          sesiReschedule.sesiKelas.status !== "Scheduled" ||
-                          !formState[sessionIndex]?.ischanged
-                        }
-                        value={
-                          formState[sessionIndex]?.waktuBaru
-                            ? formState[sessionIndex].waktuBaru
-                            : ""
-                        }
-                        onChange={(e) =>
-                          handleInputChange(
-                            sessionIndex,
-                            "waktuBaru",
-                            e.target.value
-                          )
-                        }
-                        className={`${styles.placeholder} relative block px-5 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC]  focus:text-black focus:z-10 disabled:opacity-50`}
-                      />
-                    </td>
+
                     <td className="border-b pl-8 px-6 py-6">
                       <button
-                        disabled={sesiReschedule.listReschedule.length == 0}
+                        disabled={
+                          sesiGantiPengajar.listGantiPengajar.length == 0
+                        }
                         onClick={(e) => {
                           e.preventDefault();
                           setDetailNumber(
@@ -286,8 +230,8 @@ const SesiReschedule = () => {
                     </td>
                   </tr>
                   {detailNumber == sessionIndex &&
-                    sesiReschedule.listReschedule[
-                      sesiReschedule.listReschedule.length - 1
+                    sesiGantiPengajar.listGantiPengajar[
+                      sesiGantiPengajar.listGantiPengajar.length - 1
                     ] && (
                       <>
                         <tr>
@@ -299,43 +243,27 @@ const SesiReschedule = () => {
                           <td />
                           <td />
                           <td />
-                          <td />
 
                           <td className="py-2 px-12">
                             <span>Status</span>
                           </td>
                         </tr>
-                        {sesiReschedule.listReschedule.map(
-                          (reschedule: ReadReschedule) => (
-                            <tr aria-colspan={4} key={`tr-${reschedule.id}`}>
-                              <td className="py-2 pl-8 flex flex-col items-start">
+                        {sesiGantiPengajar.listGantiPengajar.map(
+                          (gantiPengajar: ReadGantiPengajar) => (
+                            <tr aria-colspan={4} key={`tr-${gantiPengajar.id}`}>
+                              <td className="py-2 pl-8  flex flex-col items-start">
                                 <span>
-                                  {reschedule.waktuPermintaan.split(" ")[0]}
+                                  {gantiPengajar.waktuPermintaan.split(" ")[0]}
                                 </span>
                               </td>
                               <td />
                               <td />
                               <td />
-                              <td></td>
-                              <td className="py-2 px-16">
-                                <span>
-                                  {new Date(
-                                    reschedule.waktuBaru
-                                  ).toLocaleDateString()}
-                                </span>
-                              </td>
-                              <td className="py-2 px-8">
-                                <span>
-                                  {new Date(
-                                    reschedule.waktuBaru
-                                  ).toLocaleTimeString([], {
-                                    timeStyle: "short",
-                                  })}
-                                </span>
-                              </td>
+                              <td />
+                              <td />
 
                               <td className="py-2 px-8">
-                                <span>{reschedule.status}</span>
+                                <span>{gantiPengajar.status}</span>
                               </td>
                             </tr>
                           )
@@ -349,13 +277,13 @@ const SesiReschedule = () => {
         </div>
         <div className="pt-8">
           <label className="block font-medium text-neutral/70">
-            Alasan Reschedule
+            Alasan Ganti Pengajar
           </label>
           <textarea
             required={isChanged}
             value={alasan}
             onChange={(e) => setAlasan(e.target.value)}
-            placeholder="Masukkan alasan reschedule"
+            placeholder="Masukkan alasan ganti pengajar"
             className="h-24 bg-base mt-1 p-2 w-full border rounded-md"
           />
         </div>
@@ -363,15 +291,15 @@ const SesiReschedule = () => {
           <button
             type="submit"
             className={`${styles.button_tx} ${styles.edit_btn} disabled:opacity-50 relative`}
-            disabled={!isChanged || createRescheduleIsLoading}
+            disabled={!isChanged || createGantiPengajarIsLoading}
           >
-            {createRescheduleIsLoading ? (
+            {createGantiPengajarIsLoading ? (
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6"></div>
                 <span>On Progress</span>
               </div>
             ) : (
-              "Buat Permintaan Reschedule"
+              "Buat Permintaan Ganti Pengajar"
             )}
           </button>
         </div>
@@ -380,4 +308,4 @@ const SesiReschedule = () => {
   );
 };
 
-export default SesiReschedule;
+export default SesiGantiPengajar;
