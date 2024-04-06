@@ -8,10 +8,15 @@ import { JenisKelas } from "../../../../common/types/jenis";
 import useFetchPengajar from "../../../../common/hooks/user/useFetchPengajar";
 import { PengajarSelect } from "../../../../common/types/pengajar";
 import Select from "react-select";
-import { MuridSelect } from "../../../../common/types/murid";
+import { MuridDetail, MuridSelect } from "../../../../common/types/murid";
 import { useRouter } from "next/navigation";
+import { useAuthContext } from "../../../../common/utils/authContext";
 
 const AddKelas = () => {
+  const queryClient = useQueryClient();
+  const fetchWithToken = useFetchWithToken();
+  const { pengguna } = useAuthContext();
+
   const router = useRouter();
 
   const [programId, setProgramId] = useState("");
@@ -36,25 +41,6 @@ const AddKelas = () => {
     useState<PengajarSelect>(null);
   const [pengajarId, setPengajarId] = useState("");
 
-  const [listMuridExisting, setListMuridExisting] = useState<MuridSelect[]>([]);
-  const listMuridExistingTemp: MuridSelect[] = [
-    {
-      value: "Student1",
-      label: "Student1",
-    },
-    {
-      value: "Student2",
-      label: "Student2",
-    },
-    {
-      value: "Student3",
-      label: "Student3",
-    },
-    {
-      value: "Student4",
-      label: "Student4",
-    },
-  ];
   const [muridSelected, setMuridSelected] = useState<MuridSelect[]>([]);
   const [muridValues, setMuridValues] = useState([]);
 
@@ -75,7 +61,6 @@ const AddKelas = () => {
     linkGroup,
   };
 
-  const fetchWithToken = useFetchWithToken();
   const { isLoading: listUserLoading, listPengajarExisting } =
     useFetchPengajar();
   const [listProgram, setListProgram] = useState([]);
@@ -83,6 +68,7 @@ const AddKelas = () => {
   const [listBahasa, setListBahasa] = useState([]);
   const [listModePertemuan, setListModePertemuan] = useState([]);
   const [listTipe, setListTipe] = useState([]);
+  const [listMuridExisting, setListMuridExisting] = useState([]);
   const daysOfWeek = [
     { id: 0, name: "Sunday" },
     { id: 1, name: "Monday" },
@@ -99,16 +85,13 @@ const AddKelas = () => {
     setMuridValues(murid);
   };
 
-  const {
-    mutateAsync: addKelasMutation,
-    data,
-    error,
-  } = useMutation({
+  const { mutateAsync: addKelasMutation, data, error} = useMutation({
     mutationFn: () =>
       fetchWithToken("/kelas", "POST", payload).then((res) => res.json()),
     onSuccess: (data) => {
       console.log(data.content as Kelas);
       router.push("/kelas");
+      queryClient.invalidateQueries("kelas");
     },
     onError: (error) => {
       console.log(error);
@@ -120,15 +103,29 @@ const AddKelas = () => {
     queryFn: () =>
       fetchWithToken("/kelas/program", "GET").then((res) => res.json()),
     onSuccess: (data) => {
-      setListProgram(data.content);
+      const listProgramTemp = data.content.map((program: Program) => ({
+        value: program.id,
+        label: program.nama,
+        jumlahPertemuan: program.jumlahPertemuan,
+        jumlahLevel: program.jumlahLevel,
+      }));
+      setListProgram(listProgramTemp);
     },
   });
 
-  const {
-    isLoading: isLoadingJenisAttributes,
-    data: dataJenisAttributes,
-    refetch: getJenisKelas,
-  } = useQuery({
+  const {} = useQuery({
+    queryKey: ["listMurid"],
+    queryFn: () => fetchWithToken("/murid").then((res) => res.json()),
+    onSuccess: (listMurid) => {
+      let murid = listMurid.content.map((murid: MuridDetail) => ({
+        value: murid.id,
+        label: murid.nama,
+      }));
+      setListMuridExisting(murid);
+    },
+  });
+
+  const {isLoading: isLoadingJenisAttributes, data: dataJenisAttributes, refetch: getJenisKelas,} = useQuery({
     queryKey: ["jenis", jenisKelas],
     queryFn: () =>
       fetchWithToken(
@@ -137,17 +134,14 @@ const AddKelas = () => {
       ).then((res) => res.json()),
     onSuccess: (data) => {
       console.log(data);
-      setJenisKelas(data.content);
-      setJenisKelasId(data.content.id);
+      const jenisKelas = data.content as JenisKelas;
+      setJenisKelas(jenisKelas);
+      setJenisKelasId(jenisKelas.id);
     },
     enabled: !!jenisKelasNama && !!tipe && !!modaPertemuan && !!bahasa,
   });
 
-  const {
-    isLoading: isLoadingJenisKelas,
-    data: dataJenisKelas,
-    refetch: getJenisAttributes,
-  } = useQuery({
+  const {isLoading: isLoadingJenisKelas, data: dataJenisKelas, refetch: getJenisAttributes,} = useQuery({
     queryKey: ["jenis", jenisKelasNama],
     queryFn: () =>
       fetchWithToken(
@@ -173,7 +167,11 @@ const AddKelas = () => {
         (res) => res.json()
       ),
     onSuccess: (data) => {
-      setListJenisKelas(data.content);
+      const listJenisKelasTemp = data.content.map((jenis: JenisKelas) => ({
+        value: jenis.id,
+        label: jenis.nama,
+      }));
+      setListJenisKelas(listJenisKelasTemp);
     },
     enabled: !!programId,
   });
@@ -257,6 +255,24 @@ const AddKelas = () => {
     }
   }, [jenisKelasId]);
 
+  const handleChangeProgram = (e) => {
+    const selectedProgramId = e.value;
+    console.log(e);
+    setProgramId(selectedProgramId);
+    if (selectedProgramId) {
+      setJumlahPertemuan(e.jumlahPertemuan);
+      setJumlahLevel(e.jumlahLevel);
+    } else {
+      setJumlahPertemuan(0);
+      setJumlahLevel(0);
+    }
+  }
+
+  const handleChangeJenisKelas = (e) => {
+    setJenisKelasNama(e.label);
+    setJenisKelasId(e.value);
+  }
+
   return (
     <div>
       {isLoadingProgram ||
@@ -267,77 +283,103 @@ const AddKelas = () => {
           <div className="spinner"></div>
         </div>
       ) : null}
-      <div className="max-w-md mx-auto mt-8">
-        <form
-          onSubmit={(e) => {
-            console.log(payload);
-            e.preventDefault();
-            addKelasMutation();
-          }}
-          className="space-y-6"
-        >
-          <div className="form-control">
-            <label className="label">
-              Program
-              <select
-                value={programId}
-                onChange={(e) => {
-                  const selectedProgramId = e.target.value;
-                  setProgramId(selectedProgramId);
-                  if (selectedProgramId) {
-                    setJumlahPertemuan(
-                      listProgram.find(
-                        (program) => program.id === selectedProgramId
-                      ).jumlahPertemuan
-                    );
-                    setJumlahLevel(
-                      listProgram.find(
-                        (program) => program.id === selectedProgramId
-                      ).jumlahLevel
-                    );
-                  } else {
-                    setJumlahPertemuan(0);
-                    setJumlahLevel(0);
-                  }
+      <div className="flex flex-col space-y-8 my-10">
+        <h1 className=" flex justify-center text-6xl font-bold text-neutral/100 ">
+          Tambah Kelas
+        </h1>
+        <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-lg rounded-lg border">
+            <form
+              onSubmit={(e) => {
+                console.log(payload);
+                e.preventDefault();
+                addKelasMutation();
+              }}
+              className="space-y-6"
+            >
+            <div className="grid grid-cols-2 gap-8">
+            <div>
+              <label className="block font-medium text-neutral/70">
+                Program
+              </label>
+              <Select
+                defaultValue={programId}
+                name="colors"
+                onChange={handleChangeProgram}
+                options={listProgram}
+                className="bg-base mt-1 p-1 w-full border rounded-md"
+                classNamePrefix="select"
+                styles={{
+                  control: (provided, state) => ({
+                    ...provided,
+                    border: "none",
+                    boxShadow: "none",
+                    backgroundColor: "none",
+                  }),
+                  multiValue: (provided) => ({
+                    ...provided,
+                    backgroundColor: "#EDF6FF",
+                  }),
+                  option: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isSelected
+                      ? "#215E9B"
+                      : provided.backgroundColor,
+                    color: state.isSelected ? "white" : provided.color,
+                    fontWeight: state.isSelected ? "bold" : provided.fontWeight,
+                  }),
                 }}
-                className="input"
-              >
-                <option value="">Select a program</option>
-                {listProgram.map((program) => (
-                  <option key={program.id} value={program.id}>
-                    {program.nama}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>Jumlah Pertemuan: {jumlahPertemuan}</label>
+                />
+            </div>
+            <div>
+              <label>Jumlah Pertemuan</label>
+              <input
+                disabled
+                placeholder={jumlahPertemuan.toString()}
+                onChange={(e) => setJumlahPertemuan(parseInt(e.target.value))}
+                className={`appearance-none relative block w-full px-3 py-3 mt-1 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
+              />
+            </div>
           </div>
 
-          <div className="form-control">
-            <label className="label">
+          <div className="">
+            <label className="block font-medium text-neutral/70">
               Jenis
-              <select
-                value={jenisKelasNama}
-                onChange={(e) => {
-                  setJenisKelasNama(e.target.value);
-                }}
-                className="input"
-                disabled={programId === ""}
-              >
-                <option value="">Select a jenis</option>
-                {listJenisKelas.map((jenis) => (
-                  <option key={jenis.nama} value={jenis.nama}>
-                    {jenis.nama}
-                  </option>
-                ))}
-              </select>
             </label>
+            <Select
+              defaultValue={jenisKelasNama}
+              isDisabled={programId === ""}
+              name="colors"
+              onChange={handleChangeJenisKelas}
+              options={listJenisKelas}
+              className="bg-base mt-1 p-1 w-full border rounded-md"
+              classNamePrefix="select"
+              styles={{
+                control: (provided, state) => ({
+                  ...provided,
+                  border: "none",
+                  boxShadow: "none",
+                  backgroundColor: "none",
+                }),
+                multiValue: (provided) => ({
+                  ...provided,
+                  backgroundColor: "#EDF6FF",
+                }),
+                option: (provided, state) => ({
+                  ...provided,
+                  backgroundColor: state.isSelected
+                    ? "#215E9B"
+                    : provided.backgroundColor,
+                  color: state.isSelected ? "white" : provided.color,
+                  fontWeight: state.isSelected ? "bold" : provided.fontWeight,
+                }),
+              }}
+            />
           </div>
 
-          <div className="form-control">
-            <label className="label">Bahasa</label>
+          <div className="form-control flex flex-wrap items-center">
+            <label className="label mr-4 block font-medium text-neutral/70">Bahasa</label>
             {listBahasa.map((bahasaItem, index) => (
-              <div key={index}>
+              <div key={index} className="flex items-center mr-4">
                 <input
                   type="radio"
                   name="bahasa"
@@ -345,60 +387,70 @@ const AddKelas = () => {
                   onChange={(e) => {
                     setBahasa(e.target.value);
                   }}
+                  className="mr-1"
                 />
-                <label>{bahasaItem}</label>
+                <label className="mr-1 block font-medium text-neutral/70">
+                  {jenisKelasNama === "" ? "Select Bahasa" : bahasaItem}
+                </label>
               </div>
             ))}
           </div>
 
-          <div className="form-control">
-            <label className="label">Moda Pertemuan</label>
+          <div className="form-control flex flex-wrap items-center">
+            <label className="label mr-4 block font-medium text-neutral/70">Moda Pertemuan</label>
             {listModePertemuan.map((modaItem, index) => (
-              <div key={index}>
+              <div key={index} className="flex items-center mr-4">
                 <input
                   type="radio"
                   name="moda_pertemuan"
                   value={modaItem}
                   onChange={(e) => {
-                    // Handle radio button change
                     setModaPertemuan(e.target.value);
                   }}
+                  className="mr-1"
                 />
-                <label>{modaItem}</label>
+                <label className="mr-1 block font-medium text-neutral/70">
+                {jenisKelasNama === "" ? "Select Jenis Kelas" : modaItem}
+                </label>
               </div>
             ))}
           </div>
 
-          <div className="form-control">
-            <label className="label">Tipe</label>
+          <div className="form-control flex flex-wrap items-center">
+            <label className="label mr-4 block font-medium text-neutral/70">Tipe:</label>
             {listTipe.map((tipeItem, index) => (
-              <div key={index}>
+              <div key={index} className="flex items-center mr-4">
                 <input
                   type="radio"
                   name="tipe"
                   value={tipeItem}
                   onChange={(e) => {
-                    // Handle radio button change
                     setTipe(e.target.value);
                   }}
+                  className="mr-1"
+                  disabled={jenisKelasNama === ""}
                 />
-                <label>{tipeItem}</label>
+                <label className="mr-1 block font-medium text-neutral/70">
+                {jenisKelasNama === "" ? "Select Tipe Kelas" : tipeItem}
+                  </label>
               </div>
             ))}
           </div>
 
-          <div className="form-control">
-            <label className="label">Days of the Week</label>
+          <div className="form-control flex flex-row">
+            <label className="label mr-4 block font-medium text-neutral/70">Hari:</label>
             {daysOfWeek.map((day) => (
-              <div key={day.id}>
+              <div key={day.id} className="flex items-center mr-4">
                 <input
                   type="checkbox"
                   id={`day-${day.id}`}
                   value={day.id}
                   checked={selectedDays.includes(day.id)}
                   onChange={() => handleDayChange(day.id)}
+                  className="bg-base -mb-0.5 p-2 w-full border rounded-md mr-1"
                 />
-                <label htmlFor={`day-${day.id}`}>{day.name}</label>
+                <label
+                  htmlFor={`day-${day.id}`} className="block font-medium text-neutral/70">{day.name}</label>
               </div>
             ))}
           </div>
@@ -413,25 +465,35 @@ const AddKelas = () => {
             />
           </div>
 
-          <div className="form-control">
-            <label className="label">Tanggal Mulai</label>
-            <input
-              type="date"
-              value={tanggalMulai}
-              onChange={(e) => setTanggalMulai(e.target.value)}
-              className="input"
-            />
-          </div>
+          <div className="grid grid-cols-2 gap-8">
+            <div className="relative">
+                <label className="block font-medium text-neutral/70">
+                  Tanggal Kelas Dimulai
+                </label>
+                <div className="flex mt-1 relative">
+                  <input
+                    type="date"
+                    value={tanggalMulai}
+                    onChange={(e) => setTanggalMulai(e.target.value)}
+                    className="bg-base mt-1 p-2 w-full border rounded-md"
+                  />
+                </div>
+              </div>
 
-          <div className="form-control">
-            <label className="label">Tanggal Selesai</label>
-            <input
-              type="date"
-              value={tanggalSelesai}
-              onChange={(e) => setTanggalSelesai(e.target.value)}
-              className="input"
-              disabled={true}
-            />
+              <div className="relative">
+                <label className="block font-medium text-neutral/70">
+                  Tanggal Kelas Selesai
+                </label>
+                <div className="flex mt-1 relative">
+                  <input
+                    type="date"
+                    value={tanggalSelesai}
+                    onChange={(e) => setTanggalSelesai(e.target.value)}
+                    className="bg-base mt-1 p-2 w-full border rounded-md"
+                    disabled={true}
+                  />
+                </div>
+              </div>
           </div>
 
           {/* Display generated class dates */}
@@ -479,26 +541,26 @@ const AddKelas = () => {
           <div className="form-control">
             <label className="label">List Murid</label>
             <Select
-              defaultValue={muridSelected}
-              isMulti
-              name="colors"
-              onChange={handleChangeMurid}
-              options={listMuridExistingTemp}
-              className="bg-base mt-1 p-2 w-full border rounded-md"
-              classNamePrefix="select"
-              styles={{
-                control: (provided) => ({
-                  ...provided,
-                  border: "none", // Remove border
-                  boxShadow: "none", // Remove box shadow
-                  backgroundColor: "none", // Match platform input background color
-                }),
-                multiValue: (provided) => ({
-                  ...provided,
-                  backgroundColor: "#EDF6FF", // Match platform input background color
-                }),
-              }}
-            />
+                defaultValue={muridSelected}
+                isMulti
+                name="colors"
+                onChange={handleChangeMurid}
+                options={listMuridExisting}
+                className="bg-base mt-1 p-1 w-full border rounded-md"
+                classNamePrefix="select"
+                styles={{
+                  control: (provided) => ({
+                    ...provided,
+                    border: "none",
+                    boxShadow: "none",
+                    backgroundColor: "none",
+                  }),
+                  multiValue: (provided) => ({
+                    ...provided,
+                    backgroundColor: "#EDF6FF",
+                  }),
+                }}
+              />
           </div>
           <div className="form-control">
             <label className="label">Level</label>
@@ -542,9 +604,11 @@ const AddKelas = () => {
           >
             Buat Kelas
           </button>
-        </form>
+            </form>
+              </div>
+            </div>
+        
       </div>
-    </div>
   );
 };
 
