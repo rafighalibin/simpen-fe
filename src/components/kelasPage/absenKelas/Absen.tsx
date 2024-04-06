@@ -12,27 +12,13 @@ import Link from "next/link";
 const Absen = () => {
   const fetchWithToken = useFetchWithToken();
   const { id } = useParams();
+  const [playlistKelas, setPlaylistKelas] = useState("");
+  const [isChanged, setIsChanged] = useState(false);
   const { isLoading, error, data } = useQuery({
     queryKey: ["kelasDetail"],
     queryFn: () => fetchWithToken(`/kelas/${id}`).then((res) => res.json()),
     onSuccess: (data) => {
-      data.content.listMurid.forEach((e) => {
-        muridSelected.push({
-          value: e,
-          label: e,
-        });
-      });
-    },
-  });
-  const [muridSelected, setMuridSelected] = useState<MuridSelect[]>([]);
-  const [playlistKelas, setPlaylistKelas] = useState("");
-  const [isChanged, setIsChanged] = useState(false);
-
-  const { mutateAsync: deleteMutation } = useMutation({
-    mutationFn: () =>
-      fetchWithToken(`/kelas/${id}`, "DELETE").then((res) => res.json()),
-    onSuccess: (data) => {
-      console.log(data);
+      setPlaylistKelas(data.content.linkPlaylist);
     },
   });
 
@@ -42,7 +28,7 @@ const Absen = () => {
     isError: updatePlaylistError,
   } = useMutation({
     mutationFn: () =>
-      fetchWithToken(`/kelas/playlist/${id}`, "PUT", {
+      fetchWithToken(`/kelas/playlist/${id}`, "POST", {
         id: id,
         linkPlaylist: playlistKelas,
       }).then((res) => res.json()),
@@ -124,9 +110,14 @@ const Absen = () => {
                 Zoom Kelas
               </button>
             </Link>
+            <Link href={`reschedule`}>
+              <button className="bg-warning text-white px-4 py-2 rounded-md hover:bg-warningHover">
+                Ubah Jadwal
+              </button>
+            </Link>
             <Link href={"/error/construction"}>
               <button className="bg-warning text-white px-4 py-2 rounded-md hover:bg-warningHover">
-                Ubah Jadwal / Ganti Guru
+                Ganti Guru
               </button>
             </Link>
             <Link href={`/kelas/${id}`}>
@@ -233,14 +224,14 @@ const Absen = () => {
 
         <div>
           <label className="block font-medium text-neutral/70">
-            Link Group Kelas
+            Link Playlist Kelas
           </label>
           <div className="flex space-x-4">
             <input
               type="search"
-              value={playlistKelas}
+              value={playlistKelas || ""}
               placeholder="LInk Playlist Rekaman Kelas"
-              name="linkGroup"
+              name="linkPlaylist"
               onChange={(e) => {
                 setIsChanged(true);
                 setPlaylistKelas(e.target.value);

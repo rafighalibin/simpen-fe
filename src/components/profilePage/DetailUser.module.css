@@ -1,0 +1,68 @@
+.heading {
+    color: #000;
+    text-align: center;
+    font-size: 64px;
+    font-style: normal;
+    line-height: 120%;
+  }
+  
+  .title {
+    color: var(--Dark-Dark, #111928);
+    font-size: 16px;
+    font-style: normal;
+    line-height: 24px; /* 150% */
+  }
+  
+  .placeholder {
+    color: var(--Dark-Dark-6, #9ca3af);
+    font-size: 16px;
+    font-style: normal;
+    line-height: 24px; /* 150% */
+  }
+  
+  .put_btn {
+    display: inline-flex;
+    padding: 12px 24px;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    border-radius: 8px;
+    background: var(--Blue, #f87e0d);
+  }
+  
+  .del_btn {
+    display: inline-flex;
+    padding: 12px 24px;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    border-radius: 8px;
+    border: 1px solid var(--Coral---Darker, #cb4c4b);
+    background: var(--Coral---Darker, #cb4c4b);
+  }
+  
+  .button_tx {
+    color: var(--White-White, var(--White, #fff));
+    text-align: center;
+    font-size: 16px;
+    font-style: normal;
+    line-height: 24px; /* 150% */
+  }
+  
+  .edit_btn {
+    display: inline-flex;
+    padding: 12px 24px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    border-radius: 6px;
+    background: var(--Blue, #66a2dc);
+  }
+  
+  .form_paragraph {
+    color: var(--Dark-Dark-4, #4b5563);
+    font-size: 14px;
+    font-style: normal;
+    line-height: 22px; /* 157.143% */
+  }
+  

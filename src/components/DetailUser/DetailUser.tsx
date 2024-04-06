@@ -31,6 +31,8 @@ export const DetailUser = ({ data }) => {
     router.push(`/user/detail/edit/${data.id}`);
   };
 
+  console.log(data);
+
   return (
     <div>
       <div

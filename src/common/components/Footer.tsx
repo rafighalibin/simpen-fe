@@ -16,23 +16,20 @@ const Footer = () => {
     return null;
   }
   return (
-    <div className="bg-primaryForeground sm:flex items-center justify-center">
-      <div className={`flex items-center justify-center sm:py-10 pt-6 pb-2`}>
-        <div className={`mr-4`}>
+    <footer className="bg-primaryForeground flex items-center justify-center fixed bottom-0 left-0 w-full">
+      <div className="flex items-center justify-center py-4">
+        <div className="mr-4">
           <Image src={nakahamaLogo} alt={"asset attr 1"} width={20} />
         </div>
-        <div className="border-r border-primary h-8"></div>{" "}
-        <div className={` ml-4`}>
+        <div className="border-r border-primary h-2"></div>{" "}
+        <div className="ml-4">
           <Image src={kalanantiLogo} alt={"asset attr 2"} width={100} />
         </div>
       </div>
-      <div
-        className={`${styles.tx} sm:ml-4 ml-0 sm:text-left text-center sm:mb-0 sm:pb-0 pb-3`}
-        style={InterReguler.style}
-      >
+      <h2 className="text-primary text-xs ml-4">
         © 2024 Nakahama Labs for Kalananti
-      </div>
-    </div>
+      </h2>
+    </footer>
   );
 };
 export default Footer;

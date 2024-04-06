@@ -11,6 +11,7 @@ import { useState } from "react";
 import { redirect, useRouter } from "next/navigation";
 import Link from "next/link";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
+import Loading from "../../common/components/Loading";
 
 interface Tag {
   id: number;
@@ -62,7 +63,7 @@ export const TagForm = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return  <Loading />;;
   }
 
   if (isSuccess){

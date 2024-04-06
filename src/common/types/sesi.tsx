@@ -10,11 +10,13 @@ export type SesiSelect = {
 };
 
 export type SesiDetail = {
-  noSesi: number;
+  nomorPertemuan: number;
   sesi_id: string;
   waktuPelaksanaan: string;
   status: string;
   listMuridSesi: MuridSesi[];
+  persentaseKehadiran: number;
+  averageRating: number;
 };
 
 export type MuridSesi = {
