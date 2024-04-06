@@ -115,7 +115,7 @@ const Absen = () => {
                 Ubah Jadwal
               </button>
             </Link>
-            <Link href={"/error/construction"}>
+            <Link href={"ganti-pengajar"}>
               <button className="bg-warning text-white px-4 py-2 rounded-md hover:bg-warningHover">
                 Ganti Guru
               </button>
