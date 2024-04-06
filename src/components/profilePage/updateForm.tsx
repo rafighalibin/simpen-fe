@@ -5,6 +5,7 @@ import { useState, useRef } from "react";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import { useQueryClient } from "react-query";
 import { useAuthContext } from "../../common/utils/authContext";
+import Loading from "../../common/components/Loading";
 
 export const UpdateForm = () => {
   const fetchWithToken = useFetchWithToken();
@@ -236,7 +237,7 @@ export const UpdateForm = () => {
 
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   if (isSuccess) {
