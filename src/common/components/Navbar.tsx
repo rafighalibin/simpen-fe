@@ -33,7 +33,10 @@ const Navbar = () => {
   return (
     <nav className="bg-primary py-4">
       <div className="max-w-7xl mx-auto px-4">
-        <div style={InterReguler.style} className="flex justify-between items-center ">
+        <div
+          style={InterReguler.style}
+          className="flex justify-between items-center "
+        >
           <div className="flex space-x-4">
             <h1 style={PoppinsBold.style} className="text-white font-bold">
               <a href="/">Simpen</a>
@@ -41,33 +44,49 @@ const Navbar = () => {
 
             {pengguna.role === "superadmin" && (
               <div className="flex space-x-4">
-                <a href="/user" className={`text-gray-300 hover:text-white ${pathName == "/user" ? "text-white" : "text-gray-300"}`}>
+                <a
+                  href="/user"
+                  className={`text-gray-300 hover:text-white ${
+                    pathName == "/user" ? "text-white" : "text-gray-300"
+                  }`}
+                >
                   Akun
-                </a>
-                <a href="/kelas/program" className={`text-gray-300 hover:text-white ${pathName == "/kelas/program" ? "text-white" : "text-gray-300"}`}>
-                  Program
-                </a>
-                <a href="/kelas/jenis" className={`text-gray-300 hover:text-white ${pathName == "/kelas/jenis" ? "text-white" : "text-gray-300"}`}>
-                  Jenis Kelas
-                </a>
-                <a href="/kelas" className={`text-gray-300 hover:text-white ${pathName == "/kelas" ? "text-white" : "text-gray-300"}`}>
-                  Kelas
-                </a>
-                <a href="/pengajar" className={`text-gray-300 hover:text-white ${pathName == "/pengajar" ? "text-white" : "text-gray-300"}`}>
-                  Pengajar
                 </a>
               </div>
             )}
 
             {pengguna.role === "operasional" && (
               <div className="flex space-x-4">
-                <a href="/kelas" className={`text-gray-300 hover:text-white ${pathName == "/kelas" ? "text-white" : "text-gray-300"}`}>
+                <a
+                  href="/kelas"
+                  className={`text-gray-300 hover:text-white ${
+                    pathName == "/kelas" ? "text-white" : "text-gray-300"
+                  }`}
+                >
                   Kelas
                 </a>
-                <a href="/pengajar" className={`text-gray-300 hover:text-white ${pathName == "/pengajar" ? "text-white" : "text-gray-300"}`}>
+                <a
+                  href="/pengajar"
+                  className={`text-gray-300 hover:text-white ${
+                    pathName == "/pengajar" ? "text-white" : "text-gray-300"
+                  }`}
+                >
                   Pengajar
                 </a>
-                <a href="/user/profile" className={`text-gray-300 hover:text-white ${pathName == "/profil" ? "text-white" : "text-gray-300"}`}>
+                <a
+                  href="/perubahan-kelas"
+                  className={`text-gray-300 hover:text-white ${
+                    pathName == "/pengajar" ? "text-white" : "text-gray-300"
+                  }`}
+                >
+                  Perubahan Kelas
+                </a>
+                <a
+                  href="/user/profile"
+                  className={`text-gray-300 hover:text-white ${
+                    pathName == "/profil" ? "text-white" : "text-gray-300"
+                  }`}
+                >
                   Profil
                 </a>
               </div>

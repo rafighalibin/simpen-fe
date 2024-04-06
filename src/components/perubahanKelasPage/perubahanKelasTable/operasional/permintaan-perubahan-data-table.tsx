@@ -14,8 +14,7 @@ import {
 
 import { Filter, fuzzyFilter } from "../../../../common/utils/table/filter";
 import { DebouncedInput } from "../../../../common/utils/table/debounceInput";
-import styles from "../KelasTable.module.css"; // Assuming the same CSS module is applicable
-import Link from "next/link";
+import styles from "../PerubahanKelasTable.module.css"; // Assuming the same CSS module is applicable
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -121,13 +120,6 @@ export function DataTable<TData, TValue>({
             ))}
           </div>
         ))}
-        <Link href="/kelas/add">
-          <button
-            className={`px-4 py-2 bg-primary/80 hover:bg-primary text-white rounded`}
-          >
-            + Tambah Kelas
-          </button>
-        </Link>
       </div>
 
       <div className="shadow-lg rounded-lg ">
@@ -169,16 +161,6 @@ export function DataTable<TData, TValue>({
             ))}
           </thead>
           <tbody className={styles.table_items_text}>
-            {table.getRowModel().rows.length === 0 && (
-              <tr>
-                <td
-                  colSpan={columns.length}
-                  className="text-center bg-gray-100 py-4"
-                >
-                  No data found
-                </td>
-              </tr>
-            )}
             {table.getRowModel().rows.map((row) => (
               <tr key={row.id} className="border-b-2">
                 {row.getVisibleCells().map((cell) => (
