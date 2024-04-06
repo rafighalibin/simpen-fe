@@ -8,8 +8,11 @@ export type ReadReschedule = {
   status: string;
   waktuPermintaan: string;
 };
-export type ReadSesiReschedule = {
+export type ReadRescheduleSesi = {
   sesiKelas: SesiRead;
+  activeReschedule: ReadReschedule;
+  activeRescheduleDate: string;
+  activeRescheduleTime: string;
   listReschedule: ReadReschedule[];
 };
 
@@ -26,4 +29,8 @@ export type CreateReschedulePayload = {
   waktuBaru: string;
   alasan: string;
   ischanged: boolean;
+};
+
+const getLatestRescheduleDate = (reschedule: ReadReschedule) => {
+  return new Date(reschedule.waktuBaru).getDate();
 };
