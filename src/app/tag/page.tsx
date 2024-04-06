@@ -109,7 +109,7 @@ export default function TagPage() {
   const totalPages = Math.ceil(sortedTags.length / itemsPerPage);
 
   const paginate = (pageNumber) => setSelectedPage(pageNumber);
-  
+
   const renderPageNumbers = () => {
     const pageNumbers = [];
     for (let i = 1; i <= totalPages; i++) {
@@ -129,7 +129,7 @@ export default function TagPage() {
     }
     return pageNumbers;
   };
-  
+
   const indexOfLastItem = selectedPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const displayedTags = sortedTags.slice(indexOfFirstItem, indexOfLastItem);
@@ -233,81 +233,83 @@ export default function TagPage() {
             </Link>
           </div>
 
-            {sortedTags.length === 0 ? (
-              <div className="text-center text-gray-500">
-                Belum ada tag atau tag tidak ditemukan.
-              </div>
-            ) : (
+          {sortedTags.length === 0 ? (
+            <div className="text-center text-gray-500">
+              Belum ada tag atau tag tidak ditemukan.
+            </div>
+          ) : (
+            <>
               <div className="overflow-x-auto mt-4 rounded-lg shadow-md">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      No.
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Nama Tag
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Jumlah Pengajar
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {displayedTags.map((tag, index) => (
-                    <tr key={tag.id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {indexOfFirstItem + index + 1}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {tag.nama}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {tag.jumlahPengajar}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="gap-8">
-                          <Link href={`/tag/edit/${tag.id}`}>
-                            <button className="bg-transparent hover:bg-infoHover text-blue-500 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded-full">
-                              Ubah
-                            </button>
-                          </Link>
-                          <button
-                            onClick={() => handleDeleteTag(tag.id)}
-                            className="bg-transparent hover:bg-red-500 text-red-500 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded-full"
-                          >
-                            Hapus
-                          </button>
-                        </div>
-                      </td>
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        No.
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Nama Tag
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Jumlah Pengajar
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Action
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-          </div>
-            )}
-          <div className="flex justify-center my-4">
-        <div className="p-2">
-          <button
-            onClick={handlePrevPage}
-            disabled={selectedPage === 1}
-            className="px-3 py-1 mx-1 bg-white border border-[#DFE4EA] text-[#637381] rounded hover:bg-[#A8D4FF] hover:text-white"
-          >
-            {"<"}
-          </button>
-          {renderPageNumbers()}
-          <button
-            onClick={handleNextPage}
-            disabled={selectedPage === totalPages}
-            className="px-3 py-1 mx-1 bg-white border border-[#DFE4EA] text-[#637381] rounded hover:bg-[#A8D4FF] hover:text-white"
-          >
-            {">"}
-          </button>
-        </div>
-      </div>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {displayedTags.map((tag, index) => (
+                      <tr key={tag.id}>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {indexOfFirstItem + index + 1}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {tag.nama}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {tag.jumlahPengajar}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="gap-8">
+                            <Link href={`/tag/edit/${tag.id}`}>
+                              <button className="bg-transparent hover:bg-infoHover text-blue-500 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded-full">
+                                Ubah
+                              </button>
+                            </Link>
+                            <button
+                              onClick={() => handleDeleteTag(tag.id)}
+                              className="bg-transparent hover:bg-red-500 text-red-500 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded-full"
+                            >
+                              Hapus
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="flex justify-center my-4">
+                <div className="p-2">
+                  <button
+                    onClick={handlePrevPage}
+                    disabled={selectedPage === 1}
+                    className="px-3 py-1 mx-1 bg-white border border-[#DFE4EA] text-[#637381] rounded hover:bg-[#A8D4FF] hover:text-white"
+                  >
+                    {"<"}
+                  </button>
+                  {renderPageNumbers()}
+                  <button
+                    onClick={handleNextPage}
+                    disabled={selectedPage === totalPages}
+                    className="px-3 py-1 mx-1 bg-white border border-[#DFE4EA] text-[#637381] rounded hover:bg-[#A8D4FF] hover:text-white"
+                  >
+                    {">"}
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     )

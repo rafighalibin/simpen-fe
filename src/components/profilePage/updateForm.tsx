@@ -5,6 +5,7 @@ import { useState, useRef } from "react";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import { useQueryClient } from "react-query";
 import { useAuthContext } from "../../common/utils/authContext";
+import Loading from "../../common/components/Loading";
 
 export const UpdateForm = () => {
   const fetchWithToken = useFetchWithToken();
@@ -132,10 +133,10 @@ export const UpdateForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(pengguna.role);
-    
+
     if (
-      pengguna.role === "pengajar" && (formState.nik.length !== 16 ||
-      !/^\d+$/.test(formState.nik)) 
+      pengguna.role === "pengajar" &&
+      (formState.nik.length !== 16 || !/^\d+$/.test(formState.nik))
     ) {
       setFormState({
         ...formState,
@@ -234,9 +235,8 @@ export const UpdateForm = () => {
     });
   }
 
-
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   if (isSuccess) {
@@ -839,8 +839,8 @@ export const UpdateForm = () => {
                 </div>
               </div>
               <p className="text-sm text-neutral/50">
-                  Jika tidak ingin mengubah password, kosongkan field ini.
-                </p>
+                Jika tidak ingin mengubah password, kosongkan field ini.
+              </p>
               <div className="flex justify-center py-4 gap-4">
                 <button
                   type="submit"
@@ -855,159 +855,158 @@ export const UpdateForm = () => {
             </div>
           </form>
         )}
-        {(pengguna.role === "akademik" ||
-          pengguna.role === "operasional") && (
-            <form onSubmit={handleSubmit}>
-              <div className="bg-base flex flex-col space-y-4 px-8 py-4 shadow-md rounded-lg">
-                <h1 className=" flex text-3xl font-bold text-neutral/100 ">
-                  Data Diri
-                </h1>
-                <div className="flex flex-row gap-4 space-x-8">
-                  <div className="w-1/2">
-                    <label className="block font-medium text-neutral/70">
-                      Email Kalananti
-                    </label>
-                    <input
-                      disabled
-                      type="text"
-                      name="email"
-                      value={formState.email == null ? "" : formState.email}
-                      className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
-                    />
-                  </div>
-                  <div className="w-1/2">
-                    <label className="block font-medium text-neutral/70">
-                      Jenis Kelamin
-                    </label>
-                    <div className="flex items-center mt-1">
-                      <input
-                        type="radio"
-                        id="laki-laki"
-                        name="jenisKelamin"
-                        value="laki-laki"
-                        onChange={handleChange}
-                        checked={formState.jenisKelamin == "laki-laki"}
-                        className="mr-2"
-                      />
-                      <label htmlFor="laki-laki" className="mr-4">
-                        Laki-laki
-                      </label>
-                      <input
-                        type="radio"
-                        id="perempuan"
-                        name="jenisKelamin"
-                        value="perempuan"
-                        onChange={handleChange}
-                        checked={formState.jenisKelamin === "perempuan"}
-                        className="mr-2"
-                      />
-                      <label htmlFor="perempuan">Perempuan</label>
-                    </div>
-                  </div>
-                </div>
-                <div>
+        {(pengguna.role === "akademik" || pengguna.role === "operasional") && (
+          <form onSubmit={handleSubmit}>
+            <div className="bg-base flex flex-col space-y-4 px-8 py-4 shadow-md rounded-lg">
+              <h1 className=" flex text-3xl font-bold text-neutral/100 ">
+                Data Diri
+              </h1>
+              <div className="flex flex-row gap-4 space-x-8">
+                <div className="w-1/2">
                   <label className="block font-medium text-neutral/70">
-                    Nama Lengkap
+                    Email Kalananti
                   </label>
                   <input
+                    disabled
                     type="text"
-                    name="nama"
-                    onChange={handleChange}
-                    placeholder="Nama Lengkap"
-                    className="bg-base mt-1 p-2 w-full border rounded-md "
-                    value={formState.nama == null ? "" : formState.nama}
+                    name="email"
+                    value={formState.email == null ? "" : formState.email}
+                    className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
                 </div>
-                <div className="flex flex-row gap-4 space-x-8">
-                  <div className="w-1/2 relative">
-                    <label className="block font-medium text-neutral/70">
-                      Email Pribadi
+                <div className="w-1/2">
+                  <label className="block font-medium text-neutral/70">
+                    Jenis Kelamin
+                  </label>
+                  <div className="flex items-center mt-1">
+                    <input
+                      type="radio"
+                      id="laki-laki"
+                      name="jenisKelamin"
+                      value="laki-laki"
+                      onChange={handleChange}
+                      checked={formState.jenisKelamin == "laki-laki"}
+                      className="mr-2"
+                    />
+                    <label htmlFor="laki-laki" className="mr-4">
+                      Laki-laki
                     </label>
-                    <div className="flex mt-1 relative">
-                      <input
-                        type="email"
-                        value={
-                          formState.emailPribadi == null
-                            ? ""
-                            : formState.emailPribadi
-                        }
-                        name="emailPribadi"
-                        onChange={handleChange}
-                        placeholder="Email Pribadi"
-                        className="bg-base mt-1 p-2 w-full border rounded-md "
-                      />
-                    </div>
+                    <input
+                      type="radio"
+                      id="perempuan"
+                      name="jenisKelamin"
+                      value="perempuan"
+                      onChange={handleChange}
+                      checked={formState.jenisKelamin === "perempuan"}
+                      className="mr-2"
+                    />
+                    <label htmlFor="perempuan">Perempuan</label>
                   </div>
-                  <div className="w-1/2 relative">
-                    <label className="block font-medium text-neutral/70">
-                      No. Telpon
-                    </label>
-                    <div className="flex mt-1 relative">
-                      <input
-                        type="number"
-                        value={formState.noTelp == null ? "" : formState.noTelp}
-                        name="noTelp"
-                        onChange={handleChange}
-                        placeholder="No. Telpon"
-                        className="bg-base mt-1 p-2 w-full border rounded-md "
-                      />
-                    </div>
-                  </div>
-                </div>
-                <h1 className=" flex text-3xl pt-12 font-bold text-neutral/100 ">
-                  Ubah Password
-                </h1>
-                <div className="flex flex-row gap-4 space-x-8">
-                  <div className="w-1/2 relative">
-                    <label className="block font-medium text-neutral/70">
-                      Password Baru
-                    </label>
-                    <div className="flex mt-1 relative">
-                      <input
-                        type="password"
-                        name="password"
-                        placeholder="Password Baru"
-                        onChange={handleChange}
-                        className="bg-base mt-1 p-2 w-full border rounded-md "
-                      />
-                    </div>
-                  </div>
-                  <div className="w-1/2 relative">
-                    <label className="block font-medium text-neutral/70">
-                      Konfirmasi Password
-                    </label>
-                    <div className="flex mt-1 relative">
-                      <input
-                        type="password"
-                        name="konfirmasiPassword"
-                        placeholder="Konfirmasi Password"
-                        onChange={handleChange}
-                        onBlur={handleConfirmPassword}
-                        className="bg-base mt-1 p-2 w-full border rounded-md "
-                      />
-                    </div>
-                    {!passwordsMatch && (
-                      <p className="text-red-500">Password tidak cocok</p>
-                    )}
-                  </div>
-                </div>
-                <p className="text-sm text-neutral/50">
-                  Jika tidak ingin mengubah password, kosongkan field ini.
-                </p>
-                <div className="flex justify-center py-4 gap-4">
-                  <button
-                    type="submit"
-                    className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
-                  >
-                    Ubah Detail Akun
-                  </button>
-                  <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
-                    Cancel
-                  </button>
                 </div>
               </div>
-            </form>
-          )}
+              <div>
+                <label className="block font-medium text-neutral/70">
+                  Nama Lengkap
+                </label>
+                <input
+                  type="text"
+                  name="nama"
+                  onChange={handleChange}
+                  placeholder="Nama Lengkap"
+                  className="bg-base mt-1 p-2 w-full border rounded-md "
+                  value={formState.nama == null ? "" : formState.nama}
+                />
+              </div>
+              <div className="flex flex-row gap-4 space-x-8">
+                <div className="w-1/2 relative">
+                  <label className="block font-medium text-neutral/70">
+                    Email Pribadi
+                  </label>
+                  <div className="flex mt-1 relative">
+                    <input
+                      type="email"
+                      value={
+                        formState.emailPribadi == null
+                          ? ""
+                          : formState.emailPribadi
+                      }
+                      name="emailPribadi"
+                      onChange={handleChange}
+                      placeholder="Email Pribadi"
+                      className="bg-base mt-1 p-2 w-full border rounded-md "
+                    />
+                  </div>
+                </div>
+                <div className="w-1/2 relative">
+                  <label className="block font-medium text-neutral/70">
+                    No. Telpon
+                  </label>
+                  <div className="flex mt-1 relative">
+                    <input
+                      type="number"
+                      value={formState.noTelp == null ? "" : formState.noTelp}
+                      name="noTelp"
+                      onChange={handleChange}
+                      placeholder="No. Telpon"
+                      className="bg-base mt-1 p-2 w-full border rounded-md "
+                    />
+                  </div>
+                </div>
+              </div>
+              <h1 className=" flex text-3xl pt-12 font-bold text-neutral/100 ">
+                Ubah Password
+              </h1>
+              <div className="flex flex-row gap-4 space-x-8">
+                <div className="w-1/2 relative">
+                  <label className="block font-medium text-neutral/70">
+                    Password Baru
+                  </label>
+                  <div className="flex mt-1 relative">
+                    <input
+                      type="password"
+                      name="password"
+                      placeholder="Password Baru"
+                      onChange={handleChange}
+                      className="bg-base mt-1 p-2 w-full border rounded-md "
+                    />
+                  </div>
+                </div>
+                <div className="w-1/2 relative">
+                  <label className="block font-medium text-neutral/70">
+                    Konfirmasi Password
+                  </label>
+                  <div className="flex mt-1 relative">
+                    <input
+                      type="password"
+                      name="konfirmasiPassword"
+                      placeholder="Konfirmasi Password"
+                      onChange={handleChange}
+                      onBlur={handleConfirmPassword}
+                      className="bg-base mt-1 p-2 w-full border rounded-md "
+                    />
+                  </div>
+                  {!passwordsMatch && (
+                    <p className="text-red-500">Password tidak cocok</p>
+                  )}
+                </div>
+              </div>
+              <p className="text-sm text-neutral/50">
+                Jika tidak ingin mengubah password, kosongkan field ini.
+              </p>
+              <div className="flex justify-center py-4 gap-4">
+                <button
+                  type="submit"
+                  className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
+                >
+                  Ubah Detail Akun
+                </button>
+                <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );

@@ -85,57 +85,10 @@ const Navbar = () => {
                         : "md:text-info"
                     }  md:hover:text-primaryForeground`}
                   >
-                    User
+                    Akun
                   </a>
                 </li>
-                <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
-                  <a
-                    href="/program"
-                    className={`${
-                      getRootPath(path) === "program"
-                        ? "text-primaryForeground"
-                        : "text-info"
-                    }  md:hover:text-primaryForeground`}
-                  >
-                    Program
-                  </a>
-                </li>
-                <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
-                  <a
-                    href="/jenis-kelas"
-                    className={`${
-                      getRootPath(path) === "jenis-kelas"
-                        ? "text-primaryForeground"
-                        : "text-info"
-                    }  md:hover:text-primaryForeground`}
-                  >
-                    Jenis Kelas
-                  </a>
-                </li>
-                <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent  hover:bg-[#efefef]">
-                  <a
-                    href="/kelas"
-                    className={`${
-                      getRootPath(path) === "kelas"
-                        ? "text-primaryForeground"
-                        : "text-info"
-                    }  md:hover:text-primaryForeground`}
-                  >
-                    Kelas
-                  </a>
-                </li>
-                <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent  hover:bg-[#efefef]">
-                  <a
-                    href="/pengajar"
-                    className={`${
-                      getRootPath(path) === "pengajar"
-                        ? "text-primaryForeground"
-                        : "text-info"
-                    }  md:hover:text-primaryForeground`}
-                  >
-                    Pengajar
-                  </a>
-                </li>
+
                 <li className="p-2 hover:bg-[#efefef] md:hidden block">
                   <div
                     className={`text-[16px] ${styles.logout_tx} md:hidden block `}
@@ -175,7 +128,7 @@ const Navbar = () => {
                 </li>
                 <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
                   <a
-                    href="/#"
+                    href="/pengajar"
                     className={`${
                       getRootPath(path) === "pengajar"
                         ? "md:text-primaryForeground"
@@ -187,26 +140,26 @@ const Navbar = () => {
                 </li>
                 <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
                   <a
-                    href="/user/profile"
+                    href="/perubahan-kelas"
                     className={`${
                       getRootPath(path) === "user"
                         ? "md:text-primaryForeground"
                         : "md:text-info"
                     }  md:hover:text-primaryForeground`}
                   >
-                    Profil
+                    Perubahan Kelas
                   </a>
                 </li>
                 <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent  hover:bg-[#efefef]">
                   <a
-                    href="/murid"
+                    href="/user/profile"
                     className={`${
                       getRootPath(path) === "murid"
                         ? "md:text-primaryForeground"
                         : "md:text-info"
                     }  md:hover:text-primaryForeground`}
                   >
-                    Murid
+                    Profil
                   </a>
                 </li>
                 <li className="p-2 hover:bg-[#efefef] md:hidden block">
@@ -248,7 +201,7 @@ const Navbar = () => {
                 </li>
                 <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
                   <a
-                    href="/#"
+                    href="/pengajar"
                     className={`${
                       getRootPath(path) === "user"
                         ? "md:text-primaryForeground"

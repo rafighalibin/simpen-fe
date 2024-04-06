@@ -21,8 +21,9 @@ export const DetailUser = ({ data }) => {
   console.log(data.id);
 
   const handleDelete = async () => {
-    if (window.confirm("Are you sure you want to delete this Account?")) {
+    if (window.confirm("Apa anda yakin ingin menonaktifkan akun ini?")) {
       await deleteMutation();
+      localStorage.setItem("removeUserSuccess", `${data.nama}`);
       router.push("/user");
     }
   };

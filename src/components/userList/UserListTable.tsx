@@ -24,11 +24,54 @@ export const UserListTable = () => {
   const [filterBy, setFilterBy] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
+  const [showAlert, setShowAlert] = useState(false);
+  const [userAlert, setUserAlert] = useState("");
+  const [alertType, setAlertType] = useState("");
   const router = useRouter();
 
   useEffect(() => {
     refetch();
   }, [refetch]);
+
+  useEffect(() => {
+    if (typeof localStorage !== "undefined") {
+      const addAlert = localStorage.getItem("addUserSuccess");
+      const editAlert = localStorage.getItem("editUserSuccess");
+      const removeAlert = localStorage.getItem("removeUserSuccess");
+
+      if (addAlert) {
+        setShowAlert(true);
+        setUserAlert(addAlert);
+        setAlertType("add");
+        console.log(addAlert);
+      } else if (editAlert) {
+        setShowAlert(true);
+        setUserAlert(editAlert);
+        setAlertType("edit");
+      } else if (removeAlert) {
+        setShowAlert(true);
+        setUserAlert(removeAlert);
+        setAlertType("delete");
+      }
+    }
+  }, []);
+  useEffect(() => {
+    if (setShowAlert) {
+      if (typeof localStorage !== "undefined") {
+        const addAlert = localStorage.getItem("addUserSuccess");
+        const editAlert = localStorage.getItem("editUserSuccess");
+        const removeAlert = localStorage.getItem("removeUserSuccess");
+
+        if (addAlert) {
+          localStorage.removeItem("addUserSuccess");
+        } else if (editAlert) {
+          localStorage.removeItem("editUserSuccess");
+        } else if (removeAlert) {
+          localStorage.removeItem("removeUserSuccess");
+        }
+      }
+    }
+  }, [setShowAlert]);
 
   useEffect(() => {
     function sortUsers(users, filterBy) {
@@ -119,6 +162,47 @@ export const UserListTable = () => {
         Daftar Akun
       </div>
       <div>
+        {showAlert && (
+          <div
+            className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mt-3 mb-5"
+            role="alert"
+          >
+            <span className="block sm:inline">Akun </span>
+            <strong className="font-bold">{userAlert} </strong>
+            <span className="block sm:inline">
+              {alertType === "add"
+                ? `berhasil ditambahkan sebagai pengguna!`
+                : alertType === "edit"
+                ? "berhasil diperbarui!"
+                : alertType === "delete"
+                ? " telah dinonaktifkan!"
+                : ""}
+            </span>
+            <span
+              className="absolute top-0 bottom-0 right-0 px-4 py-3"
+              onClick={() => setShowAlert(false)}
+            >
+              <svg
+                className="fill-current h-6 w-6 text-green-500"
+                role="button"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <title>Close</title>
+                <path
+                  fillRule="evenodd"
+                  d="M14.348 5.652a.5.5 0 0 1 0 .707l-8 8a.5.5 0 1 1-.707-.707l8-8a.5.5 0 0 1 .707 0z"
+                />
+                <path
+                  fillRule="evenodd"
+                  d="M5.652 5.652a.5.5 0 0 0-.707 0l-8 8a.5.5 0 0 0 .707.707l8-8a.5.5 0 0 0 0-.707z"
+                />
+              </svg>
+            </span>
+          </div>
+        )}
+      </div>
+      <div>
         <Filtering
           sQ={searchQuery}
           ssQ={setSearchQuery}
@@ -137,7 +221,7 @@ export const UserListTable = () => {
               className={`p-6 ${styles.table_items_text}`}
               style={InterMedium.style}
             >
-              No users found.
+              Pengguna tidak ditemukan.
             </div>
           ) : (
             <table className={`table-auto w-full`}>

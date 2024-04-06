@@ -32,6 +32,7 @@ export function DataTable<TData, TValue>({
   const [totalPages, setTotalPages] = useState(
     Math.ceil(data.length / pagination.pageSize)
   );
+
   const [globalFilter, setGlobalFilter] = useState("");
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const table = useReactTable({
@@ -161,6 +162,17 @@ export function DataTable<TData, TValue>({
             ))}
           </thead>
           <tbody className={styles.table_items_text}>
+            {table.getRowModel().rows.length === 0 && (
+              <tr>
+                <td
+                  colSpan={columns.length}
+                  className="text-center bg-gray-100 py-4"
+                >
+                  No data found
+                </td>
+              </tr>
+            )}
+
             {table.getRowModel().rows.map((row) => (
               <tr key={row.id} className="border-b-2">
                 {row.getVisibleCells().map((cell) => (
