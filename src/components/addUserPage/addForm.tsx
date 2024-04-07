@@ -28,8 +28,10 @@ export const AddForm = () => {
     onSuccess: (data) => {
       if (data.code == 200) {
         console.log(data.content);
+        setError(null);
         setSuccess("Sukses mendaftarkan.");
         setTimeout(() => {
+          localStorage.setItem("addUserSuccess", `${formState.nama}`);
           router.push("/user");
         }, 1000);
       } else if (data.code == 400) {
