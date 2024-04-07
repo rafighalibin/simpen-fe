@@ -40,6 +40,7 @@ export const EditUserForm = ({ data }) => {
     onSuccess: (data) => {
       if (data) setSuccess("Informasi akun berhasil diubah.");
       setTimeout(() => {
+        localStorage.setItem("editUserSuccess", `${formState.nama}`);
         router.push("/user");
       }, 1000);
     },

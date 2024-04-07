@@ -37,8 +37,8 @@ export const LoginForm = () => {
       }).then((res) => res.json()),
     onSuccess: (data) => {
       if (data.code == 200) {
-        setIsLoading(true); // Set isLoading state to true
         setPenggunaToken(data.content);
+        setIsLoading(true); // Set isLoading state to true
         setTimeout(() => {
           router.replace("/dashboard");
         }, 1000);
