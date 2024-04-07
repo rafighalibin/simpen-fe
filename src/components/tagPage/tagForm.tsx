@@ -123,6 +123,7 @@ export const TagForm = () => {
               Nama Tag
             </label>
             <input
+              required
               type="text"
               value={nama}
               onChange={(e) => setNama(e.target.value)}

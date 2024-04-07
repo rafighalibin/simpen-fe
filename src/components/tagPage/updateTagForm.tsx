@@ -125,6 +125,7 @@ export const UpdateTagForm = () => {
               Nama Tag
             </label>
             <input
+              required
               type="text"
               value={nama}
               onChange={(e) => setNama(e.target.value)}
