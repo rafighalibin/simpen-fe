@@ -4,16 +4,14 @@ import AddKelas from "../../../components/kelasPage/kelasTable/operasional/addKe
 import { useAuthContext } from "../../../common/utils/authContext";
 import { useRouter } from "next/navigation";
 import IsLoggedIn from "../../../common/utils/IsLoggedIn";
+import { Breadcrumbs } from "../../../components/breadcrumbs/breadcrumbs";
 
 function Page() {
-  const { checkPermission } = useAuthContext();
-
   return (
-    checkPermission(true, true, false) && (
       <div className="px-[8vw] py-8">
-        <AddKelas />
-      </div>
-    )
+      <Breadcrumbs />
+      <AddKelas />
+    </div>
   );
 }
 

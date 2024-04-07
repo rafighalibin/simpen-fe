@@ -71,9 +71,12 @@ const DetailAkun = ({ buttons }) => {
 
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
-    return date.toLocaleDateString("en-US");
+    const day = date.getDate().toString().padStart(2, '0'); // Tambahkan nol di depan jika hanya satu digit
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Tambahkan nol di depan jika hanya satu digit
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   };
-
+  
   return (
     <div>
       <div className=" px-48 py-12 space-y-10 flex-grow flex flex-col justify-center">
