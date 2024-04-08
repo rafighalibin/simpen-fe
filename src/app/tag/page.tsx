@@ -46,11 +46,7 @@ export default function TagPage() {
       fetchWithToken(`/tag/${id}`, "DELETE").then((res) => res.json()),
     onSuccess: () => {
       queryClient.invalidateQueries("tags");
-      setShowSuccessAlert(true);
-      setTimeout(() => {
-        setShowSuccessAlert(false);
-      }, 3000);
-      // window.location.reload();
+      localStorage.setItem("DeleteTagSuccess", "true");
     },
   });
 
@@ -60,11 +56,15 @@ export default function TagPage() {
       // Check success status in localStorage
       const tagSuccess = localStorage.getItem("tagSuccess");
       const updateTagSuccess = localStorage.getItem("UpdateTagSuccess");
+      const deleteTagSuccess = localStorage.getItem("DeleteTagSuccess");
 
+      console.log(tagSuccess, updateTagSuccess, deleteTagSuccess);
       // Remove success status from localStorage after displaying
       if (tagSuccess === "true") {
         setShowSuccessAlert(true);
       } else if (updateTagSuccess === "true") {
+        setShowSuccessAlert(true);
+      } else {
         setShowSuccessAlert(true);
       }
     }
@@ -77,10 +77,16 @@ export default function TagPage() {
         // Check success status in localStorage
         const tagSuccess = localStorage.getItem("tagSuccess");
         const updateTagSuccess = localStorage.getItem("UpdateTagSuccess");
+        const deleteTagSuccess = localStorage.getItem("DeleteTagSuccess");
 
+        console.log(tagSuccess, updateTagSuccess, deleteTagSuccess);
         if (tagSuccess === "true") {
           localStorage.removeItem("tagSuccess");
-        } else if (updateTagSuccess === "true") {
+        }
+        if (deleteTagSuccess === "true") {
+          localStorage.removeItem("DeleteTagSuccess");
+        }
+        if (updateTagSuccess === "true") {
           localStorage.removeItem("UpdateTagSuccess");
         }
       }
@@ -98,8 +104,10 @@ export default function TagPage() {
   const sortedTags = [...filteredTags].sort((a, b) => {
     if (sortBy === "nama_asc") {
       return a.nama.localeCompare(b.nama);
-    } else if (sortBy === "jumlahPengajar") {
+    } else if (sortBy === "jumlahPengajar_asc") {
       return a.jumlahPengajar - b.jumlahPengajar;
+    } else if (sortBy === "jumlahPengajar_desc") {
+      return b.jumlahPengajar - a.jumlahPengajar;
     } else if (sortBy === "nama_desc") {
       // If the sort direction is descending, reverse the comparison result
       return b.nama.localeCompare(a.nama);
@@ -109,7 +117,7 @@ export default function TagPage() {
   const totalPages = Math.ceil(sortedTags.length / itemsPerPage);
 
   const paginate = (pageNumber) => setSelectedPage(pageNumber);
-  
+
   const renderPageNumbers = () => {
     const pageNumbers = [];
     for (let i = 1; i <= totalPages; i++) {
@@ -129,7 +137,17 @@ export default function TagPage() {
     }
     return pageNumbers;
   };
-  
+
+  let successMessage = null;
+
+  if (localStorage.getItem("tagSuccess") === "true") {
+    successMessage = "Tag successfully added.";
+  } else if (localStorage.getItem("UpdateTagSuccess") === "true") {
+    successMessage = "Tag successfully updated.";
+  } else if (localStorage.getItem("DeleteTagSuccess") === "true") {
+    successMessage = "Tag successfully deleted.";
+  }
+
   const indexOfLastItem = selectedPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const displayedTags = sortedTags.slice(indexOfFirstItem, indexOfLastItem);
@@ -171,19 +189,14 @@ export default function TagPage() {
         <Breadcrumbs />
         <div className="px-20 py-20 space-y-10 flex-grow flex flex-col justify-center">
           {/* Success Alert */}
-          {showSuccessAlert && (
+          {showSuccessAlert && successMessage && (
             <div
               className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
               role="alert"
             >
               <strong className="font-bold">Success!</strong>
-              <span className="block sm:inline">
-                {localStorage.getItem("tagSuccess") === "true"
-                  ? " Tag successfully added."
-                  : localStorage.getItem("UpdateTagSuccess") === "true"
-                  ? " Tag successfully updated."
-                  : " Tag successfully deleted."}
-              </span>
+              <span className="block sm:inline"> {successMessage}</span>
+
               <span
                 className="absolute top-0 bottom-0 right-0 px-4 py-3"
                 onClick={() => setShowSuccessAlert(false)}
@@ -224,7 +237,12 @@ export default function TagPage() {
               <option value="">Sort By</option>
               <option value="nama_asc">By Name (Asc)</option>
               <option value="nama_desc">By Name (Desc)</option>
-              <option value="jumlahPengajar">By Jumlah Pengajar</option>
+              <option value="jumlahPengajar_asc">
+                By Jumlah Pengajar (Asc)
+              </option>
+              <option value="jumlahPengajar_desc">
+                By Jumlah Pengajar (Desc)
+              </option>
             </select>
             <Link href={`/tag/create`}>
               <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
@@ -233,81 +251,83 @@ export default function TagPage() {
             </Link>
           </div>
 
-            {sortedTags.length === 0 ? (
-              <div className="text-center text-gray-500">
-                Belum ada tag atau tag tidak ditemukan.
-              </div>
-            ) : (
+          {sortedTags.length === 0 ? (
+            <div className="text-center text-gray-500">
+              Belum ada tag atau tag tidak ditemukan.
+            </div>
+          ) : (
+            <>
               <div className="overflow-x-auto mt-4 rounded-lg shadow-md">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      No.
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Nama Tag
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Jumlah Pengajar
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {displayedTags.map((tag, index) => (
-                    <tr key={tag.id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {indexOfFirstItem + index + 1}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {tag.nama}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {tag.jumlahPengajar}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="gap-8">
-                          <Link href={`/tag/edit/${tag.id}`}>
-                            <button className="bg-transparent hover:bg-infoHover text-blue-500 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded-full">
-                              Ubah
-                            </button>
-                          </Link>
-                          <button
-                            onClick={() => handleDeleteTag(tag.id)}
-                            className="bg-transparent hover:bg-red-500 text-red-500 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded-full"
-                          >
-                            Hapus
-                          </button>
-                        </div>
-                      </td>
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        No.
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Nama Tag
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Jumlah Pengajar
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Action
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-          </div>
-            )}
-          <div className="flex justify-center my-4">
-        <div className="p-2">
-          <button
-            onClick={handlePrevPage}
-            disabled={selectedPage === 1}
-            className="px-3 py-1 mx-1 bg-white border border-[#DFE4EA] text-[#637381] rounded hover:bg-[#A8D4FF] hover:text-white"
-          >
-            {"<"}
-          </button>
-          {renderPageNumbers()}
-          <button
-            onClick={handleNextPage}
-            disabled={selectedPage === totalPages}
-            className="px-3 py-1 mx-1 bg-white border border-[#DFE4EA] text-[#637381] rounded hover:bg-[#A8D4FF] hover:text-white"
-          >
-            {">"}
-          </button>
-        </div>
-      </div>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {displayedTags.map((tag, index) => (
+                      <tr key={tag.id}>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {indexOfFirstItem + index + 1}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {tag.nama}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {tag.jumlahPengajar}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="gap-8">
+                            <Link href={`/tag/edit/${tag.id}`}>
+                              <button className="bg-transparent hover:bg-infoHover text-blue-500 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded-full">
+                                Ubah
+                              </button>
+                            </Link>
+                            <button
+                              onClick={() => handleDeleteTag(tag.id)}
+                              className="bg-transparent hover:bg-red-500 text-red-500 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded-full"
+                            >
+                              Hapus
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="flex justify-center my-4">
+                <div className="p-2">
+                  <button
+                    onClick={handlePrevPage}
+                    disabled={selectedPage === 1}
+                    className="px-3 py-1 mx-1 bg-white border border-[#DFE4EA] text-[#637381] rounded hover:bg-[#A8D4FF] hover:text-white"
+                  >
+                    {"<"}
+                  </button>
+                  {renderPageNumbers()}
+                  <button
+                    onClick={handleNextPage}
+                    disabled={selectedPage === totalPages}
+                    className="px-3 py-1 mx-1 bg-white border border-[#DFE4EA] text-[#637381] rounded hover:bg-[#A8D4FF] hover:text-white"
+                  >
+                    {">"}
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     )
