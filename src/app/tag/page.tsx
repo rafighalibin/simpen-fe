@@ -46,11 +46,7 @@ export default function TagPage() {
       fetchWithToken(`/tag/${id}`, "DELETE").then((res) => res.json()),
     onSuccess: () => {
       queryClient.invalidateQueries("tags");
-      setShowSuccessAlert(true);
-      setTimeout(() => {
-        setShowSuccessAlert(false);
-      }, 3000);
-      // window.location.reload();
+      localStorage.setItem("DeleteTagSuccess", "true");
     },
   });
 
@@ -60,11 +56,15 @@ export default function TagPage() {
       // Check success status in localStorage
       const tagSuccess = localStorage.getItem("tagSuccess");
       const updateTagSuccess = localStorage.getItem("UpdateTagSuccess");
+      const deleteTagSuccess = localStorage.getItem("DeleteTagSuccess");
 
+      console.log(tagSuccess, updateTagSuccess, deleteTagSuccess);
       // Remove success status from localStorage after displaying
       if (tagSuccess === "true") {
         setShowSuccessAlert(true);
       } else if (updateTagSuccess === "true") {
+        setShowSuccessAlert(true);
+      } else {
         setShowSuccessAlert(true);
       }
     }
@@ -77,10 +77,16 @@ export default function TagPage() {
         // Check success status in localStorage
         const tagSuccess = localStorage.getItem("tagSuccess");
         const updateTagSuccess = localStorage.getItem("UpdateTagSuccess");
+        const deleteTagSuccess = localStorage.getItem("DeleteTagSuccess");
 
+        console.log(tagSuccess, updateTagSuccess, deleteTagSuccess);
         if (tagSuccess === "true") {
           localStorage.removeItem("tagSuccess");
-        } else if (updateTagSuccess === "true") {
+        }
+        if (deleteTagSuccess === "true") {
+          localStorage.removeItem("DeleteTagSuccess");
+        }
+        if (updateTagSuccess === "true") {
           localStorage.removeItem("UpdateTagSuccess");
         }
       }
@@ -98,8 +104,10 @@ export default function TagPage() {
   const sortedTags = [...filteredTags].sort((a, b) => {
     if (sortBy === "nama_asc") {
       return a.nama.localeCompare(b.nama);
-    } else if (sortBy === "jumlahPengajar") {
+    } else if (sortBy === "jumlahPengajar_asc") {
       return a.jumlahPengajar - b.jumlahPengajar;
+    } else if (sortBy === "jumlahPengajar_desc") {
+      return b.jumlahPengajar - a.jumlahPengajar;
     } else if (sortBy === "nama_desc") {
       // If the sort direction is descending, reverse the comparison result
       return b.nama.localeCompare(a.nama);
@@ -129,6 +137,16 @@ export default function TagPage() {
     }
     return pageNumbers;
   };
+
+  let successMessage = null;
+
+  if (localStorage.getItem("tagSuccess") === "true") {
+    successMessage = "Tag successfully added.";
+  } else if (localStorage.getItem("UpdateTagSuccess") === "true") {
+    successMessage = "Tag successfully updated.";
+  } else if (localStorage.getItem("DeleteTagSuccess") === "true") {
+    successMessage = "Tag successfully deleted.";
+  }
 
   const indexOfLastItem = selectedPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -171,19 +189,14 @@ export default function TagPage() {
         <Breadcrumbs />
         <div className="px-20 py-20 space-y-10 flex-grow flex flex-col justify-center">
           {/* Success Alert */}
-          {showSuccessAlert && (
+          {showSuccessAlert && successMessage && (
             <div
               className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
               role="alert"
             >
               <strong className="font-bold">Success!</strong>
-              <span className="block sm:inline">
-                {localStorage.getItem("tagSuccess") === "true"
-                  ? " Tag successfully added."
-                  : localStorage.getItem("UpdateTagSuccess") === "true"
-                  ? " Tag successfully updated."
-                  : " Tag successfully deleted."}
-              </span>
+              <span className="block sm:inline"> {successMessage}</span>
+
               <span
                 className="absolute top-0 bottom-0 right-0 px-4 py-3"
                 onClick={() => setShowSuccessAlert(false)}
@@ -224,7 +237,12 @@ export default function TagPage() {
               <option value="">Sort By</option>
               <option value="nama_asc">By Name (Asc)</option>
               <option value="nama_desc">By Name (Desc)</option>
-              <option value="jumlahPengajar">By Jumlah Pengajar</option>
+              <option value="jumlahPengajar_asc">
+                By Jumlah Pengajar (Asc)
+              </option>
+              <option value="jumlahPengajar_desc">
+                By Jumlah Pengajar (Desc)
+              </option>
             </select>
             <Link href={`/tag/create`}>
               <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
