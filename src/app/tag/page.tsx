@@ -98,23 +98,25 @@ export default function TagPage() {
   let tagNama = null;
   let tagNamaUpdate = null;
 
-  if (
-    localStorage.getItem("tagSuccess") === "true" &&
-    localStorage.getItem("tagNama")
-  ) {
-    successMessage = " berhasil ditambahkan!";
-    tagNama = localStorage.getItem("tagNama");
-  } else if (
-    localStorage.getItem("UpdateTagSuccess") === "true" &&
-    localStorage.getItem("UpdateTagNama")
-  ) {
-    successMessage = "Berhasil diubah menjadi ";
-    tagNamaUpdate = localStorage.getItem("UpdateTagNama");
-    tagNama = localStorage.getItem("tagNama");
-  } else if (
-    localStorage.getItem("DeleteTagSuccess") === "true" 
-  ) {
-    successMessage = " berhasil dihapus!";
+  if( typeof localStorage !== "undefined"){
+    if (
+      localStorage.getItem("tagSuccess") === "true" &&
+      localStorage.getItem("tagNama")
+    ) {
+      successMessage = " berhasil ditambahkan!";
+      tagNama = localStorage.getItem("tagNama");
+    } else if (
+      localStorage.getItem("UpdateTagSuccess") === "true" &&
+      localStorage.getItem("UpdateTagNama")
+    ) {
+      successMessage = "Berhasil diubah menjadi ";
+      tagNamaUpdate = localStorage.getItem("UpdateTagNama");
+      tagNama = localStorage.getItem("tagNama");
+    } else if (
+      localStorage.getItem("DeleteTagSuccess") === "true" 
+    ) {
+      successMessage = " berhasil dihapus!";
+    }
   }
 
   if (isLoading) {
