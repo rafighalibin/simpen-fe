@@ -82,6 +82,7 @@ export default function TagPage() {
         console.log(tagSuccess, updateTagSuccess, deleteTagSuccess);
         if (tagSuccess === "true") {
           localStorage.removeItem("tagSuccess");
+          localStorage.removeItem("tagNama");
         }
         if (deleteTagSuccess === "true") {
           localStorage.removeItem("DeleteTagSuccess");
@@ -92,6 +93,29 @@ export default function TagPage() {
       }
     }
   }, [showSuccessAlert]);
+
+  let successMessage = null;
+  let tagNama = null;
+  let tagNamaUpdate = null;
+
+  if (
+    localStorage.getItem("tagSuccess") === "true" &&
+    localStorage.getItem("tagNama")
+  ) {
+    successMessage = " berhasil ditambahkan!";
+    tagNama = localStorage.getItem("tagNama");
+  } else if (
+    localStorage.getItem("UpdateTagSuccess") === "true" &&
+    localStorage.getItem("UpdateTagNama")
+  ) {
+    successMessage = "Berhasil diubah menjadi ";
+    tagNamaUpdate = localStorage.getItem("UpdateTagNama");
+    tagNama = localStorage.getItem("tagNama");
+  } else if (
+    localStorage.getItem("DeleteTagSuccess") === "true" 
+  ) {
+    successMessage = " berhasil dihapus!";
+  }
 
   if (isLoading) {
     return <Loading />;
@@ -137,16 +161,6 @@ export default function TagPage() {
     }
     return pageNumbers;
   };
-
-  let successMessage = null;
-
-  if (localStorage.getItem("tagSuccess") === "true") {
-    successMessage = "Tag successfully added.";
-  } else if (localStorage.getItem("UpdateTagSuccess") === "true") {
-    successMessage = "Tag successfully updated.";
-  } else if (localStorage.getItem("DeleteTagSuccess") === "true") {
-    successMessage = "Tag successfully deleted.";
-  }
 
   const indexOfLastItem = selectedPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -194,8 +208,20 @@ export default function TagPage() {
               className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
               role="alert"
             >
-              <strong className="font-bold">Success!</strong>
-              <span className="block sm:inline"> {successMessage}</span>
+              {tagNamaUpdate ? (
+                <>
+                  <span className="block sm:inline">Tag </span>
+                  <strong className="font-bold">{tagNama}</strong>
+                  <span className="block sm:inline"> {successMessage}</span>
+                  <strong className="font-bold">{tagNamaUpdate}</strong>
+                </>
+              ) : (
+                <>
+                  <span className="block sm:inline">Tag </span>
+                  <strong className="font-bold">{tagNama}</strong>
+                  <span className="block sm:inline"> {successMessage}</span>
+                </>
+              )}
 
               <span
                 className="absolute top-0 bottom-0 right-0 px-4 py-3"
