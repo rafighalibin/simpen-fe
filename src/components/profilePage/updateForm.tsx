@@ -965,6 +965,7 @@ export const UpdateForm = () => {
                   Nama Lengkap
                 </label>
                 <input
+                required
                   type="text"
                   name="nama"
                   onChange={handleChange}

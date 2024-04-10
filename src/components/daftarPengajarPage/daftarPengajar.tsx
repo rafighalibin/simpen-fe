@@ -11,9 +11,13 @@ import {
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import { PengajarDetail, PengajarSelect } from "../../common/types/pengajar";
 import Loading from "../../common/components/Loading";
+import { TagDetail, TagSelect } from "../../common/types/tag";
+import Select from "react-select";
 
 export const DaftarPengajar = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [listTagExisting, setListTagExisting] = useState<TagSelect[]>([]);
+  const [searchKeywords, setSearchKeywords] = useState([]);
   const [itemsPerPage, setItemsPerPage] = useState(8);
   const fetchWithToken = useFetchWithToken();
   const [searchType, setSearchType] = useState("nama");
@@ -40,23 +44,39 @@ export const DaftarPengajar = () => {
     },
   });
 
-  if (isLoading) {
+  const {
+    isLoading: TagLoading,
+    error: tagError,
+    data: tag,
+  } = useQuery({
+    queryKey: ["tags"],
+    queryFn: () => fetchWithToken(`/tag`).then((res) => res.json()),
+    onSuccess(data) {
+      if (data) {
+        let tags = data.content.map((element: TagDetail) => ({
+          value: element.id,
+          label: element.nama,
+        }));
+        setListTagExisting(tags);
+      }
+    },
+  });
+
+  if (isLoading || TagLoading) {
     return <Loading />;
   }
 
-  const filteredPengajar: PengajarDetail[] = listPengajarExisting.filter(
-    (pengajar: PengajarDetail) => {
-      if (searchType === "nama") {
-        return pengajar.nama
-          .toLowerCase()
-          .includes(searchKeyword.toLowerCase());
-      } else if (searchType === "tag") {
-        return pengajar.listTag.some((tag) =>
-          tag.nama.toLowerCase().includes(searchKeyword.toLowerCase())
-        );
-      }
+  const filteredPengajar = listPengajarExisting.filter((pengajar) => {
+    if (searchType === "nama") {
+      return pengajar.nama.toLowerCase().includes(searchKeyword.toLowerCase());
+    } else if (searchType === "tag") {
+      return searchKeywords.every((keyword) =>
+        pengajar.listTag.some((tag) =>
+          tag.nama.toLowerCase().includes(keyword.toLowerCase())
+        )
+      );
     }
-  );
+  });
 
   const sortedPengajar = [...filteredPengajar].sort((a, b) => {
     if (sortBy === "nama_asc") {
@@ -136,13 +156,31 @@ export const DaftarPengajar = () => {
     <div className="px-2 py-16 space-y-10 flex-grow flex flex-col justify-center">
       <h1 className="text-6xl font-bold pb-4">Daftar Pengajar</h1>
       <div className="mt-4 flex items-center">
-        <input
-          type="text"
-          value={searchKeyword}
-          onChange={(e) => setSearchKeyword(e.target.value)}
-          placeholder="Cari Pengajar"
-          className="flex-grow px-4 py-2 mr-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
-        />
+        {searchType === "tag" ? (
+          <Select
+            value={searchKeywords.map((keyword) => ({
+              value: keyword,
+              label: keyword,
+            }))} // Mengubah nilai searchKeywords menjadi format yang sesuai dengan format yang diterima oleh Select
+            isMulti // Memungkinkan pemilihan lebih dari satu tag
+            onChange={(selectedOptions) =>
+              setSearchKeywords(selectedOptions.map((option) => option.value))
+            } // Mengubah nilai searchKeywords saat tag dipilih atau dihapus
+            options={listTagExisting.map((tag) => ({
+              value: tag.label.toLowerCase(),
+              label: tag.label,
+            }))} // Mengonversi listTagExisting ke format yang sesuai dengan format yang diterima oleh Select
+            className="flex-grow px-4 py-2 mr-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
+          />
+        ) : (
+          <input
+            type="text"
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
+            placeholder="Cari Pengajar"
+            className="flex-grow px-4 py-2 mr-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
+          />
+        )}
         <select
           value={sortBy}
           onChange={handleSortByChange}
@@ -174,11 +212,9 @@ export const DaftarPengajar = () => {
           <p className="text-red-500">
             Pengajar dengan nama {searchKeyword} tidak ditemukan.
           </p>
-        ) : filteredPengajar.length === 0 &&
-          searchKeyword !== "" &&
-          searchType === "tag" ? ( // Jika hasil pencarian tag kosong
+        ) : filteredPengajar.length === 0 && searchType === "tag" ? ( // Jika hasil pencarian tag kosong
           <p className="text-red-500">
-            Pengajar dengan tag {searchKeyword} tidak ditemukan.
+            Pengajar dengan tag yang dipilih tidak ditemukan.
           </p>
         ) : (
           <>
