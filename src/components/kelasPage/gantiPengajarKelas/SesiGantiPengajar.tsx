@@ -150,9 +150,6 @@ const SesiGantiPengajar = () => {
                   <th className={`px-6 py-6 text-left bg-baseForeground `}>
                     Ganti Pengajar
                   </th>
-                  <th className={`px-6 py-6 text-left bg-baseForeground `}>
-                    Pengajar Pengganti
-                  </th>
                   <th className={`px-10 py-6 text-left bg-baseForeground `}>
                     Riwayat
                   </th>
@@ -179,7 +176,19 @@ const SesiGantiPengajar = () => {
                       ).toLocaleTimeString([], { timeStyle: "short" })}
                     </td>
                     <td className="border-b px-6 py-6">
-                      {sesiGantiPengajar.sesiKelas.status}
+                      {sesiGantiPengajar.sesiKelas.status.indexOf(
+                        "Requested"
+                      ) >= 0 ? (
+                        <span className="text-warning">
+                          {sesiGantiPengajar.sesiKelas.status}
+                        </span>
+                      ) : sesiGantiPengajar.sesiKelas.status == "Finished" ? (
+                        <span className="text-success">
+                          {sesiGantiPengajar.sesiKelas.status}
+                        </span>
+                      ) : (
+                        <span>{sesiGantiPengajar.sesiKelas.status}</span>
+                      )}
                     </td>
                     <td className="border-b pl-16 px-6 py-6 ">
                       <input
@@ -195,20 +204,6 @@ const SesiGantiPengajar = () => {
                             e.target.checked
                           );
                         }}
-                      />
-                    </td>
-
-                    <td className="border-b px-6 py-6">
-                      <input
-                        disabled
-                        type="text"
-                        value={
-                          sesiGantiPengajar.activeGantiPengajarNamaPengajar ==
-                          ""
-                            ? "Tidak Ada"
-                            : sesiGantiPengajar.activeGantiPengajarNamaPengajar
-                        }
-                        className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 rounded-md"
                       />
                     </td>
 
@@ -234,36 +229,73 @@ const SesiGantiPengajar = () => {
                       sesiGantiPengajar.listGantiPengajar.length - 1
                     ] && (
                       <>
-                        <tr>
-                          <td className="py-2 pl-8">
-                            <span>Waktu Permintaan</span>
+                        <tr className="text-center font-bold border-b ">
+                          <td className="py-2 border-r">
+                            <span>
+                              <p>Tanggal</p>
+                              <p>Permintaan</p>
+                            </span>
                           </td>
                           <td />
                           <td />
-                          <td />
-                          <td />
-                          <td />
-
-                          <td className="py-2 px-12">
+                          <td className="py-2 border-x">
+                            <span>Alasan</span>
+                          </td>
+                          <td className="py-2 border-x">
                             <span>Status</span>
+                          </td>
+                          <td className="py-2 border-l">
+                            <span>
+                              <p>Pengajar</p>
+                              <p>Pengganti</p>
+                            </span>
                           </td>
                         </tr>
                         {sesiGantiPengajar.listGantiPengajar.map(
                           (gantiPengajar: ReadGantiPengajar) => (
-                            <tr aria-colspan={4} key={`tr-${gantiPengajar.id}`}>
-                              <td className="py-2 pl-8  flex flex-col items-start">
+                            <tr
+                              aria-colspan={4}
+                              key={`tr-${gantiPengajar.id}`}
+                              className="text-center border-b"
+                            >
+                              <td className="py-2 border-r">
                                 <span>
                                   {gantiPengajar.waktuPermintaan.split(" ")[0]}
                                 </span>
                               </td>
                               <td />
                               <td />
-                              <td />
-                              <td />
-                              <td />
-
-                              <td className="py-2 px-8">
-                                <span>{gantiPengajar.status}</span>
+                              <td className="py-2 border-x">
+                                <span>{gantiPengajar.alasan}</span>
+                              </td>
+                              <td className="py-2 border-x">
+                                {gantiPengajar.status == "Requested" ? (
+                                  <span className="text-warning py-1 px-4">
+                                    {gantiPengajar.status}
+                                  </span>
+                                ) : gantiPengajar.status == "Approved" ? (
+                                  <span className="text-success py-1 px-4">
+                                    {gantiPengajar.status}
+                                  </span>
+                                ) : gantiPengajar.status == "Rejected" ? (
+                                  <span className="text-error py-1 px-4">
+                                    {gantiPengajar.status}
+                                  </span>
+                                ) : (
+                                  <span>{gantiPengajar.status}</span>
+                                )}
+                              </td>
+                              <td className="py-2 border-l">
+                                <span>
+                                  {gantiPengajar.namaPengajarPenggati && (
+                                    <a
+                                      className={`bg-transparent hover:bg-[#215E9B] text-[#215E9B]  hover:text-white py-1 px-4 border border-[#215E9B] hover:border-transparent rounded-full disabled:opacity-50 relative`}
+                                      href={`/pengajar/${gantiPengajar.idPengajarPengganti}`}
+                                    >
+                                      {gantiPengajar.namaPengajarPenggati}
+                                    </a>
+                                  )}
+                                </span>
                               </td>
                             </tr>
                           )

@@ -85,7 +85,9 @@ const DetailRequestPerubahanKelas = () => {
   return (
     <div>
       <h1 className=" flex justify-center text-5xl font-bold text-neutral/100 my-10">
-        Detail Request Perubahan Kelas
+        {searchParams.get("tipe") == "reschedule"
+          ? "Detail Request Reschedule"
+          : "Detail Request  Ganti Pengajar"}
       </h1>
       <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-lg rounded-lg border">
         <div>
