@@ -446,7 +446,7 @@ export const UpdateForm = () => {
 
                 <div className="w-1/2 relative">
                   <label className="block font-medium text-neutral/70">
-                    Alamat Domisili
+                    Domisili Kota
                   </label>
                   <div className="flex mt-1 relative">
                     <input
@@ -458,7 +458,7 @@ export const UpdateForm = () => {
                           : formState.domisiliKota
                       }
                       onChange={handleChange}
-                      placeholder="Alamat Domisili"
+                      placeholder="Domisili Kota"
                       className="bg-base mt-1 p-2 w-full border rounded-md "
                     />
                   </div>

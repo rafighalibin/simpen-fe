@@ -14,6 +14,7 @@ import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import { Breadcrumbs } from "../../components/breadcrumbs/breadcrumbs";
 import Loading from "../../common/components/Loading";
 import { absenPengajarRead } from "../../common/types/absenPengajar";
+import styles from "./daftarAbsen.module.css";
 
 export const DaftarAbsenPengajar = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -227,19 +228,19 @@ export const DaftarAbsenPengajar = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                       kode Kelas
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                       Nama Pengajar
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                       Program
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                       Jenis Kelas
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                       Total Fee
                     </th>
                   </tr>
@@ -262,28 +263,13 @@ export const DaftarAbsenPengajar = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         {absen.fee}
                       </td>
-                      {/* <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="gap-8">
-                    <Link href={`/tag/edit/${tag.id}`}>
-                      <button className="bg-transparent hover:bg-infoHover text-blue-500 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded-full">
-                        Ubah
-                      </button>
-                    </Link>
-                    <button
-                      onClick={() => handleDeleteTag(tag.id)}
-                      className="bg-transparent hover:bg-red-500 text-red-500 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded-full"
-                    >
-                      Hapus
-                    </button>
-                  </div>
-                </td> */}
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-            <div className="flex justify-center my-4">
-              <div className="p-2">
+            <div className="flex justify-center my-4 mt-16">
+              <div className={`${styles.pagination_container} p-2`}>
                 <button
                   onClick={handlePrevPage}
                   disabled={selectedPage === 1}
