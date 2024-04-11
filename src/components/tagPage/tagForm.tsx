@@ -68,6 +68,7 @@ export const TagForm = () => {
 
   if (isSuccess){
     localStorage.setItem("tagSuccess", "true");
+    localStorage.setItem("tagNama", nama);
     redirect(`/tag`);
   }
 
@@ -80,10 +81,10 @@ export const TagForm = () => {
             className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
             role="alert"
           >
-            <strong className="font-bold">Duplicate Tag!</strong>
+            <strong className="font-bold">Tag Duplikat!</strong>
             <span className="block sm:inline">
               {" "}
-              Tag with the same name already exists.
+              Tag dengan nama yang sama sudah pernah ditambahkan.
             </span>
             <span
               className="absolute top-0 bottom-0 right-0 px-4 py-3"

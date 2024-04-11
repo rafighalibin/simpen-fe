@@ -90,8 +90,8 @@ const DetailAkun = ({ buttons }) => {
           className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
           role="alert"
         >
-          <strong className="font-bold">Success!</strong>
-          <span className="block sm:inline"> Profile successfully Updated.</span>
+          <strong className="font-bold">Sukses!</strong>
+          <span className="block sm:inline"> Profil Berhasil Diperbarui.</span>
           <span
             className="absolute top-0 bottom-0 right-0 px-4 py-3"
             onClick={() => setShowSuccessAlert(false)}
