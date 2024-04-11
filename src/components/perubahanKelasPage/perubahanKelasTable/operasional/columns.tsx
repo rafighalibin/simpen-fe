@@ -22,9 +22,6 @@ export const columns: ColumnDef<ReadPermintaanPerubahan>[] = [
   {
     accessorKey: "tipePermintaan",
     header: "Tipe Permintaan",
-    meta: {
-      filter: false,
-    },
   },
   {
     accessorKey: "namaPengajar",
