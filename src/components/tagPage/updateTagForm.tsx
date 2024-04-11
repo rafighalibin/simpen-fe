@@ -12,6 +12,7 @@ import { redirect, useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import Loading from "../../common/components/Loading";
+import { set } from "react-hook-form";
 
 interface Tag {
   id: number;
@@ -25,9 +26,10 @@ export const UpdateTagForm = () => {
   const fetchWithToken = useFetchWithToken();
   const [nama, setNama] = useState("");
   const router = useRouter();
-  // const [searchKeyword, setSearchKeyword] = useState("");
   const [showDuplicateTagAlert, setShowDuplicateTagAlert] = useState(false);
-  // const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [formState, setFormState] = useState({
+    nama: "",
+  })
   const payload = {
     id: id,
     nama
@@ -40,6 +42,13 @@ export const UpdateTagForm = () => {
         (res) => res.json()
       ),
   });
+
+  if (data && formState.nama === "") {
+    const tag = data.content.find((tag: Tag) => tag.id.toString() === id);
+    setFormState({
+      nama: tag.nama
+    });
+  }
 
   const { mutateAsync: updateTagMutation, data: Tag, isSuccess } = useMutation({
     mutationFn: () =>
@@ -70,6 +79,8 @@ export const UpdateTagForm = () => {
 
   if (isSuccess){
     localStorage.setItem("UpdateTagSuccess", "true");
+    localStorage.setItem("UpdateTagNama", nama);
+    localStorage.setItem("tagNama", formState.nama); // Convert id to string before passing it to localStorage.setItem()
     redirect(`/tag`);
   }
 
@@ -82,10 +93,10 @@ export const UpdateTagForm = () => {
             className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
             role="alert"
           >
-            <strong className="font-bold">Duplicate Tag!</strong>
+            <strong className="font-bold">Tag Duplikat!</strong>
             <span className="block sm:inline">
               {" "}
-              Tag with the same name already exists.
+              Tag dengan nama yang sama sudah pernah ditambahkan.
             </span>
             <span
               className="absolute top-0 bottom-0 right-0 px-4 py-3"
