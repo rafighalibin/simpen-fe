@@ -11,6 +11,7 @@ import Select from "react-select";
 import { MuridDetail, MuridSelect } from "../../../../common/types/murid";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "../../../../common/utils/authContext";
+import { set } from "react-hook-form";
 
 const AddKelas = () => {
   const queryClient = useQueryClient();
@@ -22,6 +23,7 @@ const AddKelas = () => {
   const [programId, setProgramId] = useState("");
   const [jumlahPertemuan, setJumlahPertemuan] = useState(0);
   const [jumlahLevel, setJumlahLevel] = useState(0);
+  const [listJumlahLevel, setListJumlahLevel] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 
   const [bahasa, setBahasa] = useState("");
   const [modaPertemuan, setModaPertemuan] = useState("");
@@ -90,8 +92,12 @@ const AddKelas = () => {
       fetchWithToken("/kelas", "POST", payload).then((res) => res.json()),
     onSuccess: (data) => {
       console.log(data.content as Kelas);
-      router.push("/kelas");
-      queryClient.invalidateQueries("kelas");
+      if(data.content===null){
+        alert("Kelas gagal dibuat");
+      } else{
+        router.push("/kelas");
+        queryClient.invalidateQueries("kelas");
+      }
     },
     onError: (error) => {
       console.log(error);
@@ -125,12 +131,20 @@ const AddKelas = () => {
     },
   });
 
+  const payloadJenis = {
+    nama: jenisKelasNama,
+    tipe: tipe,
+    bahasa : bahasa,
+    modaPertemuan: modaPertemuan,
+  };
+
   const {isLoading: isLoadingJenisAttributes, data: dataJenisAttributes, refetch: getJenisKelas,} = useQuery({
     queryKey: ["jenis", jenisKelas],
     queryFn: () =>
       fetchWithToken(
-        `/kelas/jenis/find?nama=${jenisKelasNama}&modaPertemuan=${modaPertemuan}&bahasa=${bahasa}&tipe=${tipe}`,
-        "GET"
+        `/kelas/jenis/find`,
+        "POST",
+        payloadJenis
       ).then((res) => res.json()),
     onSuccess: (data) => {
       console.log(data);
@@ -141,12 +155,18 @@ const AddKelas = () => {
     enabled: !!jenisKelasNama && !!tipe && !!modaPertemuan && !!bahasa,
   });
 
+  const payloadExistingAttributes = {
+    namaJenisKelas: jenisKelasNama,
+    programId: programId,
+  };
+
   const {isLoading: isLoadingJenisKelas, data: dataJenisKelas, refetch: getJenisAttributes,} = useQuery({
     queryKey: ["jenis", jenisKelasNama],
     queryFn: () =>
       fetchWithToken(
-        `/kelas/jenis/existing-attributes-detail?nama=${jenisKelasNama}`,
-        "GET"
+        `/kelas/jenis/existing-attributes-detail`,
+        "POST",
+        payloadExistingAttributes
       ).then((res) => res.json()),
     onSuccess: (data) => {
       setListBahasa(data.content.bahasa);
@@ -197,7 +217,15 @@ const AddKelas = () => {
       const classDates = [];
       const numMeetings = jumlahPertemuan;
       let currentDate = new Date(startDate);
-
+  
+      // Extract hours and minutes from selectedTime
+      const [hours, minutes] = selectedTime.split(':').map(Number);
+  
+      // Set the time of currentDate to selectedTime
+      currentDate.setHours(hours);
+      currentDate.setMinutes(minutes);
+      currentDate.setSeconds(0); // Ensure seconds are set to 0
+  
       // Loop until the required number of meetings are generated
       while (classDates.length < numMeetings) {
         const dayOfWeek = currentDate.getDay();
@@ -225,6 +253,7 @@ const AddKelas = () => {
       setListJadwalKelas(classDates);
     }
   };
+  
 
   useEffect(() => {
     generateClassDates();
@@ -262,6 +291,9 @@ const AddKelas = () => {
     if (selectedProgramId) {
       setJumlahPertemuan(e.jumlahPertemuan);
       setJumlahLevel(e.jumlahLevel);
+      setListJumlahLevel(
+        Array.from({ length: e.jumlahLevel }, (_, i) => i + 1)
+      );
     } else {
       setJumlahPertemuan(0);
       setJumlahLevel(0);
@@ -302,6 +334,7 @@ const AddKelas = () => {
                 Program
               </label>
               <Select
+                required
                 defaultValue={programId}
                 name="colors"
                 onChange={handleChangeProgram}
@@ -346,6 +379,7 @@ const AddKelas = () => {
               Jenis
             </label>
             <Select
+              required
               defaultValue={jenisKelasNama}
               isDisabled={programId === ""}
               name="colors"
@@ -381,6 +415,7 @@ const AddKelas = () => {
             {listBahasa.map((bahasaItem, index) => (
               <div key={index} className="flex items-center mr-4">
                 <input
+                  required
                   type="radio"
                   name="bahasa"
                   value={bahasaItem}
@@ -401,6 +436,7 @@ const AddKelas = () => {
             {listModePertemuan.map((modaItem, index) => (
               <div key={index} className="flex items-center mr-4">
                 <input
+                  required
                   type="radio"
                   name="moda_pertemuan"
                   value={modaItem}
@@ -417,10 +453,11 @@ const AddKelas = () => {
           </div>
 
           <div className="form-control flex flex-wrap items-center">
-            <label className="label mr-4 block font-medium text-neutral/70">Tipe:</label>
+            <label className="label mr-4 block font-medium text-neutral/70">Tipe</label>
             {listTipe.map((tipeItem, index) => (
               <div key={index} className="flex items-center mr-4">
                 <input
+                  required
                   type="radio"
                   name="tipe"
                   value={tipeItem}
@@ -438,7 +475,7 @@ const AddKelas = () => {
           </div>
 
           <div className="form-control flex flex-row">
-            <label className="label mr-4 block font-medium text-neutral/70">Hari:</label>
+            <label className="label mr-4 block font-medium text-neutral/70">Hari</label>
             {daysOfWeek.map((day) => (
               <div key={day.id} className="flex items-center mr-4">
                 <input
@@ -455,13 +492,15 @@ const AddKelas = () => {
             ))}
           </div>
 
+
           <div className="form-control">
             <label className="label">Time</label>
             <input
+              required
               type="time"
               value={selectedTime}
               onChange={(e) => setSelectedTime(e.target.value)}
-              className="input"
+              className="bg-base mt-1 p-2 w-full border rounded-md"
             />
           </div>
 
@@ -472,6 +511,7 @@ const AddKelas = () => {
                 </label>
                 <div className="flex mt-1 relative">
                   <input
+                    required
                     type="date"
                     value={tanggalMulai}
                     onChange={(e) => setTanggalMulai(e.target.value)}
@@ -490,7 +530,7 @@ const AddKelas = () => {
                     value={tanggalSelesai}
                     onChange={(e) => setTanggalSelesai(e.target.value)}
                     className="bg-base mt-1 p-2 w-full border rounded-md"
-                    disabled={true}
+                    disabled
                   />
                 </div>
               </div>
@@ -507,6 +547,7 @@ const AddKelas = () => {
           <div className="form-control">
             <label className="label">Pengajar</label>
             <Select
+              required
               defaultValue={pengajarSelected}
               name="colors"
               onChange={(e) => {
@@ -514,7 +555,7 @@ const AddKelas = () => {
                 setPengajarId(e.value);
               }}
               options={listPengajarExisting}
-              className="bg-base mt-1 p-2 w-full border rounded-md"
+              className="bg-base mt-1 p-1 w-full border rounded-md"
               classNamePrefix="select"
               styles={{
                 control: (provided, state) => ({
@@ -541,6 +582,7 @@ const AddKelas = () => {
           <div className="form-control">
             <label className="label">List Murid</label>
             <Select
+                required
                 defaultValue={muridSelected}
                 isMulti
                 name="colors"
@@ -564,25 +606,38 @@ const AddKelas = () => {
           </div>
           <div className="form-control">
             <label className="label">Level</label>
-            <select
-              value={level.toString()}
-              onChange={(e) => setLevel(parseInt(e.target.value))}
-              className="input"
-            >
-              <option value="0">Select Level</option>
-              {Array.from({ length: jumlahLevel }, (_, i) => (
-                <option key={i} value={(i + 1).toString()}>
-                  {i + 1}
-                </option>
-              ))}
-            </select>
+            <Select
+              required
+              defaultValue={{ value: level.toString(), label: level.toString() }}
+              name="colors"
+              onChange={(e) => setLevel(parseInt(e.value))}
+              options={Array.from({ length: jumlahLevel }, (_, i) => ({
+                value: (i + 1).toString(),
+                label: (i + 1).toString()
+            }))}
+              className="bg-base mt-1 p-1 w-full border rounded-md"
+              classNamePrefix="select"
+              styles={{
+                control: (provided) => ({
+                  ...provided,
+                  border: "none",
+                  boxShadow: "none",
+                  backgroundColor: "none",
+                }),
+                multiValue: (provided) => ({
+                  ...provided,
+                  backgroundColor: "#EDF6FF",
+                }),
+              }}
+            />
           </div>
 
           <div className="form-control">
             <label className="label">Platform</label>
             <input
+              required
               type="text"
-              className="input"
+              className="bg-base mt-1 p-2 w-full border rounded-md"
               value={platform}
               onChange={(e) => setPlatform(e.target.value)}
             />
@@ -591,8 +646,9 @@ const AddKelas = () => {
           <div className="form-control">
             <label className="label">Link Group</label>
             <input
+              required
               type="text"
-              className="input"
+              className="bg-base mt-1 p-2 w-full border rounded-md"
               value={linkGroup}
               onChange={(e) => setLinkGroup(e.target.value)}
             />
