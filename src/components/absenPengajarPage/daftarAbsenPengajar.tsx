@@ -50,9 +50,10 @@ export const DaftarAbsenPengajar = () => {
           .toLowerCase()
           .includes(searchKeyword.toLowerCase());
       } else if (searchType === "kodeKelas") {
-        return absenPengajar.id.toString()
-        .toLowerCase()
-        .includes(searchKeyword.toLowerCase());
+        return absenPengajar.kodeKelas
+          .toString()
+          .toLowerCase()
+          .includes(searchKeyword.toLowerCase());
       } else if (searchType === "program") {
         return absenPengajar.programName
           .toLowerCase()
@@ -61,9 +62,82 @@ export const DaftarAbsenPengajar = () => {
         return absenPengajar.jenisKelasName
           .toLowerCase()
           .includes(searchKeyword.toLowerCase());
+      } else if (searchType === "payroll") {
+        if (!searchKeyword) {
+          // Jika tidak ada nilai yang dimasukkan, tampilkan semua data
+          return true;
+        }
+        return absenPengajar.listPeriodePayroll.some(payroll => {
+          const startDate = new Date(payroll.tanggalMulai).getTime();
+          const endDate = new Date(payroll.tanggalSelesai).getTime();
+          const absenDate = new Date(
+            parseInt(absenPengajar.tanggalAbsen[0]),
+            parseInt(absenPengajar.tanggalAbsen[1]) - 1,
+            parseInt(absenPengajar.tanggalAbsen[2])
+          ).getTime();
+          console.log(startDate);
+          console.log(endDate);
+          console.log(absenDate);
+          // Memeriksa apakah tanggal absen berada dalam rentang tanggal periode payroll
+          return absenDate >= startDate && absenDate <= endDate;
+        });
+
+      } else if (searchType === "tanggalAbsen") {
+        // Filter berdasarkan tanggal absen
+        if (!searchKeyword) {
+          // Jika tidak ada nilai yang dimasukkan, tampilkan semua data
+          return true;
+        }
+        const localDateTimeString = absenPengajar.tanggalAbsen.toString();
+        let year = "";
+        let month = "";
+        let day = "";
+        let commaCount = 0;
+        for (let i = 0; i < localDateTimeString.length; i++) {
+          if (localDateTimeString[i] === ",") {
+            commaCount++;
+            if (commaCount === 1) {
+              year = localDateTimeString.substring(0, i);
+            } else if (commaCount === 2) {
+              month = localDateTimeString.substring(year.length + 1, i);
+            } else if (commaCount === 3) {
+              day = localDateTimeString.substring(
+                year.length + month.length + 2,
+                i
+              );
+              break; // Keluar dari loop setelah menemukan day
+            }
+          }
+        }
+        // Membuat objek Date dari tanggal yang diuraikan
+        const tanggalAbsenDate = new Date(`${year}-${month}-${day}`);
+        // Membuat objek Date dari searchKeyword
+        const searchDate = new Date(searchKeyword);
+        // Membandingkan tanggal secara tepat
+        const searchDateOnly = new Date(
+          searchDate.getFullYear(),
+          searchDate.getMonth(),
+          searchDate.getDate()
+        );
+        const tanggalAbsenDateOnly = new Date(
+          tanggalAbsenDate.getFullYear(),
+          tanggalAbsenDate.getMonth(),
+          tanggalAbsenDate.getDate()
+        );
+        return searchDateOnly.getTime() === tanggalAbsenDateOnly.getTime();
       }
     }
   );
+  console.log(filteredAbsenPengajar)
+
+  const handleSearchTypeChange = (e) => {
+    setSearchType(e.target.value);
+    setSearchKeyword("");
+  };
+
+  const handleSearchKeywordChange = (e) => {
+    setSearchKeyword(e.target.value);
+  };
 
   const sortedAbsen = [...filteredAbsenPengajar].sort((a, b) => {
     if (sortBy === "nama_asc") {
@@ -83,6 +157,32 @@ export const DaftarAbsenPengajar = () => {
       return String(a.fee).localeCompare(String(b.fee));
     } else if (sortBy === "fee_desc") {
       return String(b.fee).localeCompare(String(a.fee));
+    } else if (sortBy === "tanggalAbsen_asc") {
+      // Sorting berdasarkan tanggal absen ascending
+      const dateA = new Date(
+        Number(a.tanggalAbsen[0]),
+        Number(a.tanggalAbsen[1]) - 1,
+        Number(a.tanggalAbsen[2])
+      ).getTime();
+      const dateB = new Date(
+        Number(b.tanggalAbsen[0]),
+        Number(b.tanggalAbsen[1]) - 1,
+        Number(b.tanggalAbsen[2])
+      ).getTime();
+      return dateA - dateB;
+    } else if (sortBy === "tanggalAbsen_desc") {
+      // Sorting berdasarkan tanggal absen descending
+      const dateA = new Date(
+        Number(a.tanggalAbsen[0]),
+        Number(a.tanggalAbsen[1]) - 1,
+        Number(a.tanggalAbsen[2])
+      ).getTime();
+      const dateB = new Date(
+        Number(b.tanggalAbsen[0]),
+        Number(b.tanggalAbsen[1]) - 1,
+        Number(b.tanggalAbsen[2])
+      ).getTime();
+      return dateB - dateA;
     }
 
     return 0;
@@ -140,24 +240,88 @@ export const DaftarAbsenPengajar = () => {
     setSelectedPage((prevPage) => Math.max(prevPage - 1, 1));
   };
 
-  const noPengajarMessage =
-    listAbsenExisting.length === 0 ? (
-      <p className="text-center text-gray-500">
-        Tidak ada absen pengajar ditemukan.
-      </p>
-    ) : null;
+  const formatLocalDateTime = (localDateTime) => {
+    const localDateTimeString = localDateTime.toString();
+
+    let year = "";
+    let month = "";
+    let day = "";
+
+    let commaCount = 0;
+    for (let i = 0; i < localDateTimeString.length; i++) {
+      if (localDateTimeString[i] === ",") {
+        commaCount++;
+        if (commaCount === 1) {
+          year = localDateTimeString.substring(0, i);
+        } else if (commaCount === 2) {
+          month = localDateTimeString.substring(year.length + 1, i);
+        } else if (commaCount === 3) {
+          day = localDateTimeString.substring(
+            year.length + month.length + 2,
+            i
+          );
+          break; // Keluar dari loop setelah menemukan day
+        }
+      }
+    }
+
+    // Daftar nama bulan
+    const months = [
+      "Januari",
+      "Februari",
+      "Maret",
+      "April",
+      "Mei",
+      "Juni",
+      "Juli",
+      "Agustus",
+      "September",
+      "Oktober",
+      "November",
+      "Desember",
+    ];
+
+    // Mengambil nama bulan dari array berdasarkan indeks
+    const monthIndex = parseInt(month, 10) - 1;
+    const monthName = months[monthIndex];
+
+    // Mengembalikan format yang diinginkan
+    return `${day} ${monthName} ${year}`;
+  };
+
+  const formatTanggal = (timestamp) => {
+    const date = new Date(timestamp);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' } as const;
+    return date.toLocaleDateString('id-ID', options);
+  };
 
   return (
     <div className="px-2 py-16 space-y-10 flex-grow flex flex-col justify-center">
       <h1 className="text-6xl font-bold pb-4">Daftar Absen Pengajar</h1>
       <div className="mt-4 flex items-center">
-        <input
-          type="text"
+      {searchType === "payroll" ? (
+        <select
           value={searchKeyword}
-          onChange={(e) => setSearchKeyword(e.target.value)}
+          onChange={handleSearchKeywordChange}
+          className="flex-grow px-4 py-2 mr-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
+        >
+          <option value="">Pilih Periode Payroll</option>
+      {filteredAbsenPengajar.length > 0 && (
+        filteredAbsenPengajar[1].listPeriodePayroll.map((periode) => (
+          <option key={periode.id} value={periode.id}>
+            {formatTanggal(periode.tanggalMulai)} - {formatTanggal(periode.tanggalSelesai)}
+          </option>
+          )))}
+        </select>
+      ) : (
+        <input
+          type={searchType === "tanggalAbsen" ? "date" : "text"} // Mengubah input menjadi input tanggal jika searchType adalah "tanggalAbsen"
+          value={searchKeyword}
+          onChange={handleSearchKeywordChange}
           placeholder="Cari Absen Pengajar"
           className="flex-grow px-4 py-2 mr-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
         />
+    )}
         <select
           value={sortBy}
           onChange={handleSortByChange}
@@ -172,18 +336,21 @@ export const DaftarAbsenPengajar = () => {
           <option value="jenisKelas_desc">By Jenis Kelas (Desc)</option>
           <option value="jumlahFee_asc">By Jumlah Fee (Asc)</option>
           <option value="jumlahFee_desc">By Jumlah Fee (Desc)</option>
+          <option value="tanggalAbsen_asc">By Tanggal Absen (Asc)</option>
+          <option value="tanggalAbsen_desc">By Tanggal Absen (Desc)</option>
         </select>
 
         <select
           value={searchType}
-          onChange={(e) => setSearchType(e.target.value)}
+          onChange={handleSearchTypeChange}
           className="px-4 py-2 mr-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
         >
           <option value="nama">Cari berdasarkan Nama</option>
           <option value="kodeKelas">Cari berdasarkan Kode Kelas</option>
           <option value="program">Cari berdasarkan Program</option>
           <option value="jenisKelas">Cari berdasarkan Jenis Kelas</option>
-          <option value="fee">Cari berdasarkan Fee</option>
+          <option value="tanggalAbsen">Cari berdasarkan Tanggal Absen</option>
+          <option value="payroll">Cari berdasarkan Periode Payroll</option>
         </select>
         <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
           <a href={``}>Export</a>
@@ -191,7 +358,7 @@ export const DaftarAbsenPengajar = () => {
       </div>
 
       <div className="overflow-x-auto mt-4">
-        {noPengajarMessage}
+        {/* {noPengajarMessage} */}
         {filteredAbsenPengajar.length === 0 &&
         searchKeyword !== "" &&
         searchType === "nama" ? ( // Jika hasil pencarian nama kosong
@@ -222,6 +389,16 @@ export const DaftarAbsenPengajar = () => {
           <p className="text-red-500">
             Pengajar dengan periode payroll {searchKeyword} tidak ditemukan.
           </p>
+        ) : filteredAbsenPengajar.length === 0 &&
+          searchKeyword !== "" &&
+          searchType === "tanggalAbsen" ? ( // Jika hasil pencarian berdasarkan tanggal absen kosong
+          <p className="text-red-500">
+            Tidak ada pengajar dengan tanggal absen {searchKeyword} ditemukan.
+          </p>
+        ) : listAbsenExisting.length === 0 ? (
+          <p className="text-center text-gray-500">
+            Tidak ada absen pengajar ditemukan.
+          </p>
         ) : (
           <>
             <div className="overflow-x-auto mt-4 rounded-lg shadow-md">
@@ -243,13 +420,16 @@ export const DaftarAbsenPengajar = () => {
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                       Total Fee
                     </th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      Tanggal Absen
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {displayedAbsen.map((absen, index) => (
                     <tr key={absen.id}>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {absen.id}
+                        {absen.kodeKelas}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {absen.pengajar}
@@ -262,6 +442,9 @@ export const DaftarAbsenPengajar = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {absen.fee}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {formatLocalDateTime(absen.tanggalAbsen)}
                       </td>
                     </tr>
                   ))}
