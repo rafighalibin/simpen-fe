@@ -206,7 +206,18 @@ const SesiReschedule = () => {
                       ).toLocaleTimeString([], { timeStyle: "short" })}
                     </td>
                     <td className="border-b px-6 py-6">
-                      {sesiReschedule.sesiKelas.status}
+                      {sesiReschedule.sesiKelas.status.indexOf("Requested") >=
+                      0 ? (
+                        <span className="text-warning">
+                          {sesiReschedule.sesiKelas.status}
+                        </span>
+                      ) : sesiReschedule.sesiKelas.status == "Finished" ? (
+                        <span className="text-success">
+                          {sesiReschedule.sesiKelas.status}
+                        </span>
+                      ) : (
+                        <span>{sesiReschedule.sesiKelas.status}</span>
+                      )}
                     </td>
                     <td className="border-b pl-16 px-6 py-6 ">
                       <input
@@ -290,25 +301,37 @@ const SesiReschedule = () => {
                       sesiReschedule.listReschedule.length - 1
                     ] && (
                       <>
-                        <tr>
-                          <td className="py-2 pl-8">
-                            <span>Waktu Permintaan</span>
+                        <tr className="text-center font-bold border-b ">
+                          <td className="py-2 border-r">
+                            <span>
+                              <p>Tanggal</p>
+                              <p>Permintaan</p>
+                            </span>
                           </td>
                           <td />
                           <td />
                           <td />
-                          <td />
-                          <td />
-                          <td />
-
-                          <td className="py-2 px-12">
+                          <td className="py-2 border-x">
+                            <span>Alasan</span>
+                          </td>
+                          <td className="py-2 border-x">
                             <span>Status</span>
+                          </td>
+                          <td className="py-2 border-l">
+                            <span>Tanggal Baru</span>
+                          </td>
+                          <td className="py-2 border-l">
+                            <span>Waktu Baru</span>
                           </td>
                         </tr>
                         {sesiReschedule.listReschedule.map(
                           (reschedule: ReadReschedule) => (
-                            <tr aria-colspan={4} key={`tr-${reschedule.id}`}>
-                              <td className="py-2 pl-8 flex flex-col items-start">
+                            <tr
+                              aria-colspan={4}
+                              key={`tr-${reschedule.id}`}
+                              className="text-center border-b"
+                            >
+                              <td className="py-2 border-r">
                                 <span>
                                   {reschedule.waktuPermintaan.split(" ")[0]}
                                 </span>
@@ -316,26 +339,49 @@ const SesiReschedule = () => {
                               <td />
                               <td />
                               <td />
-                              <td></td>
-                              <td className="py-2 px-16">
+                              <td className="py-2 border-x">
+                                <span>{reschedule.alasan}</span>
+                              </td>
+                              <td className="py-2 border-x">
+                                {reschedule.status == "Requested" ? (
+                                  <span className="text-warning py-1 px-4">
+                                    {reschedule.status}
+                                  </span>
+                                ) : reschedule.status == "Approved" ? (
+                                  <span className="text-success py-1 px-4">
+                                    {reschedule.status}
+                                  </span>
+                                ) : reschedule.status == "Rejected" ? (
+                                  <span className="text-error py-1 px-4">
+                                    {reschedule.status}
+                                  </span>
+                                ) : (
+                                  <span>{reschedule.status}</span>
+                                )}
+                              </td>
+                              <td className="py-2 border-x">
                                 <span>
-                                  {new Date(
-                                    reschedule.waktuBaru
-                                  ).toLocaleDateString()}
+                                  {reschedule.waktuBaru && (
+                                    <span>
+                                      {new Date(
+                                        reschedule.waktuBaru
+                                      ).toLocaleDateString()}
+                                    </span>
+                                  )}
                                 </span>
                               </td>
-                              <td className="py-2 px-8">
+                              <td className="py-2 border-l">
                                 <span>
-                                  {new Date(
-                                    reschedule.waktuBaru
-                                  ).toLocaleTimeString([], {
-                                    timeStyle: "short",
-                                  })}
+                                  {reschedule.waktuBaru && (
+                                    <span>
+                                      {new Date(
+                                        reschedule.waktuBaru
+                                      ).toLocaleTimeString([], {
+                                        timeStyle: "short",
+                                      })}
+                                    </span>
+                                  )}
                                 </span>
-                              </td>
-
-                              <td className="py-2 px-8">
-                                <span>{reschedule.status}</span>
                               </td>
                             </tr>
                           )

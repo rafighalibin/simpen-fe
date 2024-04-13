@@ -17,12 +17,16 @@ export type ReadGantiPengajarSesi = {
 };
 
 export type CreateGantiPengajarForm = {
+  id?: string;
   sesiKelasId: string;
   alasan: string;
   ischanged: boolean;
+  pengajarPenggantiId?: string;
 };
 
 export type CreateGantiPengajarPayload = {
+  id?: string;
   sesiKelasId: string;
+  pengajarPenggantiId?: string;
   alasan: string;
 };

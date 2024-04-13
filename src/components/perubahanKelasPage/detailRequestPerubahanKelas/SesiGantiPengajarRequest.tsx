@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import useFetchWithToken from "../../../common/hooks/fetchWithToken";
 import { useParams } from "next/navigation";
 import Loading from "../../../app/loading";
@@ -26,6 +26,7 @@ const SesiGantiPengajarRequest = () => {
   const [alasanNumber, setAlasanNumber] = useState(0);
   const [pengajarSelected, setPengajarSelected] =
     useState<PengajarSelect>(null);
+  const queryClient = useQueryClient();
 
   const { isLoading: listUserLoading, listPengajarExisting } =
     useFetchPengajar();
@@ -42,49 +43,89 @@ const SesiGantiPengajarRequest = () => {
     },
   });
 
+  const {
+    mutateAsync: updateGantiPengajarMutation,
+    isLoading: updateGantiPengajarIsLoading,
+    data: updateGantiPengajarResponse,
+    isSuccess: updateGantiPengajarSuccess,
+    isError: updateGantiPengajarError,
+  } = useMutation({
+    mutationFn: () =>
+      fetchWithToken(`/ganti-pengajar/create/${id}`, "PUT", payload).then(
+        (res) => res.json()
+      ),
+    onSuccess: () => {
+      setIsChanged(false);
+      queryClient.invalidateQueries("gantiPengajarKelas");
+    },
+  });
+
   useEffect(() => {
     if (fetchData) {
       setFormState([]);
       fetchData.content.listSesiGantiPengajar.map(
         (sesiGantiPengajar: ReadGantiPengajarSesi) => {
           let createGantiPengajartemp: CreateGantiPengajarForm = {
+            id: sesiGantiPengajar.activeGantiPengajar?.id,
             sesiKelasId: sesiGantiPengajar.sesiKelas.sesi_id,
-
             alasan: "",
             ischanged: false,
+            pengajarPenggantiId: "",
           };
           setFormState((prev) => [...prev, createGantiPengajartemp]);
         }
       );
     }
   }, [fetchData]);
-  const handleChangePengajar = (e) => {
+
+  const handleChangePengajar = (e, sessionIndex) => {
     const { value } = e;
-    setFormState((prev) => ({ ...prev, pengajarId: value }));
+    setIsChanged(true);
+    let CreateGantiPengajarFormTemp: CreateGantiPengajarForm =
+      formState[sessionIndex];
+    CreateGantiPengajarFormTemp.pengajarPenggantiId = e.value;
+    CreateGantiPengajarFormTemp.ischanged = true;
+    setFormState((prev) => {
+      prev[sessionIndex] = CreateGantiPengajarFormTemp;
+      return [...prev];
+    });
   };
   if (fetchDataIsLoading) return <Loading />;
 
   const listSesiGantiPengajar: ReadGantiPengajarSesi[] =
     fetchData.content.listSesiGantiPengajar;
 
-  function pad(number, length) {
-    return (number < 10 ? "0" : "") + number;
-  }
-  const handleSubmit = () => {
-    console.log("SUBMIT");
+  const handleSubmit = (isApproved: Boolean) => {
+    setPayload([]);
+    let payloadListTemp: CreateGantiPengajarPayload[] = [];
+
+    formState.forEach((element) => {
+      if (element.id) {
+        let payloadTemp: CreateGantiPengajarPayload = {
+          id: element.id,
+          sesiKelasId: element.sesiKelasId,
+          pengajarPenggantiId: isApproved ? element.pengajarPenggantiId : null,
+          alasan: alasan,
+        };
+        payloadListTemp.push(payloadTemp);
+      }
+    });
+    payload.push(...payloadListTemp);
+    console.log(payload);
+    updateGantiPengajarMutation();
   };
 
   return (
     <div>
       <div className="my-5">
-        {true && !isChanged && (
+        {updateGantiPengajarSuccess && !isChanged && (
           <div className="bg-[#DAF8E6] text-[#004434] text-sm px-4 py-2">
-            Berhasil membuat permintaan gantiPengajar
+            Berhasil update permintaan ganti pengajar
           </div>
         )}
-        {true && !isChanged && (
+        {updateGantiPengajarError && !isChanged && (
           <div className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2">
-            Gagal membuat permintaan gantiPengajar
+            Gagal update permintaan ganti pengajar
           </div>
         )}
         {fetchDataError && !isChanged && (
@@ -94,18 +135,13 @@ const SesiGantiPengajarRequest = () => {
         )}
       </div>
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
-        }}
-      >
+      <form>
         <div>
           <div className="shadow-lg rounded-lg ">
             <table data-testid={id} className="table-auto w-full">
               <thead className="bg-baseForeground rounded-t-lg">
                 <tr>
-                  <th className={`px-6 py-6 text-left bg-baseForeground `}>
+                  <th className={`px-4 py-6 text-left bg-baseForeground `}>
                     Pertemuan
                   </th>
                   <th className={`px-6 py-6 text-left bg-baseForeground `}>
@@ -122,9 +158,6 @@ const SesiGantiPengajarRequest = () => {
                     Riwayat
                   </th>
                   <th className={`px-10 py-6 text-left bg-baseForeground `}>
-                    Alasan
-                  </th>
-                  <th className={`px-10 py-6 text-left bg-baseForeground `}>
                     Pengajar Penganti
                   </th>
                 </tr>
@@ -136,7 +169,7 @@ const SesiGantiPengajarRequest = () => {
                   className={styles.table_items_text}
                 >
                   <tr key={`sesi-${sesiGantiPengajar.sesiKelas.sesi_id}`}>
-                    <td className="border-b pl-10 px-6 py-6">
+                    <td className="border-b pl-10 px-6 py-6 ">
                       {sessionIndex + 1}
                     </td>
                     <td className="border-b px-6 py-6">
@@ -150,12 +183,26 @@ const SesiGantiPengajarRequest = () => {
                       ).toLocaleTimeString([], { timeStyle: "short" })}
                     </td>
                     <td className="border-b px-6 py-6">
-                      {sesiGantiPengajar.sesiKelas.status}
+                      {sesiGantiPengajar.sesiKelas.status.indexOf(
+                        "Requested"
+                      ) >= 0 ? (
+                        <span className="text-warning">
+                          {sesiGantiPengajar.sesiKelas.status}
+                        </span>
+                      ) : sesiGantiPengajar.sesiKelas.status == "Finished" ? (
+                        <span className="text-success">
+                          {sesiGantiPengajar.sesiKelas.status}
+                        </span>
+                      ) : (
+                        <span>{sesiGantiPengajar.sesiKelas.status}</span>
+                      )}
                     </td>
 
                     <td className="border-b pl-8 px-6 py-6">
                       <button
-                        disabled={!sesiGantiPengajar.activeGantiPengajar}
+                        disabled={
+                          !(sesiGantiPengajar.listGantiPengajar.length >= 1)
+                        }
                         onClick={(e) => {
                           e.preventDefault();
                           setDetailNumber(
@@ -167,26 +214,13 @@ const SesiGantiPengajarRequest = () => {
                         Riwayat
                       </button>
                     </td>
-                    <td className="border-b pl-8 px-6 py-6">
-                      <button
-                        disabled={!sesiGantiPengajar.activeGantiPengajar}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setAlasanNumber(
-                            alasanNumber == sessionIndex ? -1 : sessionIndex
-                          );
-                        }}
-                        className={`bg-transparent hover:bg-[#215E9B] text-[#215E9B]  hover:text-white py-2 px-4 border border-[#215E9B] hover:border-transparent rounded-full disabled:opacity-50 relative`}
-                      >
-                        Alasan
-                      </button>
-                    </td>
+
                     <td className="border-b pl-8 px-6 py-6">
                       <Select
                         isDisabled={!sesiGantiPengajar.activeGantiPengajar}
                         defaultValue={pengajarSelected}
                         name="colors"
-                        onChange={handleChangePengajar}
+                        onChange={(e) => handleChangePengajar(e, sessionIndex)}
                         options={listPengajarExisting}
                         className="bg-base mt-1 p-2 w-full border rounded-md"
                         classNamePrefix="select"
@@ -220,66 +254,77 @@ const SesiGantiPengajarRequest = () => {
                       sesiGantiPengajar.listGantiPengajar.length - 1
                     ] && (
                       <>
-                        <tr>
-                          <td className="py-2 px-8">
-                            <span>Tanngal Permintaan</span>
+                        <tr className="text-center font-bold border-b ">
+                          <td className="py-2 border-r">
+                            <span>
+                              <p>Tanggal</p>
+                              <p>Permintaan</p>
+                            </span>
                           </td>
                           <td />
                           <td />
-                          <td />
-                          <td />
-                          <td />
-
-                          <td className="py-2 px-12">
+                          <td className="py-2 border-x">
+                            <span>Alasan</span>
+                          </td>
+                          <td className="py-2 border-x">
                             <span>Status</span>
+                          </td>
+                          <td className="py-2 border-l">
+                            <span>
+                              <p>Pengajar</p>
+                              <p>Pengganti</p>
+                            </span>
                           </td>
                         </tr>
                         {sesiGantiPengajar.listGantiPengajar.map(
                           (gantiPengajar: ReadGantiPengajar) => (
-                            <tr aria-colspan={4} key={`tr-${gantiPengajar.id}`}>
-                              <td className="py-2 px-8">
+                            <tr
+                              aria-colspan={4}
+                              key={`tr-${gantiPengajar.id}`}
+                              className="text-center border-b"
+                            >
+                              <td className="py-2 border-r">
                                 <span>
                                   {gantiPengajar.waktuPermintaan.split(" ")[0]}
                                 </span>
                               </td>
                               <td />
                               <td />
-                              <td />
-                              <td />
-                              <td>
-                                <span>
-                                  {gantiPengajar.namaPengajarPenggati}
-                                </span>
+                              <td className="py-2 border-x">
+                                <span>{gantiPengajar.alasan}</span>
                               </td>
-
-                              <td className="py-2 px-8">
-                                <span>{gantiPengajar.status}</span>
+                              <td className="py-2 border-x">
+                                {gantiPengajar.status == "Requested" ? (
+                                  <span className="text-warning py-1 px-4">
+                                    {gantiPengajar.status}
+                                  </span>
+                                ) : gantiPengajar.status == "Approved" ? (
+                                  <span className="text-success py-1 px-4">
+                                    {gantiPengajar.status}
+                                  </span>
+                                ) : gantiPengajar.status == "Rejected" ? (
+                                  <span className="text-error py-1 px-4">
+                                    {gantiPengajar.status}
+                                  </span>
+                                ) : (
+                                  <span>{gantiPengajar.status}</span>
+                                )}
+                              </td>
+                              <td className="py-2 border-l">
+                                <span>
+                                  {gantiPengajar.namaPengajarPenggati && (
+                                    <a
+                                      className={`bg-transparent hover:bg-[#215E9B] text-[#215E9B]  hover:text-white py-1 px-4 border border-[#215E9B] hover:border-transparent rounded-full disabled:opacity-50 relative`}
+                                      href={`/pengajar/${gantiPengajar.idPengajarPengganti}`}
+                                    >
+                                      {gantiPengajar.namaPengajarPenggati}
+                                    </a>
+                                  )}
+                                </span>
                               </td>
                             </tr>
                           )
                         )}
-                      </>
-                    )}
-                  {alasanNumber == sessionIndex &&
-                    sesiGantiPengajar.listGantiPengajar[
-                      sesiGantiPengajar.listGantiPengajar.length - 1
-                    ] && (
-                      <>
-                        <tr>
-                          <td colSpan={8} className="py-2 px-8">
-                            <span>Alasan</span>
-                          </td>
-                        </tr>
-
-                        <tr>
-                          <td colSpan={8} className="py-2 px-8 ">
-                            <span>
-                              {sesiGantiPengajar.activeGantiPengajar != null
-                                ? sesiGantiPengajar.activeGantiPengajar.alasan
-                                : ""}
-                            </span>
-                          </td>
-                        </tr>
                       </>
                     )}
                 </tbody>
@@ -290,10 +335,23 @@ const SesiGantiPengajarRequest = () => {
 
         <div>
           <div className="flex justify-center py-7 gap-4">
-            <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                handleSubmit(true);
+              }}
+              className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
+            >
               Terima
             </button>
-            <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                handleSubmit(false);
+              }}
+              disabled={isChanged}
+              className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover disabled:opacity-50"
+            >
               Tolak
             </button>
           </div>
