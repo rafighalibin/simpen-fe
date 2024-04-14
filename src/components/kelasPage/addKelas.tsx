@@ -55,7 +55,8 @@ export const AddKelas = () => {
           value: "Student4",
           label: "Student4",
         },
-      ];
+    ];
+
     const [muridSelected, setMuridSelected] = useState<MuridSelect[]>([]);
     const [muridValues, setMuridValues] = useState([]);
 

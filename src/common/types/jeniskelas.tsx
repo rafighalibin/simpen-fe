@@ -1,12 +1,14 @@
+import { Program } from "./program";
+
 export type JenisKelas = {
-    id: number;
+    id: string;
     nama: string;
     pertemuan: string;
     tipe: string;
     bahasa: string;
-    pic_akademik_id: number;
-    list_program: string;
-    list_kelas: string;
+    picAkademikId: string;
+    picAkademikNama: string;
+    listProgram: Program[];
 };
 
 export type JenisKelasSelect = {

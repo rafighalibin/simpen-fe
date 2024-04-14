@@ -9,7 +9,6 @@ import { InterMedium, PoppinsBold } from "../../font/font";
 import { Filtering } from "./Filtering";
 import { useMutation } from "react-query";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
-import { useRouter } from "next/navigation";
 
 export const JenisKelasTable = () => {
   const {
@@ -24,7 +23,6 @@ export const JenisKelasTable = () => {
   const [sortBy, setSortBy] = useState("");
   const [filterBy, setFilterBy] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const router = useRouter();
 
   const { mutateAsync: deleteMutation } = useMutation({
     mutationFn: (id: string) =>
@@ -33,9 +31,6 @@ export const JenisKelasTable = () => {
           if (res.status === 500) {
             alert("Jenis Kelas Internal Server Error. Ada Program yang berhubungan!");
           }
-          else {
-            alert("Jenis Kelas berhasil dihapus");
-          }
           return res.json();
         })
         .catch((error) => {
@@ -43,7 +38,6 @@ export const JenisKelasTable = () => {
           throw error;
         }),
     onSuccess: () => {
-      window.location.href = "/kelas/jenis";
       refetch();
     },
   });
@@ -53,15 +47,8 @@ export const JenisKelasTable = () => {
   }, [refetch]);
 
   const handleDelete = async (jeniskelas) => {
-    if (window.confirm("Are you sure you want to delete this jenis kelas?")) {
-      const jenisKelasId = jeniskelas.id;
-      await deleteMutation(jenisKelasId);
-    }
-  };
-
-  const handleDetailClick = (jeniskelas) => {
     const jenisKelasId = jeniskelas.id;
-    router.push(`/kelas/jenis/${jenisKelasId}`);
+    await deleteMutation(jenisKelasId);
   };
 
   const totalPages = Math.ceil(listAllJenisKelas.length / itemsPerPage);
@@ -97,7 +84,7 @@ export const JenisKelasTable = () => {
     return (
       <div>
         <div className={` ${styles.heading} text-xl font-bold my-10`}>
-          Daftar Jenis Kelas
+          Daftar Jenis Kelas - Bulk Delete
         </div>
         <div>
           <Filtering
@@ -154,7 +141,7 @@ export const JenisKelasTable = () => {
     return (
     <div>
       <div className={` ${styles.heading} text-xl font-bold my-10`}>
-        Daftar Jenis Kelas
+        Daftar Jenis Kelas - Bulk Delete
       </div>
       <div>
         <Filtering
@@ -210,7 +197,7 @@ export const JenisKelasTable = () => {
   return (
     <div>
       <div className={` ${styles.heading} text-xl font-bold my-10`}>
-        Daftar Jenis Kelas
+        Daftar Jenis Kelas - Bulk Delete
       </div>
       
       <div>
@@ -251,7 +238,7 @@ export const JenisKelasTable = () => {
                   PIC
                 </th>
                 <th className="px-4 py-4 text-left" style={InterMedium.style}>
-                  PROGRAM AKTIF
+                  TOTAL PROGRAM
                 </th>
                 <th
                   className="px-4 py-4 text-left"
@@ -281,14 +268,6 @@ export const JenisKelasTable = () => {
                     <td className="border-b px-4 py-5">{jeniskelas.bahasa}</td>
                     <td className="border-b px-4 py-5">{jeniskelas.picAkademikNama}</td>
                     <td className="border-b px-4 py-5">{jeniskelas.listProgram.length}</td>
-                    <td className="border-b px-4 py-5">
-                      <button
-                        onClick={() => handleDetailClick(jeniskelas)}
-                        className={`bg-transparent hover:bg-[#215E9B] text-[#215E9B]  hover:text-white py-2 px-4 border border-[#215E9B] hover:border-transparent rounded-full`}
-                      >
-                        Detail
-                      </button>
-                    </td>
                     <td className="border-b px-4 py-5">
                     <button
                       className={`bg-transparent hover:bg-[#F23030] text-[#F23030] hover:text-white py-2 px-4 border border-[#F23030] hover:border-transparent rounded-full`}

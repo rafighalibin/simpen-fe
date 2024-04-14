@@ -1,15 +1,57 @@
 "use client";
 
 import React, { useState } from "react";
+import { useMutation } from "react-query";
+import { useRouter } from "next/navigation";
 
 //import font and css
 import { PoppinsBold, InterMedium, InterReguler } from "../../font/font";
 import styles from "./addProgramForm.module.css";
 
+//import component
+import useFetchWithToken from "../../common/hooks/fetchWithToken";
+import useFetchAllJenisKelas from "../../common/hooks/jeniskelas/useFetchAllJenisKelas";
+
 export const AddProgramForm = () => {
-  const [program, setprogram] = useState("");
-  const [jumlahLevel, setJumlahLevel] = useState("");
-  const [jumlahPertemuan, setJumlahPertemuan] = useState("");
+  const fetchWithToken = useFetchWithToken();
+  const { isLoading: listAllJenisKelasLoading, listAllJenisKelas } = useFetchAllJenisKelas();
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const router = useRouter();
+  const [formState, setFormState] = useState({
+    nama: "",
+    jumlahLevel: null,
+    jumlahPertemuan: null,
+    jenisKelas: [],
+  });
+
+  const { mutateAsync: addProgramMutation, data: response } = useMutation({
+    mutationFn: () =>
+      fetchWithToken(`/kelas/program`, "POST", formState).then((res) => res.json()),
+    onSuccess: (data) => {
+      if (data.code == 200) {
+        console.log(data.content);
+        setSuccess("Sukses menambahkan.");
+        setTimeout(() => {
+          window.location.href = "/kelas/program";
+        }, 1000);
+      } else if (data.code == 400) {
+        setError("Program sudah pernah ada.");
+        setFormState({
+          nama: "",
+          jumlahLevel: null,
+          jumlahPertemuan: null,
+          jenisKelas: [],
+        });
+      }
+    },
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await addProgramMutation();
+  };
+
 
   return (
     <div className="">
@@ -20,7 +62,7 @@ export const AddProgramForm = () => {
         Tambah Program
       </div>
       <div className={`${styles.card_form} px-7 py-8`}>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div>
             <div
               style={InterMedium.style}
@@ -36,8 +78,10 @@ export const AddProgramForm = () => {
               required
               className={`${styles.form_placeholder} appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
               placeholder="Nama Program"
-              value={program}
-              onChange={(e) => setprogram(e.target.value)}
+              value={formState.nama}
+              onChange={(e) =>
+                setFormState({ ...formState, nama: e.target.value })
+              }
               style={InterReguler.style}
             />
           </div>
@@ -56,8 +100,10 @@ export const AddProgramForm = () => {
               required
               className={`${styles.form_placeholder} appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
               placeholder="Jumlah Level"
-              value={jumlahLevel}
-              onChange={(e) => setJumlahLevel(e.target.value)}
+              value={formState.jumlahLevel}
+              onChange={(e) =>
+                setFormState({ ...formState, jumlahLevel: parseInt(e.target.value) })
+              }
               style={InterReguler.style}
             />
             <div
@@ -72,50 +118,111 @@ export const AddProgramForm = () => {
               style={InterMedium.style}
               className={`${styles.form_title} mb-3`}
             >
-              Jumlah Level
+              Jumlah Pertemuan
             </div>
-            <select
-              id="jumlah-level"
-              name="jumlah-level"
-              autoComplete="jumlah-level"
+            <input
+              id="jumlah-pertemuan"
+              name="jumlah-pertemuan"
+              type="jumlah-pertemuan"
+              autoComplete="jumlah-pertemuan"
               required
               className={`${styles.form_placeholder} appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
-              value={jumlahLevel}
-              onChange={(e) => setJumlahLevel(e.target.value)}
+              placeholder="Jumlah Pertemuan"
+              value={formState.jumlahPertemuan}
+              onChange={(e) =>
+                setFormState({ ...formState, jumlahPertemuan: parseInt(e.target.value) })
+              }
               style={InterReguler.style}
+            />
+            <div
+              style={InterReguler.style}
+              className={`${styles.form_paragraph} mt-2`}
             >
-              <option value="" disabled selected>
-                Jumlah Level
-              </option>
-              <option value="pengajar">Mitra Pengajar</option>
-              <option value="operasional">Operasional</option>
-              <option value="akademik">Akademik</option>
-            </select>
+              Jumlah Pertemuan adalah banyaknya kelas yang akan diadakan dalam program.
+            </div>
           </div>
           <div className="mt-8">
             <div
               style={InterMedium.style}
               className={`${styles.form_title} mb-3`}
             >
-              Jumlah Pertemuan
+              Jenis Kelas
             </div>
-            <select
-              id="jumlah-pertemuan"
-              name="jumlah-pertemuan"
-              autoComplete="jumlah-pertemuan"
-              required
-              className={`${styles.form_placeholder} appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
-              value={jumlahLevel}
-              onChange={(e) => setJumlahPertemuan(e.target.value)}
+            <div className="flex flex-col items-start">
+              {listAllJenisKelas.map((jeniskelas) => (
+                <React.Fragment key={jeniskelas.id}>
+                  <div className="flex items-center">
+                    <input
+                      id={jeniskelas.id}
+                      name="jenis-kelas"
+                      type="checkbox"
+                      value={jeniskelas.id}
+                      checked={formState.jenisKelas.includes(jeniskelas.id)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setFormState({
+                            ...formState,
+                            jenisKelas: [...formState.jenisKelas, jeniskelas.id],
+                          });
+                        } else {
+                          setFormState({
+                            ...formState,
+                            jenisKelas: formState.jenisKelas.filter((t) => t !== jeniskelas.id),
+                          });
+                        }
+                      }}
+                      className="mr-2"
+                    />
+                    <label htmlFor={jeniskelas.id} className="mr-4">
+                      {jeniskelas.nama + " - " + jeniskelas.bahasa + " - " + jeniskelas.tipe + " - " + jeniskelas.pertemuan + " - " + jeniskelas.picAkademikNama}
+                    </label>
+                  </div>
+                </React.Fragment>
+              ))}
+            </div>
+            <div
               style={InterReguler.style}
+              className={`${styles.form_paragraph} mt-2`}
             >
-              <option value="" disabled selected>
-                Jumlah Pertemuan
-              </option>
-              <option value="pengajar">Mitra Pengajar</option>
-              <option value="operasional">Operasional</option>
-              <option value="akademik">Akademik</option>
-            </select>
+              Pilih Jenis Kelas yang diinginkan.
+            </div>
+          </div>
+          <div className="mt-5">
+            {success && (
+              <div
+                className="bg-[#DAF8E6] text-[#004434] text-sm px-4 py-2"
+                style={InterReguler.style}
+              >
+                {success}
+              </div>
+            )}
+            {error && (
+              <div
+                className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2"
+                style={InterReguler.style}
+              >
+                {error}
+              </div>
+            )}
+            {!listAllJenisKelas.length && (
+              <div
+                className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2"
+                style={InterReguler.style}
+              >
+                Tambah Jenis Kelas terlebih dahulu bila ingin menambah Program!
+              </div>
+            )}
+          </div>
+          <div className="flex justify-center mt-9">
+            {listAllJenisKelas.length > 0 && (
+              <button
+                type="submit"
+                className={`${styles.button_tx} ${styles.btn} hover:bg-[#215E9B] focus:bg-[#215E9B]`}
+                style={InterMedium.style}
+              >
+                Tambah Program
+              </button>
+            )}
           </div>
         </form>
       </div>
