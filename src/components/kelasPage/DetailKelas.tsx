@@ -78,7 +78,7 @@ const DetailKelas = () => {
     linkGroup,
     listMurid,
     level,
-    platform,
+    zoom,
     namaPengajar,
     status,
   } = data.content;
@@ -222,6 +222,18 @@ const DetailKelas = () => {
           />
         </div>
 
+        <div>
+          <label className="block font-medium text-neutral/70">
+            Link Platform
+          </label>
+          <input
+            disabled
+            type="text"
+            value={zoom.link}
+            className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full rounded-md"
+          />
+        </div>
+
         <div className="p-2">
           <DataTableMurid
             columns={ColumnsMurid}
@@ -231,15 +243,6 @@ const DetailKelas = () => {
           />
         </div>
 
-        <div>
-          <label className="block font-medium text-neutral/70">Platform</label>
-          <input
-            disabled
-            type="text"
-            value={platform}
-            className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full rounded-md"
-          />
-        </div>
         <div>
           {!(userLoggedIn.role === "pengajar") && (
             <div className="flex justify-center py-7 gap-4">

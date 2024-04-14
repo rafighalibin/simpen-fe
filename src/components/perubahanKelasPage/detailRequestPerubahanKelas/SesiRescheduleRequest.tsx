@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import useFetchWithToken from "../../../common/hooks/fetchWithToken";
 import { useParams } from "next/navigation";
 import Loading from "../../../app/loading";
@@ -11,6 +11,8 @@ import {
   ReadReschedule,
   ReadRescheduleSesi,
 } from "../../../common/types/reschedule";
+import { ZoomSelect } from "../../../common/types/platform";
+import Select from "react-select";
 
 const SesiRescheduleRequest = () => {
   const fetchWithToken = useFetchWithToken();
@@ -18,37 +20,127 @@ const SesiRescheduleRequest = () => {
   const [isChanged, setIsChanged] = useState(false);
   const [formState, setFormState] = useState([] as CreateRescheduleForm[]);
   const [payload, setPayload] = useState([] as CreateReschedulePayload[]);
+  const [hasWarning, setHasWarning] = useState([] as Boolean[]);
   const [alasan, setAlasan] = useState("");
-  const [detailNumber, setDetailNumber] = useState(0);
-  const [alasanNumber, setAlasanNumber] = useState(0);
+  const [detailNumber, setDetailNumber] = useState(null);
+  const [listZoomAvalaible, setListZoomAvalaible] = useState<ZoomSelect[][]>(
+    []
+  );
+  const [listZoomSelected, setListZoomSelected] = useState<ZoomSelect[]>([]);
+  const queryClient = useQueryClient();
+
+  const {
+    isLoading: fetchZoomAvalaibleIsLoading,
+    error: fetchZoomAvalaibleError,
+    isSuccess: fetchZoomAvalaibleIsSuccess,
+    data: fetchZoomAvalaible = [] as ZoomSelect[][],
+  } = useQuery({
+    queryKey: ["zoomAvalaible"],
+    queryFn: () =>
+      fetchWithToken(`/platform?zoom&kelasId=${id}`).then((res) => res.json()),
+
+    onSuccess: (data) => {
+      data.content.map((platform: any, index: number) => {
+        let temp: ZoomSelect[] = [];
+        platform.map((zoom: any) => {
+          temp.push({
+            value: zoom.id,
+            label: zoom.nama,
+          });
+        });
+        setListZoomAvalaible((prev) => [...prev, temp]);
+      });
+    },
+  });
 
   const {
     isLoading: fetchDataIsLoading,
+    isSuccess: fetchDataIsSuccess,
     error: fetchDataError,
     data: fetchData,
   } = useQuery({
     queryKey: ["rescheduleKelas"],
     queryFn: () =>
       fetchWithToken(`/reschedule/${id}`).then((res) => res.json()),
+    onSuccess: (data) => {
+      data.content.listSesiReschedule.map(
+        (sesiReschedule: ReadRescheduleSesi, index: number) => {
+          let selectedZoom: ZoomSelect = {
+            value: sesiReschedule.sesiKelas.zoom.id,
+            label: sesiReschedule.sesiKelas.zoom.nama,
+          };
+
+          setListZoomSelected((prev) => [...prev, selectedZoom]);
+        }
+      );
+    },
+  });
+
+  const checkZoomAvalaible = (zoomSelect: ZoomSelect, index: number) => {
+    let found: boolean = false;
+
+    if (!listZoomAvalaible[index]) return false;
+
+    listZoomAvalaible[index].forEach((zoom) => {
+      if (zoom.value == zoomSelect.value) {
+        found = true;
+      }
+    });
+    return found;
+  };
+
+  const {
+    mutateAsync: updateRescheduleMutation,
+    isLoading: updateRescheduleIsLoading,
+    data: updateRescheduleResponse,
+    isSuccess: updateRescheduleSuccess,
+    isError: updateRescheduleError,
+  } = useMutation({
+    mutationFn: () =>
+      fetchWithToken(`/reschedule/create/${id}`, "PUT", payload).then((res) =>
+        res.json()
+      ),
+    onSuccess: () => {
+      setIsChanged(false);
+      setListZoomSelected([]);
+      queryClient.invalidateQueries("rescheduleKelas");
+    },
   });
 
   useEffect(() => {
-    if (fetchData) {
+    if (fetchData && listZoomAvalaible.length > 0) {
       setFormState([]);
       fetchData.content.listSesiReschedule.map(
-        (sesiReschedule: ReadRescheduleSesi) => {
+        (sesiReschedule: ReadRescheduleSesi, index: number) => {
           let createRescheduletemp: CreateRescheduleForm = {
+            id: sesiReschedule.activeReschedule?.id,
             sesiKelasId: sesiReschedule.sesiKelas.sesi_id,
             tanggalBaru: sesiReschedule.activeRescheduleDate,
             waktuBaru: sesiReschedule.activeRescheduleTime,
+            zoomId: checkZoomAvalaible(listZoomSelected[index], index)
+              ? listZoomSelected[index].value
+              : null,
             alasan: "",
             ischanged: false,
           };
           setFormState((prev) => [...prev, createRescheduletemp]);
         }
       );
+
+      listZoomSelected.map((zoomSelect, index) => {
+        if (
+          !checkZoomAvalaible(zoomSelect, index) &&
+          listZoomAvalaible[index] &&
+          listZoomAvalaible[index].length > 0
+        ) {
+          setHasWarning((prev) => {
+            prev[index] = true;
+            return [...prev];
+          });
+        }
+      });
     }
-  }, [fetchData]);
+  }, [fetchData, listZoomAvalaible]);
 
   if (fetchDataIsLoading) return <Loading />;
 
@@ -58,21 +150,75 @@ const SesiRescheduleRequest = () => {
   function pad(number, length) {
     return (number < 10 ? "0" : "") + number;
   }
-  const handleSubmit = () => {
-    console.log("SUBMIT");
+
+  const handleChangeZoom = (e, sessionIndex) => {
+    const { value } = e;
+    setIsChanged(true);
+    let CreateGantiPengajarFormTemp: CreateRescheduleForm =
+      formState[sessionIndex];
+    CreateGantiPengajarFormTemp.zoomId = e.value;
+    CreateGantiPengajarFormTemp.ischanged = true;
+    setFormState((prev) => {
+      prev[sessionIndex] = CreateGantiPengajarFormTemp;
+      return [...prev];
+    });
+
+    listZoomSelected.map((e, index) => {
+      if (
+        !checkZoomAvalaible(e, index) &&
+        listZoomAvalaible[index] &&
+        listZoomAvalaible[index].length > 0
+      ) {
+        setHasWarning((prev) => {
+          prev[index] = false;
+          return [...prev];
+        });
+      }
+    });
+  };
+
+  const handleSubmit = (isApproved: Boolean) => {
+    setPayload([]);
+    let payloadListTemp: CreateReschedulePayload[] = [];
+
+    formState.forEach((element, index) => {
+      if (element.id) {
+        if (element.zoomId == null && isApproved) {
+          setHasWarning((prev) => {
+            prev[index] = true;
+            return [...prev];
+          });
+          return;
+        }
+        let payloadTemp: CreateReschedulePayload = {
+          id: element.id,
+          sesiKelasId: element.sesiKelasId,
+          zoomId: isApproved ? element.zoomId : null,
+          alasan: alasan,
+        };
+        payloadListTemp.push(payloadTemp);
+      }
+    });
+    payload.push(...payloadListTemp);
+    updateRescheduleMutation();
   };
 
   return (
     <div>
       <div className="my-5">
-        {true && !isChanged && (
+        {updateRescheduleSuccess && !isChanged && (
           <div className="bg-[#DAF8E6] text-[#004434] text-sm px-4 py-2">
             Berhasil membuat permintaan reschedule
           </div>
         )}
-        {true && !isChanged && (
+        {updateRescheduleError && !isChanged && (
           <div className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2">
             Gagal membuat permintaan reschedule
+          </div>
+        )}{" "}
+        {hasWarning.some((warning) => warning) && !isChanged && (
+          <div className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2">
+            Terdapat Konflik Platform
           </div>
         )}
         {fetchDataError && !isChanged && (
@@ -82,12 +228,7 @@ const SesiRescheduleRequest = () => {
         )}
       </div>
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
-        }}
-      >
+      <form>
         <div>
           <div className="shadow-lg rounded-lg ">
             <table data-testid={id} className="table-auto w-full">
@@ -201,12 +342,42 @@ const SesiRescheduleRequest = () => {
                       </button>
                     </td>
                     <td className="border-b pl-8 px-6 py-6">
-                      <button
-                        disabled={sesiReschedule.listReschedule.length == 0}
-                        className={`bg-transparent hover:bg-[#215E9B] text-[#215E9B]  hover:text-white py-2 px-4 border border-[#215E9B] hover:border-transparent rounded-full disabled:opacity-50 relative`}
-                      >
-                        Zoom1
-                      </button>
+                      <Select
+                        isDisabled={!sesiReschedule.activeReschedule}
+                        defaultValue={listZoomSelected[sessionIndex]}
+                        name="colors"
+                        onChange={(e) => handleChangeZoom(e, sessionIndex)}
+                        options={listZoomAvalaible[sessionIndex]}
+                        className="bg-base mt-1 p-2 w-full border rounded-md"
+                        classNamePrefix="select"
+                        styles={{
+                          control: (provided, state) => ({
+                            ...provided,
+                            border: "none",
+                            boxShadow: "none",
+                            backgroundColor: "none",
+                          }),
+                          multiValue: (provided) => ({
+                            ...provided,
+                            backgroundColor: "#EDF6FF",
+                          }),
+                          option: (provided, state) => ({
+                            ...provided,
+                            backgroundColor: state.isSelected
+                              ? "#215E9B"
+                              : provided.backgroundColor,
+                            color: state.isSelected ? "white" : provided.color,
+                            fontWeight: state.isSelected
+                              ? "bold"
+                              : provided.fontWeight,
+                          }),
+                        }}
+                      />
+                      {hasWarning[sessionIndex] && (
+                        <p className="text-xs text-red-500">
+                          *Platform Konflik, silahkan pilih platform lain
+                        </p>
+                      )}
                     </td>
                   </tr>
                   {detailNumber == sessionIndex &&
@@ -309,11 +480,43 @@ const SesiRescheduleRequest = () => {
 
         <div>
           <div className="flex justify-center py-7 gap-4">
-            <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
-              Terima
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                handleSubmit(true);
+              }}
+              disabled={!isChanged || updateRescheduleIsLoading}
+              className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover disabled:opacity-50"
+            >
+              {updateRescheduleIsLoading ? (
+                <div className="inset-0 flex items-center justify-center gap-2">
+                  <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6"></div>
+                  <span>On Progress</span>
+                </div>
+              ) : (
+                "Terima"
+              )}
             </button>
-            <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
-              Tolak
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                handleSubmit(false);
+              }}
+              className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover disabled:opacity-50"
+              disabled={
+                isChanged ||
+                updateRescheduleIsLoading ||
+                listZoomAvalaible.some((listZoom) => listZoom.length == 0)
+              }
+            >
+              {updateRescheduleIsLoading ? (
+                <div className="inset-0 flex items-center justify-center gap-2">
+                  <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6"></div>
+                  <span>On Progress</span>
+                </div>
+              ) : (
+                "Tolak"
+              )}
             </button>
           </div>
         </div>

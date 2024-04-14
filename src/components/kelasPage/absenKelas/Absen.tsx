@@ -8,6 +8,7 @@ import CalendarIcon from "../../../common/components/icons/CalendarIcon";
 import Loading from "../../../common/components/Loading";
 import SesiAbsen from "./SesiAbsen";
 import Link from "next/link";
+import { useAuthContext } from "../../../common/utils/authContext";
 
 const Absen = () => {
   const fetchWithToken = useFetchWithToken();
@@ -21,6 +22,7 @@ const Absen = () => {
       setPlaylistKelas(data.content.linkPlaylist);
     },
   });
+  const { pengguna: userLoggedIn } = useAuthContext();
 
   const {
     mutateAsync: updatePlaylistMutation,
@@ -110,16 +112,20 @@ const Absen = () => {
                 Zoom Kelas
               </button>
             </Link>
-            <Link href={`reschedule`}>
-              <button className="bg-warning text-white px-4 py-2 rounded-md hover:bg-warningHover">
-                Ubah Jadwal
-              </button>
-            </Link>
-            <Link href={"ganti-pengajar"}>
-              <button className="bg-warning text-white px-4 py-2 rounded-md hover:bg-warningHover">
-                Ganti Guru
-              </button>
-            </Link>
+            {userLoggedIn.role === "pengajar" && (
+              <>
+                <Link href={`reschedule`}>
+                  <button className="bg-warning text-white px-4 py-2 rounded-md hover:bg-warningHover">
+                    Ubah Jadwal
+                  </button>
+                </Link>
+                <Link href={"ganti-pengajar"}>
+                  <button className="bg-warning text-white px-4 py-2 rounded-md hover:bg-warningHover">
+                    Ganti Guru
+                  </button>
+                </Link>
+              </>
+            )}
             <Link href={`/kelas/${id}`}>
               <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
                 Detail Kelas

@@ -22,8 +22,8 @@ const SesiGantiPengajarRequest = () => {
   const [formState, setFormState] = useState([] as CreateGantiPengajarForm[]);
   const [payload, setPayload] = useState([] as CreateGantiPengajarPayload[]);
   const [alasan, setAlasan] = useState("");
-  const [detailNumber, setDetailNumber] = useState(0);
-  const [alasanNumber, setAlasanNumber] = useState(0);
+  const [detailNumber, setDetailNumber] = useState(null);
+  const [alasanNumber, setAlasanNumber] = useState(null);
   const [pengajarSelected, setPengajarSelected] =
     useState<PengajarSelect>(null);
   const queryClient = useQueryClient();
@@ -340,19 +340,34 @@ const SesiGantiPengajarRequest = () => {
                 e.preventDefault();
                 handleSubmit(true);
               }}
-              className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
+              disabled={!isChanged || updateGantiPengajarIsLoading}
+              className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover disabled:opacity-50"
             >
-              Terima
+              {updateGantiPengajarIsLoading ? (
+                <div className="inset-0 flex items-center justify-center gap-2">
+                  <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6"></div>
+                  <span>On Progress</span>
+                </div>
+              ) : (
+                "Terima"
+              )}
             </button>
             <button
               onClick={(e) => {
                 e.preventDefault();
                 handleSubmit(false);
               }}
-              disabled={isChanged}
               className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover disabled:opacity-50"
+              disabled={isChanged || updateGantiPengajarIsLoading}
             >
-              Tolak
+              {updateGantiPengajarIsLoading ? (
+                <div className="inset-0 flex items-center justify-center gap-2">
+                  <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6"></div>
+                  <span>On Progress</span>
+                </div>
+              ) : (
+                "Tolak"
+              )}
             </button>
           </div>
         </div>

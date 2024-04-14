@@ -1,7 +1,10 @@
+import { ReadJadwalZoom, ReadZoom } from "./platform";
+
 export type SesiRead = {
   sesi_id: string;
   waktuPelaksanaan: string;
   status: string;
+  zoom?: ReadZoom;
 };
 
 export type SesiSelect = {
@@ -17,6 +20,7 @@ export type SesiDetail = {
   listMuridSesi: MuridSesi[];
   persentaseKehadiran: number;
   averageRating: number;
+  jadwalZoom?: ReadJadwalZoom;
 };
 
 export type MuridSesi = {

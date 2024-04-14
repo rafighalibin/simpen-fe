@@ -1,0 +1,64 @@
+.card1 {
+  border-radius: 8px;
+  background: #215e9b;
+  width: 53vw;
+  height: 16vh;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add box shadow */
+}
+
+.card2 {
+  border-radius: 8px;
+  background: #ffffff;
+  width: 27vw;
+  height: 70vh;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add box shadow */
+}
+
+.card3 {
+  border-radius: 8px;
+  background: #ffffff;
+  width: 24.4vw;
+  height: 9vh;
+  border: 1px solid #000000; /* Add border with desired color */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add box shadow */
+}
+
+.heading1 {
+  font-size: 30px;
+}
+
+.heading_user {
+  font-size: 20px;
+}
+
+.heading_announcement {
+  font-size: 16px;
+}
+
+.announcement_title {
+  font-size: 20px;
+}
+
+.announcement_date {
+  font-size: 14px;
+}
+
+.modal {
+  border-radius: 8px;
+  background: #ffffff;
+  width: 60vw;
+  height: 55vh;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add box shadow */
+}
+
+.modal_tx_title {
+  font-size: 25px;
+}
+
+.modal_tx_time {
+  font-size: 14px;
+}
+
+.modal_tx_paragraph {
+  font-size: 17px;
+}
