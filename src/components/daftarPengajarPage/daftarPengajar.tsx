@@ -13,8 +13,8 @@ import { PengajarDetail, PengajarSelect } from "../../common/types/pengajar";
 import Loading from "../../common/components/Loading";
 import { TagDetail, TagSelect } from "../../common/types/tag";
 import Select from "react-select";
-import styles from "./DaftarPengajar.module.css";
-import { useRouter } from 'next/navigation';
+import styles from "./daftarPengajar.module.css";
+import { useRouter } from "next/navigation";
 
 export const DaftarPengajar = () => {
   const router = useRouter();
@@ -82,9 +82,10 @@ export const DaftarPengajar = () => {
           tag.nama.toLowerCase().includes(keyword.toLowerCase())
         )
       );
-    }
-    else if (searchType === "domisiliKota"){
-      return pengajar.domisiliKota.toLowerCase().includes(searchKeyword.toLowerCase());
+    } else if (searchType === "domisiliKota") {
+      return pengajar.domisiliKota
+        .toLowerCase()
+        .includes(searchKeyword.toLowerCase());
     }
   });
 
@@ -233,16 +234,16 @@ export const DaftarPengajar = () => {
             Pengajar dengan tag yang dipilih tidak ditemukan.
           </p>
         ) : filteredPengajar.length === 0 && searchType === "domisiliKota" ? ( // Jika hasil pencarian tag kosong
-        <p className="text-red-500">
-          Pengajar dengan kota {searchKeyword} tidak ditemukan.
-        </p>
-      ) : (
+          <p className="text-red-500">
+            Pengajar dengan kota {searchKeyword} tidak ditemukan.
+          </p>
+        ) : (
           <>
             <div className="grid grid-cols-4 gap-10 py-16 px-6">
               {displayedPengajar.map((pengajar, index) => (
                 <div
                   key={pengajar.id}
-                  onClick={() => handleClick(pengajar.id)}  
+                  onClick={() => handleClick(pengajar.id)}
                   className="pt-4 bg-white rounded-lg overflow-hidden shadow-md flex flex-col items-center hover:bg-[#d6e1ec]"
                 >
                   <div className="mt-1 relative w-48 h-48 flex items-center justify-center rounded-full overflow-hidden">
