@@ -61,9 +61,6 @@ export function DataTable<TData, TValue>({
     filterFns: {
       fuzzy: fuzzyFilter,
     },
-    debugTable: true,
-    debugHeaders: true,
-    debugColumns: true,
   });
 
   // Function to render pagination buttons
@@ -99,43 +96,53 @@ export function DataTable<TData, TValue>({
   return (
     <div>
       {enableFilters && (
-        <div className="flex items-center mb-6 w-full space-x-2">
-          <DebouncedInput
-            value={globalFilter ?? ""}
-            onChange={(value) => setGlobalFilter(String(value))}
-            className="flex-grow px-2 py-2 border border-[#DFE4EA] text-[#637381] rounded"
-            placeholder="Search Murid..."
-          />
-          {table.getHeaderGroups().map((headerGroup) => (
-            <div key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <th
-                  key={header.id}
-                  className={` ${
-                    header.index === 0
-                      ? "rounded-tl-lg"
-                      : header.index + 1 === headerGroup.headers.length
-                      ? "rounded-tr-lg"
-                      : ""
-                  }`}
-                >
-                  {header.column.getCanFilter() && enableFilters ? (
-                    <div>
-                      <Filter column={header.column} table={table} />
-                    </div>
-                  ) : null}
-                </th>
-              ))}
-            </div>
-          ))}
-          <Link href="/murid/add">
-            <button
-              className={`px-4 py-2 bg-primary/80 hover:bg-primary text-white rounded`}
-            >
-              + Tambah Murid
-            </button>
-          </Link>
-        </div>
+        <table>
+          <thead className="flex items-center mb-6 w-full space-x-2">
+            <tr>
+              <td>
+                <DebouncedInput
+                  value={globalFilter ?? ""}
+                  onChange={(value) => setGlobalFilter(String(value))}
+                  className="flex-grow px-2 py-2 border border-[#DFE4EA] text-[#637381] rounded"
+                  placeholder="Search Murid..."
+                />
+              </td>
+            </tr>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <th
+                    key={header.id}
+                    className={` ${
+                      header.index === 0
+                        ? "rounded-tl-lg"
+                        : header.index + 1 === headerGroup.headers.length
+                        ? "rounded-tr-lg"
+                        : ""
+                    }`}
+                  >
+                    {header.column.getCanFilter() && enableFilters ? (
+                      <div>
+                        <Filter column={header.column} table={table} />
+                      </div>
+                    ) : null}
+                  </th>
+                ))}
+              </tr>
+            ))}
+            <tr>
+              <td>
+                <Link href="/murid/add">
+                  <button
+                    className={`px-4 py-2 bg-primary/80 hover:bg-primary text-white rounded`}
+                  >
+                    + Tambah Murid
+                  </button>
+                </Link>
+              </td>
+            </tr>
+          </thead>
+        </table>
       )}
 
       <div className="shadow-lg rounded-lg ">

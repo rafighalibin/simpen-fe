@@ -25,7 +25,11 @@ export const AddForm = () => {
     note: "",
   });
 
-  const { mutateAsync: addMuridMutation, data: response } = useMutation({
+  const {
+    mutateAsync: addMuridMutation,
+    data: response,
+    isLoading: createMuridIsLoading,
+  } = useMutation({
     mutationFn: () =>
       fetchWithToken(`/murid`, "POST", formState).then((res) => res.json()),
     onSuccess: (data) => {
@@ -222,13 +226,20 @@ export const AddForm = () => {
               </div>
             )}
           </div>
-          <div className="flex justify-center mt-9">
+          <div className="flex justify-center gap-4 pt-12">
             <button
               type="submit"
-              className={`${styles.button_tx} ${styles.btn} `}
-              style={InterMedium.style}
+              className={`${styles.button_tx} ${styles.edit_btn} disabled:opacity-50 relative`}
+              disabled={createMuridIsLoading}
             >
-              Tambah Murid
+              {createMuridIsLoading ? (
+                <div className="inset-0 flex items-center justify-center gap-2">
+                  <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6"></div>
+                  <span>On Progress</span>
+                </div>
+              ) : (
+                "Tambah Murid"
+              )}
             </button>
           </div>
         </form>
