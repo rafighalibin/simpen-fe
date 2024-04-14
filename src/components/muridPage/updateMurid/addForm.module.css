@@ -51,3 +51,13 @@
   font-style: normal;
   line-height: 24px; /* 150% */
 }
+
+.edit_btn {
+  display: inline-flex;
+  padding: 12px 24px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 6px;
+  background: var(--Blue, #66a2dc);
+}
