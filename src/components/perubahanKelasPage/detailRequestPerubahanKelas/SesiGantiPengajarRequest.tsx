@@ -22,8 +22,8 @@ const SesiGantiPengajarRequest = () => {
   const [formState, setFormState] = useState([] as CreateGantiPengajarForm[]);
   const [payload, setPayload] = useState([] as CreateGantiPengajarPayload[]);
   const [alasan, setAlasan] = useState("");
-  const [detailNumber, setDetailNumber] = useState(0);
-  const [alasanNumber, setAlasanNumber] = useState(0);
+  const [detailNumber, setDetailNumber] = useState(null);
+  const [alasanNumber, setAlasanNumber] = useState(null);
   const [pengajarSelected, setPengajarSelected] =
     useState<PengajarSelect>(null);
   const queryClient = useQueryClient();

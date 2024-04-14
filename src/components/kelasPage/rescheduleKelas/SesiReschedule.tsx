@@ -19,7 +19,7 @@ const SesiReschedule = () => {
   const [formState, setFormState] = useState([] as CreateRescheduleForm[]);
   const [payload, setPayload] = useState([] as CreateReschedulePayload[]);
   const [alasan, setAlasan] = useState("");
-  const [detailNumber, setDetailNumber] = useState(0);
+  const [detailNumber, setDetailNumber] = useState(null);
   const queryClient = useQueryClient();
 
   const {
@@ -95,7 +95,6 @@ const SesiReschedule = () => {
           sesiKelasId: element.sesiKelasId,
           waktuBaru: combineDateTime(element.tanggalBaru, element.waktuBaru),
           alasan: alasan,
-          ischanged: element.ischanged,
         };
         payloadListTemp.push(payloadTemp);
       }
