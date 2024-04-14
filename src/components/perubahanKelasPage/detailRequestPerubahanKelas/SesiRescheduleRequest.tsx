@@ -485,19 +485,38 @@ const SesiRescheduleRequest = () => {
                 e.preventDefault();
                 handleSubmit(true);
               }}
-              className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
+              disabled={!isChanged || updateRescheduleIsLoading}
+              className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover disabled:opacity-50"
             >
-              Terima
+              {updateRescheduleIsLoading ? (
+                <div className="inset-0 flex items-center justify-center gap-2">
+                  <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6"></div>
+                  <span>On Progress</span>
+                </div>
+              ) : (
+                "Terima"
+              )}
             </button>
             <button
               onClick={(e) => {
                 e.preventDefault();
                 handleSubmit(false);
               }}
-              disabled={isChanged}
               className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover disabled:opacity-50"
+              disabled={
+                isChanged ||
+                updateRescheduleIsLoading ||
+                listZoomAvalaible.some((listZoom) => listZoom.length == 0)
+              }
             >
-              Tolak
+              {updateRescheduleIsLoading ? (
+                <div className="inset-0 flex items-center justify-center gap-2">
+                  <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6"></div>
+                  <span>On Progress</span>
+                </div>
+              ) : (
+                "Tolak"
+              )}
             </button>
           </div>
         </div>

@@ -326,7 +326,7 @@ const SesiGantiPengajar = () => {
             disabled={!isChanged || createGantiPengajarIsLoading}
           >
             {createGantiPengajarIsLoading ? (
-              <div className="absolute inset-0 flex items-center justify-center">
+              <div className="inset-0 flex items-center justify-center gap-2">
                 <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6"></div>
                 <span>On Progress</span>
               </div>
