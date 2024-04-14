@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useFetchWithToken from "../fetchWithToken";
 import { Program } from "../../types/program";
 import { useQuery } from "react-query";
@@ -7,17 +7,18 @@ const useFetchAllProgram = () => {
   const fetchWithToken = useFetchWithToken();
   const [listAllProgram, setListAllProgram] = useState<Program[]>([]);
 
-  const { isLoading, error, data } = useQuery({
-    queryKey: ["listAllProgram"],
-    queryFn: () => fetchWithToken(`/kelas/program`).then((res) => res.json()),
-    onSuccess: (data) => {
-      const listProgramTemp: Program[] = data.content
-        .map((role: any) => role.user)
-        .flat();
+  const { isLoading, error, data, refetch } = useQuery("listAllProgram", () =>
+    fetchWithToken("/kelas/program").then((res) => res.json())
+  );
+
+  useEffect(() => {
+    if (data) {
+      const listProgramTemp: Program[] = data.content || [];
       setListAllProgram(listProgramTemp);
-    },
-  });
-  return { isLoading, error, listAllProgram };
+    }
+  }, [data]);
+
+  return { isLoading, error, listAllProgram, refetch };
 };
 
 export default useFetchAllProgram;

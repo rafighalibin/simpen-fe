@@ -108,26 +108,39 @@ const Navbar = () => {
               </span>
             </div>
 
-            <ul
-              className={`md:flex md:flex-grow md:items-center md:space-x-2  md:pl-7 text-[16px] right-7 absolute md:static md:z-auto z-[1] ${
-                styles.nav_items_tx
-              } ${navbar ? `top-[80px] ${styles.card} w-28` : "top-[-490px]"}`}
-              style={InterReguler.style}
-            >
-              {pengguna.role === "superadmin" && (
-                <>
-                  <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
-                    <a
-                      href="/user"
-                      className={`${
-                        getRootPath(path) === "user"
-                          ? "md:text-primaryForeground"
-                          : "md:text-info"
-                      }  md:hover:text-primaryForeground`}
-                    >
-                      Akun
-                    </a>
-                  </li>
+          <ul
+            className={`md:flex md:flex-grow md:items-center md:space-x-2  md:pl-7 text-[16px] right-7 absolute md:static md:z-auto z-[1] ${
+              styles.nav_items_tx
+            } ${navbar ? `top-[80px] ${styles.card} w-28` : "top-[-490px]"}`}
+            style={InterReguler.style}
+          >
+            {pengguna.role === "superadmin" && (
+              <>
+                <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                  <a
+                    href="/user"
+                    className={`${
+                      getRootPath(path) === "user"
+                        ? "md:text-primaryForeground"
+                        : "md:text-info"
+                    }  md:hover:text-primaryForeground`}
+                  >
+                    Akun
+                  </a>
+                </li>
+
+                <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                  <a
+                    href="/kelas"
+                    className={`${
+                      getRootPath(path) === "kelas"
+                        ? "md:text-primaryForeground"
+                        : "md:text-info"
+                    }  md:hover:text-primaryForeground`}
+                  >
+                    Kelas
+                  </a>
+                </li>
 
                   <li className="p-2 hover:bg-[#efefef] md:hidden block">
                     <div
