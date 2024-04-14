@@ -36,5 +36,6 @@ export type PengajarDetail = {
   noTelpDarurat: string,
   role: string
   listTag: TagRead[],
+  ratingKelas: number,
   // Add more fields if needed
 };

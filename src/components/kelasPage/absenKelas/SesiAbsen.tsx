@@ -124,9 +124,9 @@ const SesiAbsen = () => {
     setSesiChanged(sessionIndex);
   };
 
-  const handleButtonClick = (id) => {
-    // Mengambil id sebagai parameter
+  const handleButtonClick = (id, e) => { // Mengambil id sebagai parameter
     // Panggil mutateAsync dengan menyertakan id
+    e.preventDefault();
     absenPengajarMutation(id)
       .then((response) => {
         // Handle respons jika diperlukan
@@ -216,7 +216,7 @@ const SesiAbsen = () => {
                         {sesi.status === "Scheduled" && (
                           <button
                             className={`bg-transparent hover:bg-warning text-warning  hover:text-white py-2 px-4 border border-warning hover:border-transparent rounded-full `}
-                            onClick={() => handleButtonClick(sesi.sesi_id)}
+                            onClick={(e) => handleButtonClick(sesi.sesi_id, e)}
                           >
                             Selesai
                           </button>
