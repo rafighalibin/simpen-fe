@@ -1,4 +1,3 @@
-import { PeriodePayroll } from "./PeriodePayroll";
 
     export type absenPengajarRead = {
     id: string;
@@ -8,7 +7,6 @@ import { PeriodePayroll } from "./PeriodePayroll";
     programName: string;
     fee : number;
     tanggalAbsen: string;
-    listPeriodePayroll: PeriodePayroll[];
   };
   
   export type absenPengajarSelect = {

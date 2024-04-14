@@ -15,6 +15,7 @@ import { Breadcrumbs } from "../../components/breadcrumbs/breadcrumbs";
 import Loading from "../../common/components/Loading";
 import { absenPengajarRead } from "../../common/types/absenPengajar";
 import styles from "./daftarAbsen.module.css";
+import { PeriodePayroll } from "../../common/types/PeriodePayroll";
 
 export const DaftarAbsenPengajar = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -26,6 +27,9 @@ export const DaftarAbsenPengajar = () => {
   const [selectedPage, setSelectedPage] = useState(1);
   const [listAbsenExisting, setListAbsenExisting] = useState<
     absenPengajarRead[]
+  >([]);
+  const [listPeriodePayrollExisting, setListPeriodePayrollExisting] = useState<
+    PeriodePayroll[]
   >([]);
 
   const { isLoading, error, data } = useQuery({
@@ -39,7 +43,25 @@ export const DaftarAbsenPengajar = () => {
     },
   });
 
-  if (isLoading) {
+  const {
+    isLoading: PayrollLoading,
+    error: PayrollError,
+    data: Payroll,
+  } = useQuery({
+    queryKey: ["periodePayroll"],
+    queryFn: () =>
+      fetchWithToken(`/absen-pengajar/periode-payroll`).then((res) =>
+        res.json()
+      ),
+    onSuccess: (data) => {
+      if (data) {
+        setListPeriodePayrollExisting(data.content);
+      }
+    },
+  });
+  console.log(listPeriodePayrollExisting);
+
+  if (isLoading || PayrollLoading) {
     return <Loading />;
   }
 
@@ -67,7 +89,9 @@ export const DaftarAbsenPengajar = () => {
           // Jika tidak ada nilai yang dimasukkan, tampilkan semua data
           return true;
         }
-        return absenPengajar.listPeriodePayroll.some(payroll => {
+        console.log(listPeriodePayrollExisting);
+        return listPeriodePayrollExisting.some((payroll) => {
+          console.log(payroll.tanggalMulai, payroll.tanggalSelesai);
           const startDate = new Date(payroll.tanggalMulai).getTime();
           const endDate = new Date(payroll.tanggalSelesai).getTime();
           const absenDate = new Date(
@@ -78,10 +102,10 @@ export const DaftarAbsenPengajar = () => {
           console.log(startDate);
           console.log(endDate);
           console.log(absenDate);
+          console.log(absenDate >= startDate && absenDate <= endDate);
           // Memeriksa apakah tanggal absen berada dalam rentang tanggal periode payroll
           return absenDate >= startDate && absenDate <= endDate;
         });
-
       } else if (searchType === "tanggalAbsen") {
         // Filter berdasarkan tanggal absen
         if (!searchKeyword) {
@@ -128,7 +152,6 @@ export const DaftarAbsenPengajar = () => {
       }
     }
   );
-  console.log(filteredAbsenPengajar)
 
   const handleSearchTypeChange = (e) => {
     setSearchType(e.target.value);
@@ -291,37 +314,38 @@ export const DaftarAbsenPengajar = () => {
 
   const formatTanggal = (timestamp) => {
     const date = new Date(timestamp);
-    const options = { year: 'numeric', month: 'long', day: 'numeric' } as const;
-    return date.toLocaleDateString('id-ID', options);
+    const options = { year: "numeric", month: "long", day: "numeric" } as const;
+    return date.toLocaleDateString("id-ID", options);
   };
 
   return (
     <div className="px-2 py-16 space-y-10 flex-grow flex flex-col justify-center">
       <h1 className="text-6xl font-bold pb-4">Daftar Absen Pengajar</h1>
       <div className="mt-4 flex items-center">
-      {searchType === "payroll" ? (
-        <select
-          value={searchKeyword}
-          onChange={handleSearchKeywordChange}
-          className="flex-grow px-4 py-2 mr-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
-        >
-          <option value="">Pilih Periode Payroll</option>
-      {filteredAbsenPengajar.length > 0 && (
-        filteredAbsenPengajar[1].listPeriodePayroll.map((periode) => (
-          <option key={periode.id} value={periode.id}>
-            {formatTanggal(periode.tanggalMulai)} - {formatTanggal(periode.tanggalSelesai)}
-          </option>
-          )))}
-        </select>
-      ) : (
-        <input
-          type={searchType === "tanggalAbsen" ? "date" : "text"} // Mengubah input menjadi input tanggal jika searchType adalah "tanggalAbsen"
-          value={searchKeyword}
-          onChange={handleSearchKeywordChange}
-          placeholder="Cari Absen Pengajar"
-          className="flex-grow px-4 py-2 mr-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
-        />
-    )}
+        {searchType === "payroll" ? (
+          <select
+            value={searchKeyword}
+            onChange={handleSearchKeywordChange}
+            className="flex-grow px-4 py-2 mr-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
+          >
+            <option value="">Pilih Periode Payroll</option>
+            {filteredAbsenPengajar.length > 0 &&
+              listPeriodePayrollExisting.map((periode) => (
+                <option key={periode.id} value={periode.id}>
+                  {formatTanggal(periode.tanggalMulai)} -{" "}
+                  {formatTanggal(periode.tanggalSelesai)}
+                </option>
+              ))}
+          </select>
+        ) : (
+          <input
+            type={searchType === "tanggalAbsen" ? "date" : "text"} // Mengubah input menjadi input tanggal jika searchType adalah "tanggalAbsen"
+            value={searchKeyword}
+            onChange={handleSearchKeywordChange}
+            placeholder="Cari Absen Pengajar"
+            className="flex-grow px-4 py-2 mr-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
+          />
+        )}
         <select
           value={sortBy}
           onChange={handleSortByChange}
