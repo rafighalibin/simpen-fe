@@ -84,6 +84,9 @@ export const DaftarPengajar = () => {
       );
     }
     else if (searchType === "domisiliKota"){
+      if(pengajar.domisiliKota === null){
+        return false;
+      }
       return pengajar.domisiliKota.toLowerCase().includes(searchKeyword.toLowerCase());
     }
   });
@@ -234,7 +237,7 @@ export const DaftarPengajar = () => {
           </p>
         ) : filteredPengajar.length === 0 && searchType === "domisiliKota" ? ( // Jika hasil pencarian tag kosong
         <p className="text-red-500">
-          Pengajar dengan kota {searchKeyword} tidak ditemukan.
+          Pengajar dengan domisili kota {searchKeyword} tidak ditemukan.
         </p>
       ) : (
           <>

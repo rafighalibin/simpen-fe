@@ -59,7 +59,6 @@ export const DaftarAbsenPengajar = () => {
       }
     },
   });
-  console.log(listPeriodePayrollExisting);
 
   if (isLoading || PayrollLoading) {
     return <Loading />;
@@ -90,22 +89,27 @@ export const DaftarAbsenPengajar = () => {
           return true;
         }
         console.log(listPeriodePayrollExisting);
-        return listPeriodePayrollExisting.some((payroll) => {
-          console.log(payroll.tanggalMulai, payroll.tanggalSelesai);
-          const startDate = new Date(payroll.tanggalMulai).getTime();
-          const endDate = new Date(payroll.tanggalSelesai).getTime();
-          const absenDate = new Date(
-            parseInt(absenPengajar.tanggalAbsen[0]),
-            parseInt(absenPengajar.tanggalAbsen[1]) - 1,
-            parseInt(absenPengajar.tanggalAbsen[2])
-          ).getTime();
-          console.log(startDate);
-          console.log(endDate);
-          console.log(absenDate);
-          console.log(absenDate >= startDate && absenDate <= endDate);
-          // Memeriksa apakah tanggal absen berada dalam rentang tanggal periode payroll
-          return absenDate >= startDate && absenDate <= endDate;
-        });
+        const absenDate = new Date(
+          parseInt(absenPengajar.tanggalAbsen[0]),
+          parseInt(absenPengajar.tanggalAbsen[1]) - 1,
+          parseInt(absenPengajar.tanggalAbsen[2])
+        ).getTime();
+    
+        for (const payroll of listPeriodePayrollExisting) {
+          console.log(payroll.id);
+          console.log(searchKeyword);
+          if (payroll.id.toString() === searchKeyword) {
+            const startDate = new Date(payroll.tanggalMulai).getTime();
+            const endDate = new Date(payroll.tanggalSelesai).getTime();
+            console.log(absenDate >= startDate && absenDate <= endDate)
+    
+            if (absenDate >= startDate && absenDate <= endDate) {
+              return true; // Jika ditemukan tanggal absen dalam rentang periode payroll, kembalikan true
+            }
+          }
+        }
+      
+        return false; 
       } else if (searchType === "tanggalAbsen") {
         // Filter berdasarkan tanggal absen
         if (!searchKeyword) {
@@ -152,6 +156,7 @@ export const DaftarAbsenPengajar = () => {
       }
     }
   );
+  console.log(filteredAbsenPengajar);
 
   const handleSearchTypeChange = (e) => {
     setSearchType(e.target.value);
