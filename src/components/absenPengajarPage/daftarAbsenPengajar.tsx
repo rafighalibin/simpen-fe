@@ -175,6 +175,10 @@ export const DaftarAbsenPengajar = () => {
     } else if (sortBy === "nama_desc") {
       // If the sort direction is descending, reverse the comparison result
       return b.pengajar.localeCompare(a.pengajar);
+    } else if (sortBy === "kodeKelas_asc") {
+      return String(a.kodeKelas).localeCompare(String(b.kodeKelas));
+    } else if (sortBy === "kodeKelas_desc") {
+      return String(b.kodeKelas).localeCompare(String(a.kodeKelas));
     } else if (sortBy === "program_asc") {
       return a.programName.localeCompare(b.programName);
     } else if (sortBy === "program_desc") {
@@ -384,6 +388,8 @@ export const DaftarAbsenPengajar = () => {
           <option value="">Sort By</option>
           <option value="nama_asc">By Name (Asc)</option>
           <option value="nama_desc">By Name (Desc)</option>
+          <option value="kodeKelas_asc">By Kode Kelas (Asc)</option>
+          <option value="kodeKelas_desc">By Kode Kelas (Desc)</option>
           <option value="program_asc">By Program (Asc)</option>
           <option value="program_desc">By Program (Desc)</option>
           <option value="jenisKelas_asc">By Jenis Kelas (Asc)</option>
