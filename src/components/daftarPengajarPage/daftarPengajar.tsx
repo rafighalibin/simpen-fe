@@ -82,6 +82,10 @@ export const DaftarPengajar = () => {
           tag.nama.toLowerCase().includes(keyword.toLowerCase())
         )
       );
+    } else if (searchType === "domisiliKota") {
+      return pengajar.domisiliKota
+        .toLowerCase()
+        .includes(searchKeyword.toLowerCase());
     }
     else if (searchType === "domisiliKota"){
       if(pengajar.domisiliKota === null){

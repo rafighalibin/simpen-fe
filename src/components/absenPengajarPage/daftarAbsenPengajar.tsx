@@ -167,6 +167,7 @@ export const DaftarAbsenPengajar = () => {
     setSearchKeyword(e.target.value);
   };
 
+
   const sortedAbsen = [...filteredAbsenPengajar].sort((a, b) => {
     if (sortBy === "nama_asc") {
       return a.pengajar.localeCompare(b.pengajar);
