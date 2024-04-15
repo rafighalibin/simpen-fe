@@ -13,8 +13,8 @@ import { PengajarDetail, PengajarSelect } from "../../common/types/pengajar";
 import Loading from "../../common/components/Loading";
 import { TagDetail, TagSelect } from "../../common/types/tag";
 import Select from "react-select";
-import styles from "./DaftarPengajar.module.css";
-import { useRouter } from 'next/navigation';
+import styles from "./daftarPengajar.module.css";
+import { useRouter } from "next/navigation";
 
 export const DaftarPengajar = () => {
   const router = useRouter();
@@ -82,12 +82,7 @@ export const DaftarPengajar = () => {
           tag.nama.toLowerCase().includes(keyword.toLowerCase())
         )
       );
-    } else if (searchType === "domisiliKota") {
-      return pengajar.domisiliKota
-        .toLowerCase()
-        .includes(searchKeyword.toLowerCase());
-    }
-    else if (searchType === "domisiliKota"){
+    }else if (searchType === "domisiliKota"){
       if(pengajar.domisiliKota === null){
         return false;
       }
@@ -249,7 +244,7 @@ export const DaftarPengajar = () => {
               {displayedPengajar.map((pengajar, index) => (
                 <div
                   key={pengajar.id}
-                  onClick={() => handleClick(pengajar.id)}  
+                  onClick={() => handleClick(pengajar.id)}
                   className="pt-4 bg-white rounded-lg overflow-hidden shadow-md flex flex-col items-center hover:bg-[#d6e1ec]"
                 >
                   <div className="mt-1 relative w-48 h-48 flex items-center justify-center rounded-full overflow-hidden">
