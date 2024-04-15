@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { saveAs } from 'file-saver';
 import {
   QueryClient,
   QueryClientProvider,
@@ -324,6 +325,29 @@ export const DaftarAbsenPengajar = () => {
     return date.toLocaleDateString("id-ID", options);
   };
 
+  const exportToCSV = (data) => {
+    // Buat header CSV
+    const csvHeader = 'Nama Pengajar,Kode Kelas,Program,Jenis Kelas,Tanggal Absen\n';
+  
+    // Konversi data menjadi baris-baris CSV
+    const csvData = data.map((item) => {
+      return `${item.pengajar},${item.kodeKelas},${item.programName},${item.jenisKelasName},${formatLocalDateTime(item.tanggalAbsen).split('-').join('-')}\n`;
+    }).join('');
+  
+    // Gabungkan header dan data CSV
+    const csvContent = csvHeader + csvData;
+  
+    // Buat blob dengan data CSV
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+  
+    // Simpan blob sebagai file dengan nama 'export.csv'
+    saveAs(blob, 'absen_pengajar.csv');
+  };
+
+  const handleExportClick = () => {
+    exportToCSV(filteredAbsenPengajar);
+  }
+
   return (
     <div className="px-2 py-16 space-y-10 flex-grow flex flex-col justify-center">
       <h1 className="text-6xl font-bold pb-4">Daftar Absen Pengajar</h1>
@@ -382,8 +406,11 @@ export const DaftarAbsenPengajar = () => {
           <option value="tanggalAbsen">Cari berdasarkan Tanggal Absen</option>
           <option value="payroll">Cari berdasarkan Periode Payroll</option>
         </select>
-        <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
-          <a href={``}>Export</a>
+        <button 
+          className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
+          onClick={handleExportClick}
+        >
+          Export
         </button>
       </div>
 
