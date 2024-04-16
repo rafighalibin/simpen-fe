@@ -208,12 +208,12 @@ const SesiRescheduleRequest = () => {
       <div className="my-5">
         {updateRescheduleSuccess && !isChanged && (
           <div className="bg-[#DAF8E6] text-[#004434] text-sm px-4 py-2">
-            Berhasil membuat permintaan reschedule
+            Berhasil update permintaan reschedule
           </div>
         )}
         {updateRescheduleError && !isChanged && (
           <div className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2">
-            Gagal membuat permintaan reschedule
+            Gagal update permintaan reschedule
           </div>
         )}{" "}
         {hasWarning.some((warning) => warning) && !isChanged && (
@@ -503,11 +503,7 @@ const SesiRescheduleRequest = () => {
                 handleSubmit(false);
               }}
               className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover disabled:opacity-50"
-              disabled={
-                isChanged ||
-                updateRescheduleIsLoading ||
-                listZoomAvalaible.some((listZoom) => listZoom.length == 0)
-              }
+              disabled={isChanged || updateRescheduleIsLoading}
             >
               {updateRescheduleIsLoading ? (
                 <div className="inset-0 flex items-center justify-center gap-2">

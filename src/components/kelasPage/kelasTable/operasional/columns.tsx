@@ -31,9 +31,17 @@ export const columns: ColumnDef<KelasRead>[] = [
     header: "Pengajar",
   },
   {
+    accessorKey: "tanggalMulai",
+    header: "Tanggal Mulai",
+    accessorFn: (row) => new Date(row.tanggalMulai).toLocaleDateString("en-GB"),
+    cell: ({ row }) =>
+      new Date(row.original.tanggalMulai).toLocaleDateString("en-GB"),
+  },
+  {
     accessorKey: "tanggalSelesai",
     header: "Tanggal Selesai",
-    meta: { filter: false },
+    accessorFn: (row) =>
+      new Date(row.tanggalSelesai).toLocaleDateString("en-GB"),
     cell: ({ row }) =>
       new Date(row.original.tanggalSelesai).toLocaleDateString("en-GB"),
   },
