@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { useToken } from "../hooks/useToken";
 import { usePathname, useRouter } from "next/navigation";
@@ -36,6 +36,7 @@ const Navbar = () => {
   const unreadNotifications = notifications.filter(
     (notification) => !notification.opened
   );
+  const notificationRef = useRef(null);
 
   useEffect(() => {
     refetch();
@@ -56,7 +57,22 @@ const Navbar = () => {
     }
   }, [loggedUser]);
 
-  console.log();
+  const handleClickOutside = (event) => {
+    if (
+      notificationRef.current &&
+      !notificationRef.current.contains(event.target)
+    ) {
+      setExpandNotif(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleLogout = () => {
     setLoggingOut(true);
@@ -382,7 +398,7 @@ const Navbar = () => {
         </div>
       </nav>
       {expandNotif && (
-        <div>
+        <div ref={notificationRef}>
           <Notification
             data={notifications}
             onUpdate={handleNotificationUpdate}

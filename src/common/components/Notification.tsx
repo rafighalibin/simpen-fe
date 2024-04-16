@@ -69,7 +69,7 @@ export const Notification = ({ data, onUpdate }) => {
       );
       const data = await response.json();
       if (data && data.message) {
-        onUpdate(); // Call the callback function to trigger data refetch in Navbar
+        onUpdate();
       } else {
         console.error("No message found in response data");
       }
@@ -79,10 +79,10 @@ export const Notification = ({ data, onUpdate }) => {
   }
 
   return (
-    <div className="px-4 text-16px md:block hidden relative">
+    <div className="px-4 text-16px md:block hidden relative  ">
       <div className="flex items-center"></div>
       {notifications.length > 0 && (
-        <div className="absolute z-10 top-full right-10 mt-3 bg-white border border-gray-200 rounded-lg shadow-md">
+        <div className="absolute z-10 top-full right-10 mt-3 bg-white border border-gray-200 rounded-lg shadow-md max-h-[3  0vh] overflow-y-auto">
           <div
             className={`pl-2 pt-2 ${styles.title} text-center`}
             style={PoppinsMedium.style}
@@ -127,15 +127,14 @@ export const Notification = ({ data, onUpdate }) => {
                   >
                     {notification.tipe === 1 && (
                       <div>
-                        {"Anda mendapatkan jadwal " +
-                        (
-                          <a
-                            href={`/kelas/${notification.isi["idKelas"]}`}
-                            className="hover:text-blue-500 focus:text-blue-500"
-                          >
-                            {"kelas baru"}
-                          </a>
-                        )}
+                        {"Anda mendapatkan jadwal "}
+
+                        <a
+                          href={`/kelas/${notification.isi["idKelas"]}`}
+                          className="hover:text-blue-500 focus:text-blue-500"
+                        >
+                          kelas baru
+                        </a>
                       </div>
                     )}
                     {notification.tipe === 2 && <div>Ini feedback</div>}
@@ -145,14 +144,13 @@ export const Notification = ({ data, onUpdate }) => {
                     {notification.tipe === 4 &&
                       notification.isi["status"] == "disetujui" && (
                         <div>
-                          (
                           <a
                             href={`/sesi/${notification.isi["sesiKelas"]}`}
                             className="hover:text-blue-500 focus:text-blue-500"
                           >
-                            {"Sesi kelas"}
+                            Sesi kelas
                           </a>
-                          ){" digantikan oleh " + notification.isi["pengganti"]}
+                          {" digantikan oleh " + notification.isi["pengganti"]}
                         </div>
                       )}
                     {notification.tipe === 4 &&
@@ -161,26 +159,26 @@ export const Notification = ({ data, onUpdate }) => {
                       )}
                     {notification.tipe === 5 && (
                       <div>
-                        {"Terdapat "}(
+                        {"Terdapat "}
                         <a
-                          href={`/permintaan-perubahan`}
+                          href={`/permintaan-kelas`}
                           className="hover:text-blue-500 focus:text-blue-500"
                         >
                           {"permintaan perubahan jadwal"}
                         </a>
-                        ){" baru"}
+                        {" baru"}
                       </div>
                     )}
                     {notification.tipe === 6 && (
                       <div>
-                        {"Terdapat "}(
+                        {"Terdapat "}
                         <a
-                          href={`/permintaan-perubahan`}
+                          href={`/permintaan-kelas`}
                           className="hover:text-blue-500 focus:text-blue-500"
                         >
                           {"permintaan pengajar pengganti"}
                         </a>
-                        ){" baru"}
+                        {" baru"}
                       </div>
                     )}
                     {notification.tipe === 7 && <div>{notification.judul}</div>}
