@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { saveAs } from 'file-saver';
 import {
   QueryClient,
   QueryClientProvider,
@@ -59,7 +60,6 @@ export const DaftarAbsenPengajar = () => {
       }
     },
   });
-  console.log(listPeriodePayrollExisting);
 
   if (isLoading || PayrollLoading) {
     return <Loading />;
@@ -90,22 +90,27 @@ export const DaftarAbsenPengajar = () => {
           return true;
         }
         console.log(listPeriodePayrollExisting);
-        return listPeriodePayrollExisting.some((payroll) => {
-          console.log(payroll.tanggalMulai, payroll.tanggalSelesai);
-          const startDate = new Date(payroll.tanggalMulai).getTime();
-          const endDate = new Date(payroll.tanggalSelesai).getTime();
-          const absenDate = new Date(
-            parseInt(absenPengajar.tanggalAbsen[0]),
-            parseInt(absenPengajar.tanggalAbsen[1]) - 1,
-            parseInt(absenPengajar.tanggalAbsen[2])
-          ).getTime();
-          console.log(startDate);
-          console.log(endDate);
-          console.log(absenDate);
-          console.log(absenDate >= startDate && absenDate <= endDate);
-          // Memeriksa apakah tanggal absen berada dalam rentang tanggal periode payroll
-          return absenDate >= startDate && absenDate <= endDate;
-        });
+        const absenDate = new Date(
+          parseInt(absenPengajar.tanggalAbsen[0]),
+          parseInt(absenPengajar.tanggalAbsen[1]) - 1,
+          parseInt(absenPengajar.tanggalAbsen[2])
+        ).getTime();
+    
+        for (const payroll of listPeriodePayrollExisting) {
+          console.log(payroll.id);
+          console.log(searchKeyword);
+          if (payroll.id.toString() === searchKeyword) {
+            const startDate = new Date(payroll.tanggalMulai).getTime();
+            const endDate = new Date(payroll.tanggalSelesai).getTime();
+            console.log(absenDate >= startDate && absenDate <= endDate)
+    
+            if (absenDate >= startDate && absenDate <= endDate) {
+              return true; // Jika ditemukan tanggal absen dalam rentang periode payroll, kembalikan true
+            }
+          }
+        }
+      
+        return false; 
       } else if (searchType === "tanggalAbsen") {
         // Filter berdasarkan tanggal absen
         if (!searchKeyword) {
@@ -152,6 +157,7 @@ export const DaftarAbsenPengajar = () => {
       }
     }
   );
+  console.log(filteredAbsenPengajar);
 
   const handleSearchTypeChange = (e) => {
     setSearchType(e.target.value);
@@ -162,12 +168,17 @@ export const DaftarAbsenPengajar = () => {
     setSearchKeyword(e.target.value);
   };
 
+
   const sortedAbsen = [...filteredAbsenPengajar].sort((a, b) => {
     if (sortBy === "nama_asc") {
       return a.pengajar.localeCompare(b.pengajar);
     } else if (sortBy === "nama_desc") {
       // If the sort direction is descending, reverse the comparison result
       return b.pengajar.localeCompare(a.pengajar);
+    } else if (sortBy === "kodeKelas_asc") {
+      return String(a.kodeKelas).localeCompare(String(b.kodeKelas));
+    } else if (sortBy === "kodeKelas_desc") {
+      return String(b.kodeKelas).localeCompare(String(a.kodeKelas));
     } else if (sortBy === "program_asc") {
       return a.programName.localeCompare(b.programName);
     } else if (sortBy === "program_desc") {
@@ -318,6 +329,29 @@ export const DaftarAbsenPengajar = () => {
     return date.toLocaleDateString("id-ID", options);
   };
 
+  const exportToCSV = (data) => {
+    // Buat header CSV
+    const csvHeader = 'Nama Pengajar,Kode Kelas,Program,Jenis Kelas,Tanggal Absen\n';
+  
+    // Konversi data menjadi baris-baris CSV
+    const csvData = data.map((item) => {
+      return `${item.pengajar},${item.kodeKelas},${item.programName},${item.jenisKelasName},${formatLocalDateTime(item.tanggalAbsen).split('-').join('-')}\n`;
+    }).join('');
+  
+    // Gabungkan header dan data CSV
+    const csvContent = csvHeader + csvData;
+  
+    // Buat blob dengan data CSV
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+  
+    // Simpan blob sebagai file dengan nama 'export.csv'
+    saveAs(blob, 'absen_pengajar.csv');
+  };
+
+  const handleExportClick = () => {
+    exportToCSV(filteredAbsenPengajar);
+  }
+
   return (
     <div className="px-2 py-16 space-y-10 flex-grow flex flex-col justify-center">
       <h1 className="text-6xl font-bold pb-4">Daftar Absen Pengajar</h1>
@@ -354,6 +388,8 @@ export const DaftarAbsenPengajar = () => {
           <option value="">Sort By</option>
           <option value="nama_asc">By Name (Asc)</option>
           <option value="nama_desc">By Name (Desc)</option>
+          <option value="kodeKelas_asc">By Kode Kelas (Asc)</option>
+          <option value="kodeKelas_desc">By Kode Kelas (Desc)</option>
           <option value="program_asc">By Program (Asc)</option>
           <option value="program_desc">By Program (Desc)</option>
           <option value="jenisKelas_asc">By Jenis Kelas (Asc)</option>
@@ -376,8 +412,11 @@ export const DaftarAbsenPengajar = () => {
           <option value="tanggalAbsen">Cari berdasarkan Tanggal Absen</option>
           <option value="payroll">Cari berdasarkan Periode Payroll</option>
         </select>
-        <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
-          <a href={``}>Export</a>
+        <button 
+          className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
+          onClick={handleExportClick}
+        >
+          Export
         </button>
       </div>
 

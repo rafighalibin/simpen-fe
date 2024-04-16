@@ -82,10 +82,11 @@ export const DaftarPengajar = () => {
           tag.nama.toLowerCase().includes(keyword.toLowerCase())
         )
       );
-    } else if (searchType === "domisiliKota") {
-      return pengajar.domisiliKota
-        .toLowerCase()
-        .includes(searchKeyword.toLowerCase());
+    }else if (searchType === "domisiliKota"){
+      if(pengajar.domisiliKota === null){
+        return false;
+      }
+      return pengajar.domisiliKota.toLowerCase().includes(searchKeyword.toLowerCase());
     }
   });
 
@@ -234,10 +235,10 @@ export const DaftarPengajar = () => {
             Pengajar dengan tag yang dipilih tidak ditemukan.
           </p>
         ) : filteredPengajar.length === 0 && searchType === "domisiliKota" ? ( // Jika hasil pencarian tag kosong
-          <p className="text-red-500">
-            Pengajar dengan kota {searchKeyword} tidak ditemukan.
-          </p>
-        ) : (
+        <p className="text-red-500">
+          Pengajar dengan domisili kota {searchKeyword} tidak ditemukan.
+        </p>
+      ) : (
           <>
             <div className="grid grid-cols-4 gap-10 py-16 px-6">
               {displayedPengajar.map((pengajar, index) => (
