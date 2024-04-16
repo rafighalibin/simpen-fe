@@ -86,7 +86,13 @@ export const DaftarAbsenPengajar = () => {
         return absenPengajar.jenisKelasName
           .toLowerCase()
           .includes(searchKeyword.toLowerCase());
-      } else if (searchType === "payroll") {
+      } else if (searchType === "fee") {
+        return absenPengajar.fee
+          .toString()
+          .toLowerCase()
+          .includes(searchKeyword.toLowerCase());
+      } 
+      else if (searchType === "payroll") {
         if (!searchKeyword) {
           // Jika tidak ada nilai yang dimasukkan, tampilkan semua data
           return true;
@@ -430,6 +436,7 @@ export const DaftarAbsenPengajar = () => {
           <option value="kodeKelas">Cari berdasarkan Kode Kelas</option>
           <option value="program">Cari berdasarkan Program</option>
           <option value="jenisKelas">Cari berdasarkan Jenis Kelas</option>
+          <option value="fee">Cari berdasarkan Fee</option>
           <option value="tanggalAbsen">Cari berdasarkan Tanggal Absen</option>
           <option value="payroll">Cari berdasarkan Periode Payroll</option>
         </select>
@@ -471,7 +478,7 @@ export const DaftarAbsenPengajar = () => {
           searchKeyword !== "" &&
           searchType === "fee" ? ( // Jika hasil pencarian tag kosong
           <p className="text-red-500">
-            Pengajar dengan periode payroll {searchKeyword} tidak ditemukan.
+            Pengajar dengan fee Rp. {searchKeyword} tidak ditemukan.
           </p>
         ) : filteredAbsenPengajar.length === 0 &&
           searchKeyword !== "" &&
