@@ -17,6 +17,8 @@ export type ReadRescheduleSesi = {
 };
 
 export type CreateRescheduleForm = {
+  id?: string;
+  zoomId?: string;
   sesiKelasId: string;
   tanggalBaru: string;
   waktuBaru: string;
@@ -25,10 +27,11 @@ export type CreateRescheduleForm = {
 };
 
 export type CreateReschedulePayload = {
+  id?: string;
+  zoomId?: string;
+  waktuBaru?: string;
   sesiKelasId: string;
-  waktuBaru: string;
   alasan: string;
-  ischanged: boolean;
 };
 
 const getLatestRescheduleDate = (reschedule: ReadReschedule) => {

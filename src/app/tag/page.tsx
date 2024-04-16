@@ -14,6 +14,7 @@ import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import { useAuthContext } from "../../common/utils/authContext";
 import { Breadcrumbs } from "../../components/breadcrumbs/breadcrumbs";
 import Loading from "../../common/components/Loading";
+import styles from "../../components/tagPage/TagTable.module.css";
 
 interface Tag {
   id: number;
@@ -98,7 +99,7 @@ export default function TagPage() {
   let tagNama = null;
   let tagNamaUpdate = null;
 
-  if( typeof localStorage !== "undefined"){
+  if (typeof localStorage !== "undefined") {
     if (
       localStorage.getItem("tagSuccess") === "true" &&
       localStorage.getItem("tagNama")
@@ -112,9 +113,7 @@ export default function TagPage() {
       successMessage = "Berhasil diubah menjadi ";
       tagNamaUpdate = localStorage.getItem("UpdateTagNama");
       tagNama = localStorage.getItem("tagNama");
-    } else if (
-      localStorage.getItem("DeleteTagSuccess") === "true" 
-    ) {
+    } else if (localStorage.getItem("DeleteTagSuccess") === "true") {
       successMessage = " berhasil dihapus!";
     }
   }
@@ -289,42 +288,46 @@ export default function TagPage() {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="  py-3 text-center text-s font-semibold text-gray-500 uppercase tracking-wider">
                         No.
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      </th>   
+                      <th className=" py-3 text-center text-s font-semibold text-gray-500 uppercase tracking-wider">
                         Nama Tag
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="  py-3 text-center text-s font-semibold text-gray-500 uppercase tracking-wider">
                         Jumlah Pengajar
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Action
+                      <th className="  py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                       </th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {displayedTags.map((tag, index) => (
-                      <tr key={tag.id}>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                      <tr
+                        key={tag.id}
+                      >
+                        <td className=" pl-8 py-4 whitespace-nowrap">
                           {indexOfFirstItem + index + 1}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="pl-32 py-4 whitespace-nowrap">
                           {tag.nama}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="pl-48 py-4 whitespace-nowrap">
                           {tag.jumlahPengajar}
+                          <span> Pengajar</span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="gap-8">
+                        <td className="pl-32 py-4 whitespace-nowrap">
+                          <div className="space-x-4">
                             <Link href={`/tag/edit/${tag.id}`}>
-                              <button className="bg-transparent hover:bg-infoHover text-blue-500 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded-full">
+                              <button
+                                className={`bg-transparent hover:bg-[#215E9B] text-[#215E9B] focus:bg-[#215E9B] focus:text-white hover:text-white py-2 px-4 border border-[#215E9B] hover:border-transparent rounded-full`}
+                              >
                                 Ubah
                               </button>
                             </Link>
                             <button
                               onClick={() => handleDeleteTag(tag.id)}
-                              className="bg-transparent hover:bg-red-500 text-red-500 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded-full"
+                              className={`bg-transparent hover:bg-[#d64545d0] text-[#d64545d0] focus:bg-[#d64545d0] focus:text-white hover:text-white py-2 px-4 border border-[#d64545d0] hover:border-transparent rounded-full`}
                             >
                               Hapus
                             </button>
@@ -336,7 +339,7 @@ export default function TagPage() {
                 </table>
               </div>
               <div className="flex justify-center my-4">
-                <div className="p-2">
+                <div className={`${styles.pagination_container} p-2`}>
                   <button
                     onClick={handlePrevPage}
                     disabled={selectedPage === 1}

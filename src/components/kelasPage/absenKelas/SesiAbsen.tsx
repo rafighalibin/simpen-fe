@@ -7,6 +7,7 @@ import { SesiDetail } from "../../../common/types/sesi";
 import Loading from "../../../app/loading";
 import styles from "./SesiAbsen.module.css";
 import Link from "next/link";
+import { Siemreap } from "next/font/google";
 
 const SesiAbsen = () => {
   const fetchWithToken = useFetchWithToken();
@@ -54,24 +55,21 @@ const SesiAbsen = () => {
     },
   });
 
-  const{
+  const {
     mutateAsync: absenPengajarMutation,
     isLoading: absenPengajarIsLoading,
     data: absenPengajarResponse,
     isSuccess: absenPengajarSuccess,
     isError: absenPengajarError,
   } = useMutation({
-  mutationFn: (id) =>
-      fetchWithToken(
-        `/absen-pengajar`,
-        "POST",
-        { idSesiKelas: id }
-      ).then((res) => res.json()),
+    mutationFn: (id) =>
+      fetchWithToken(`/absen-pengajar`, "POST", { idSesiKelas: id }).then(
+        (res) => res.json()
+      ),
     onSuccess: () => {
       queryClient.invalidateQueries("sesiKelas");
     },
   });
-  
 
   if (fetchDataIsLoading) return <Loading />;
 
@@ -126,8 +124,9 @@ const SesiAbsen = () => {
     setSesiChanged(sessionIndex);
   };
 
-  const handleButtonClick = (id) => { // Mengambil id sebagai parameter
+  const handleButtonClick = (id, e) => { // Mengambil id sebagai parameter
     // Panggil mutateAsync dengan menyertakan id
+    e.preventDefault();
     absenPengajarMutation(id)
       .then((response) => {
         // Handle respons jika diperlukan
@@ -163,7 +162,7 @@ const SesiAbsen = () => {
           <div className="bg-[#DAF8E6] text-[#004434] text-sm px-4 py-2">
             Berhasil update absen
           </div>
-        )} 
+        )}
         {absenPengajarSuccess && (
           <div className="bg-[#DAF8E6] text-[#004434] text-sm px-4 py-2">
             Pengajar Berhasil Absen
@@ -185,7 +184,7 @@ const SesiAbsen = () => {
           </div>
         )}
       </div>
-      
+
       {listSesi
         .slice(indexOfFirstItem, indexOfLastItem)
         .map((sesi, sessionIndex) => (
@@ -217,7 +216,7 @@ const SesiAbsen = () => {
                         {sesi.status === "Scheduled" && (
                           <button
                             className={`bg-transparent hover:bg-warning text-warning  hover:text-white py-2 px-4 border border-warning hover:border-transparent rounded-full `}
-                            onClick={() => handleButtonClick(sesi.sesi_id)}
+                            onClick={(e) => handleButtonClick(sesi.sesi_id, e)}
                           >
                             Selesai
                           </button>
@@ -294,20 +293,33 @@ const SesiAbsen = () => {
                 </table>
               </form>
             </div>
-            <div className="pt-8  text-[#6B7280]">
-              <p>
-                Waktu Pelaksanaan:{" "}
-                {new Date(sesi.waktuPelaksanaan).toLocaleString("en-US", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  hour12: false,
-                })}
-              </p>
-              <p>Persentase Kehadiran: {sesi.persentaseKehadiran}%</p>
-              <p>Average Rating: {sesi.averageRating}</p>
+            <div className="pt-8  text-[#6B7280] flex flex-row justify-between">
+              <div>
+                <p>
+                  Waktu Pelaksanaan:{" "}
+                  {new Date(sesi.waktuPelaksanaan).toLocaleString("en-US", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                  })}
+                </p>
+                <p>Persentase Kehadiran: {sesi.persentaseKehadiran}%</p>
+                <p>Average Rating: {sesi.averageRating}</p>
+              </div>
+              <div>
+                {sesi.jadwalZoom && (
+                  <a href={sesi.jadwalZoom.link}>
+                    <button
+                      className={`${styles.button_tx} ${styles.edit_btn} disabled:opacity-50 relative`}
+                    >
+                      {sesi.jadwalZoom.nama}
+                    </button>
+                  </a>
+                )}
+              </div>
             </div>
           </div>
         ))}

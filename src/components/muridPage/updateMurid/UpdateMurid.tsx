@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import { useParams, useRouter } from "next/navigation";
 
@@ -28,28 +28,35 @@ export const UpdateMurid = () => {
   });
 
   const {
-    isLoading,
-    error: fetchingError,
-    data,
+    isLoading: fethDataIsLoading,
+    error: fetchError,
+    data: fetchData,
   } = useQuery({
     queryKey: ["muridDetail"],
     queryFn: () => fetchWithToken(`/murid/${id}`).then((res) => res.json()),
-    onSuccess: (data) => {
-      setFormState((prev) => ({
-        ...prev,
-        nama: data.content.nama,
-        tanggalLahir: new Date(data.content.tanggalLahir)
-          .toISOString()
-          .split("T")[0],
-        namaOrtu: data.content.namaOrtu,
-        emailOrtu: data.content.emailOrtu,
-        noHpOrtu: data.content.noHpOrtu,
-        note: data.content.note,
-      }));
-    },
   });
 
-  const { mutateAsync: addMuridMutation, data: response } = useMutation({
+  useEffect(() => {
+    if (fetchData) {
+      setFormState((prev) => ({
+        ...prev,
+        nama: fetchData.content.nama,
+        tanggalLahir: new Date(fetchData.content.tanggalLahir)
+          .toISOString()
+          .split("T")[0],
+        namaOrtu: fetchData.content.namaOrtu,
+        emailOrtu: fetchData.content.emailOrtu,
+        noHpOrtu: fetchData.content.noHpOrtu,
+        note: fetchData.content.note,
+      }));
+    }
+  }, [fetchData]);
+
+  const {
+    mutateAsync: addMuridMutation,
+    data: response,
+    isLoading: updateMuridIsLoading,
+  } = useMutation({
     mutationFn: () =>
       fetchWithToken(`/murid/${id}`, "PUT", formState).then((res) =>
         res.json()
@@ -85,7 +92,7 @@ export const UpdateMurid = () => {
         className={`${styles.heading} text-center my-10`}
         style={PoppinsBold.style}
       >
-        Register Murid
+        Update Murid
       </div>
       <div className={`${styles.card_form} px-7 py-8 mb-12`}>
         <form onSubmit={handleSubmit}>
@@ -247,13 +254,20 @@ export const UpdateMurid = () => {
               </div>
             )}
           </div>
-          <div className="flex justify-center mt-9">
+          <div className="flex justify-center gap-4 pt-12">
             <button
               type="submit"
-              className={`${styles.button_tx} ${styles.btn} `}
-              style={InterMedium.style}
+              className={`${styles.button_tx} ${styles.edit_btn} disabled:opacity-50 relative`}
+              disabled={updateMuridIsLoading}
             >
-              Tambah Murid
+              {updateMuridIsLoading ? (
+                <div className="inset-0 flex items-center justify-center gap-2">
+                  <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6"></div>
+                  <span>On Progress</span>
+                </div>
+              ) : (
+                "Tambah Murid"
+              )}
             </button>
           </div>
         </form>

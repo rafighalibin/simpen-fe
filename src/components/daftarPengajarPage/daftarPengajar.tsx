@@ -13,8 +13,11 @@ import { PengajarDetail, PengajarSelect } from "../../common/types/pengajar";
 import Loading from "../../common/components/Loading";
 import { TagDetail, TagSelect } from "../../common/types/tag";
 import Select from "react-select";
+import styles from "./daftarPengajar.module.css";
+import { useRouter } from "next/navigation";
 
 export const DaftarPengajar = () => {
+  const router = useRouter();
   const [searchKeyword, setSearchKeyword] = useState("");
   const [listTagExisting, setListTagExisting] = useState<TagSelect[]>([]);
   const [searchKeywords, setSearchKeywords] = useState([]);
@@ -62,6 +65,10 @@ export const DaftarPengajar = () => {
     },
   });
 
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+
   if (isLoading || TagLoading) {
     return <Loading />;
   }
@@ -75,6 +82,10 @@ export const DaftarPengajar = () => {
           tag.nama.toLowerCase().includes(keyword.toLowerCase())
         )
       );
+    } else if (searchType === "domisiliKota") {
+      return pengajar.domisiliKota
+        .toLowerCase()
+        .includes(searchKeyword.toLowerCase());
     }
   });
 
@@ -147,6 +158,10 @@ export const DaftarPengajar = () => {
     setSelectedPage((prevPage) => Math.max(prevPage - 1, 1));
   };
 
+  const handleClick = (pengajarId) => {
+    router.push(`/pengajar/${pengajarId}`);
+  };
+
   const noPengajarMessage =
     listPengajarExisting.length === 0 ? (
       <p className="text-center text-gray-500">Tidak ada pengajar ditemukan.</p>
@@ -189,7 +204,8 @@ export const DaftarPengajar = () => {
           <option value="">Sort By</option>
           <option value="nama_asc">By Name (Asc)</option>
           <option value="nama_desc">By Name (Desc)</option>
-          <option value="jumlahPengajar">By Jumlah Kelas</option>
+          <option value="jumlahPengajar">By Rating Kelas (Asc)</option>
+          <option value="jumlahPengajar">By Rating Kelas (Desc)</option>
         </select>
         <select
           value={searchType}
@@ -198,6 +214,7 @@ export const DaftarPengajar = () => {
         >
           <option value="nama">Cari berdasarkan Nama</option>
           <option value="tag">Cari berdasarkan Tag</option>
+          <option value="domisiliKota">Cari berdasarkan Domisili Kota</option>
         </select>
         <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
           <a href={`/tag`}>Daftar Tag</a>
@@ -216,13 +233,18 @@ export const DaftarPengajar = () => {
           <p className="text-red-500">
             Pengajar dengan tag yang dipilih tidak ditemukan.
           </p>
+        ) : filteredPengajar.length === 0 && searchType === "domisiliKota" ? ( // Jika hasil pencarian tag kosong
+          <p className="text-red-500">
+            Pengajar dengan kota {searchKeyword} tidak ditemukan.
+          </p>
         ) : (
           <>
             <div className="grid grid-cols-4 gap-10 py-16 px-6">
               {displayedPengajar.map((pengajar, index) => (
                 <div
                   key={pengajar.id}
-                  className="bg-white rounded-lg overflow-hidden shadow-md flex flex-col items-center"
+                  onClick={() => handleClick(pengajar.id)}
+                  className="pt-4 bg-white rounded-lg overflow-hidden shadow-md flex flex-col items-center hover:bg-[#d6e1ec]"
                 >
                   <div className="mt-1 relative w-48 h-48 flex items-center justify-center rounded-full overflow-hidden">
                     <input
@@ -260,9 +282,6 @@ export const DaftarPengajar = () => {
                     )}
                   </div>
                   <div className="p-4 text-center">
-                    <p className="font-medium">
-                      {indexOfFirstItem + index + 1}
-                    </p>
                     <p className="mt-2">{pengajar.nama}</p>
                     {/* <p>{pengajar.jumlahKelas}</p> */}
                     <div className="flex flex-wrap justify-center gap-1 pt-4">
@@ -285,7 +304,7 @@ export const DaftarPengajar = () => {
               ))}
             </div>
             <div className="flex justify-center my-4">
-              <div className="p-2">
+              <div className={`${styles.pagination_container} p-2`}>
                 <button
                   onClick={handlePrevPage}
                   disabled={selectedPage === 1}
