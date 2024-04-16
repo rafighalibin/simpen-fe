@@ -40,6 +40,7 @@ const UpdateForm = () => {
   const [listMuridExisting, setListMuridExisting] = useState<MuridSelect[]>([]);
   const [muridSelected, setMuridSelected] = useState<MuridSelect[]>([]);
   const [muridRendered, setMuridRendered] = useState(false);
+  const [fieldsError, setFieldsError] = useState(false);
 
   const [formState, setFormState] = useState({
     programName: "",
@@ -147,7 +148,7 @@ const UpdateForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    editKelasMutation();
+    await editKelasMutation();
   };
 
   useEffect(() => {
@@ -162,7 +163,8 @@ const UpdateForm = () => {
 
   if (detailKelasLoading || listUserLoading) return <Loading />;
 
-  // if (editKelasSuccess) redirect(`/kelas/${id}`);
+  if (detailKelas && detailKelas.content.status != "Scheduled")
+    redirect(`/kelas/${id}`);
 
   return (
     <div>
@@ -189,6 +191,7 @@ const UpdateForm = () => {
             </label>
             {!pengajarRendered && (
               <Select
+                required
                 defaultValue={pengajarSelected}
                 name="colors"
                 onChange={handleChangePengajar}
@@ -252,6 +255,7 @@ const UpdateForm = () => {
               Link Group Kelas
             </label>
             <input
+              required
               type="text"
               value={formState.linkGroup}
               name="linkGroup"
@@ -267,6 +271,7 @@ const UpdateForm = () => {
               </label>
               <div className="flex mt-1 relative">
                 <input
+                  required
                   type="date"
                   value={formState.tanggalMulai}
                   name="tanggalMulai"
@@ -323,6 +328,7 @@ const UpdateForm = () => {
             </label>
             {!muridRendered && (
               <Select
+                required
                 defaultValue={muridSelected}
                 isMulti
                 name="colors"
@@ -361,12 +367,12 @@ const UpdateForm = () => {
           <div className="mt-5">
             {editKelasSuccess && (
               <div className="bg-[#DAF8E6] text-[#004434] text-sm px-4 py-2">
-                Berhasil update absen
+                Berhasil update kelas
               </div>
             )}
             {editKelasError && (
               <div className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2">
-                Gagal update absen
+                Gagal update kelas
               </div>
             )}
             {fetchDataError && (
@@ -374,12 +380,14 @@ const UpdateForm = () => {
                 gagal mengambil data sesi
               </div>
             )}
+            {fieldsError && (
+              <div className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2">
+                Terdapat field yang kosong
+              </div>
+            )}
           </div>
           <div className="flex justify-center py-7 gap-4">
-            <button
-              onClick={handleSubmit}
-              className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
-            >
+            <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
               Ubah Kelas
             </button>
 

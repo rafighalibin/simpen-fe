@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { useToken } from "../hooks/useToken";
 import { usePathname, useRouter } from "next/navigation";
@@ -24,6 +24,8 @@ const Navbar = () => {
   const [loggingOut, setLoggingOut] = useState(false);
   const { pengguna, isAuthenticated } = useAuthContext();
   const [navbar, setNavbar] = useState(false);
+  const [dropdownKelas, setDropdownKelas] = useState(false);
+
   const path = usePathname();
   const {
     isLoading: loggedUserLoading,
@@ -36,6 +38,7 @@ const Navbar = () => {
   const unreadNotifications = notifications.filter(
     (notification) => !notification.opened
   );
+  const notificationRef = useRef(null);
 
   useEffect(() => {
     refetch();
@@ -56,7 +59,22 @@ const Navbar = () => {
     }
   }, [loggedUser]);
 
-  console.log();
+  const handleClickOutside = (event) => {
+    if (
+      notificationRef.current &&
+      !notificationRef.current.contains(event.target)
+    ) {
+      setExpandNotif(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleLogout = () => {
     setLoggingOut(true);
@@ -108,39 +126,26 @@ const Navbar = () => {
               </span>
             </div>
 
-          <ul
-            className={`md:flex md:flex-grow md:items-center md:space-x-2  md:pl-7 text-[16px] right-7 absolute md:static md:z-auto z-[1] ${
-              styles.nav_items_tx
-            } ${navbar ? `top-[80px] ${styles.card} w-28` : "top-[-490px]"}`}
-            style={InterReguler.style}
-          >
-            {pengguna.role === "superadmin" && (
-              <>
-                <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
-                  <a
-                    href="/user"
-                    className={`${
-                      getRootPath(path) === "user"
-                        ? "md:text-primaryForeground"
-                        : "md:text-info"
-                    }  md:hover:text-primaryForeground`}
-                  >
-                    Akun
-                  </a>
-                </li>
-
-                <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
-                  <a
-                    href="/kelas"
-                    className={`${
-                      getRootPath(path) === "kelas"
-                        ? "md:text-primaryForeground"
-                        : "md:text-info"
-                    }  md:hover:text-primaryForeground`}
-                  >
-                    Kelas
-                  </a>
-                </li>
+            <ul
+              className={`md:flex md:flex-grow md:items-center md:space-x-2  md:pl-7 text-[16px] right-7 absolute md:static md:z-auto z-[1] ${
+                styles.nav_items_tx
+              } ${navbar ? `top-[80px] ${styles.card} w-28` : "top-[-490px]"}`}
+              style={InterReguler.style}
+            >
+              {pengguna.role === "superadmin" && (
+                <>
+                  <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                    <a
+                      href="/user"
+                      className={`${
+                        getRootPath(path) === "user"
+                          ? "md:text-primaryForeground"
+                          : "md:text-info"
+                      }  md:hover:text-primaryForeground`}
+                    >
+                      Akun
+                    </a>
+                  </li>
 
                   <li className="p-2 hover:bg-[#efefef] md:hidden block">
                     <div
@@ -168,28 +173,68 @@ const Navbar = () => {
               {pengguna.role === "operasional" && (
                 <>
                   <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
-                    <a
-                      href="/kelas"
-                      className={`${
-                        getRootPath(path) === "kelas"
-                          ? "md:text-primaryForeground"
-                          : "md:text-info"
-                      }  md:hover:text-primaryForeground`}
-                    >
-                      Kelas
-                    </a>
-                  </li>
-                  <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
-                    <a
-                      href="/murid"
-                      className={`${
-                        getRootPath(path) === "user"
-                          ? "md:text-primaryForeground"
-                          : "md:text-info"
-                      }  md:hover:text-primaryForeground`}
-                    >
-                      Murid
-                    </a>
+                    <div className="relative">
+                      {/* Main link for Kelas */}
+                      <span
+                        className={`${
+                          getRootPath(path) === "kelas"
+                            ? "md:text-primaryForeground"
+                            : "md:text-info"
+                        }  md:hover:text-primaryForeground`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setDropdownKelas(!dropdownKelas);
+                        }}
+                      >
+                        Kelas
+                      </span>
+                      {dropdownKelas && (
+                        <div className="absolute top-full left-0 mt-2 w-48 bg-primary border border-[#DFE4EA] rounded-md shadow-lg z-10">
+                          <ul>
+                            <li className="p-2">
+                              <a
+                                href="/kelas"
+                                className="text-sm md:text-base text-info hover:text-primaryForeground"
+                              >
+                                Daftar Kelas
+                              </a>
+                            </li>
+                            <li className="p-2">
+                              <a
+                                href="/kelas/add"
+                                className="text-sm md:text-base text-info hover:text-primaryForeground"
+                              >
+                                Tambah Kelas
+                              </a>
+                            </li>
+                            <li className="p-2">
+                              <a
+                                href="/perubahan-kelas"
+                                className="text-sm md:text-base text-info hover:text-primaryForeground"
+                              >
+                                Perubahan Kelas
+                              </a>
+                            </li>
+                            <li className="p-2">
+                              <a
+                                href="/kelas/program"
+                                className="text-sm md:text-base text-info hover:text-primaryForeground"
+                              >
+                                Program
+                              </a>
+                            </li>
+                            <li className="p-2">
+                              <a
+                                href="/kelas/jenis"
+                                className="text-sm md:text-base text-info hover:text-primaryForeground"
+                              >
+                                Jenis Kelas
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      )}
+                    </div>
                   </li>
                   <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
                     <a
@@ -203,18 +248,7 @@ const Navbar = () => {
                       Pengajar
                     </a>
                   </li>
-                  <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
-                    <a
-                      href="/perubahan-kelas"
-                      className={`${
-                        getRootPath(path) === "user"
-                          ? "md:text-primaryForeground"
-                          : "md:text-info"
-                      }  md:hover:text-primaryForeground`}
-                    >
-                      Perubahan Kelas
-                    </a>
-                  </li>
+
                   <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent  hover:bg-[#efefef]">
                     <a
                       href="/user/profile"
@@ -407,7 +441,7 @@ const Navbar = () => {
         </div>
       </nav>
       {expandNotif && (
-        <div>
+        <div ref={notificationRef}>
           <Notification
             data={notifications}
             onUpdate={handleNotificationUpdate}
