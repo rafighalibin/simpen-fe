@@ -121,27 +121,6 @@ export function DataTable<TData, TValue>({
             ))}
           </div>
         ))}
-        <Link href="/kelas/program">
-          <button
-            className={`px-4 py-2 bg-primary/80 hover:bg-primary text-white rounded`}
-          >
-            Program
-          </button>
-        </Link>
-        <Link href="/kelas/jenis">
-          <button
-            className={`px-4 py-2 bg-primary/80 hover:bg-primary text-white rounded`}
-          >
-            Jenis Kelas
-          </button>
-        </Link>
-        <Link href="/kelas/add">
-          <button
-            className={`px-4 py-2 bg-primary/80 hover:bg-primary text-white rounded`}
-          >
-            + Tambah Kelas
-          </button>
-        </Link>
       </div>
 
       <div className="shadow-lg rounded-lg ">
