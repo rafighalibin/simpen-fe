@@ -24,6 +24,8 @@ const Navbar = () => {
   const [loggingOut, setLoggingOut] = useState(false);
   const { pengguna, isAuthenticated } = useAuthContext();
   const [navbar, setNavbar] = useState(false);
+  const [dropdownKelas, setDropdownKelas] = useState(false);
+
   const path = usePathname();
   const {
     isLoading: loggedUserLoading,
@@ -171,16 +173,68 @@ const Navbar = () => {
               {pengguna.role === "operasional" && (
                 <>
                   <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
-                    <a
-                      href="/kelas"
-                      className={`${
-                        getRootPath(path) === "kelas"
-                          ? "md:text-primaryForeground"
-                          : "md:text-info"
-                      }  md:hover:text-primaryForeground`}
-                    >
-                      Kelas
-                    </a>
+                    <div className="relative">
+                      {/* Main link for Kelas */}
+                      <span
+                        className={`${
+                          getRootPath(path) === "kelas"
+                            ? "md:text-primaryForeground"
+                            : "md:text-info"
+                        }  md:hover:text-primaryForeground`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setDropdownKelas(!dropdownKelas);
+                        }}
+                      >
+                        Kelas
+                      </span>
+                      {dropdownKelas && (
+                        <div className="absolute top-full left-0 mt-2 w-48 bg-primary border border-[#DFE4EA] rounded-md shadow-lg z-10">
+                          <ul>
+                            <li className="p-2">
+                              <a
+                                href="/kelas"
+                                className="text-sm md:text-base text-info hover:text-primaryForeground"
+                              >
+                                Daftar Kelas
+                              </a>
+                            </li>
+                            <li className="p-2">
+                              <a
+                                href="/kelas/add"
+                                className="text-sm md:text-base text-info hover:text-primaryForeground"
+                              >
+                                Tambah Kelas
+                              </a>
+                            </li>
+                            <li className="p-2">
+                              <a
+                                href="/perubahan-kelas"
+                                className="text-sm md:text-base text-info hover:text-primaryForeground"
+                              >
+                                Perubahan Kelas
+                              </a>
+                            </li>
+                            <li className="p-2">
+                              <a
+                                href="/kelas/program"
+                                className="text-sm md:text-base text-info hover:text-primaryForeground"
+                              >
+                                Program
+                              </a>
+                            </li>
+                            <li className="p-2">
+                              <a
+                                href="/kelas/jenis"
+                                className="text-sm md:text-base text-info hover:text-primaryForeground"
+                              >
+                                Jenis Kelas
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      )}
+                    </div>
                   </li>
                   <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
                     <a
@@ -194,18 +248,7 @@ const Navbar = () => {
                       Pengajar
                     </a>
                   </li>
-                  <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
-                    <a
-                      href="/perubahan-kelas"
-                      className={`${
-                        getRootPath(path) === "user"
-                          ? "md:text-primaryForeground"
-                          : "md:text-info"
-                      }  md:hover:text-primaryForeground`}
-                    >
-                      Perubahan Kelas
-                    </a>
-                  </li>
+
                   <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent  hover:bg-[#efefef]">
                     <a
                       href="/user/profile"
