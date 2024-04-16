@@ -12,6 +12,8 @@ import { FaBars, FaTimes, FaBell } from "react-icons/fa";
 import Link from "next/link";
 import useFetchLoggedUser from "../hooks/user/useFetchLoggedUser";
 import { Notification } from "./Notification";
+import { useMutation } from "react-query";
+import useFetchWithToken from "../hooks/fetchWithToken";
 
 const getRootPath = (path: String) => {
   const rootPath = path.split("/")[1];
@@ -19,6 +21,7 @@ const getRootPath = (path: String) => {
 };
 
 const Navbar = () => {
+  const fetchWithToken = useFetchWithToken();
   const router = useRouter();
   const { removePenggunaToken } = useToken();
   const [loggingOut, setLoggingOut] = useState(false);
@@ -41,6 +44,11 @@ const Navbar = () => {
   useEffect(() => {
     refetch();
   }, [refetch]);
+
+  const { mutateAsync: logoutMutation } = useMutation({
+    mutationFn: () =>
+      fetchWithToken(`/auth/logout`, "PUT").then((res) => res.json),
+  });
 
   const handleNotificationUpdate = async () => {
     try {
@@ -74,9 +82,11 @@ const Navbar = () => {
     };
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setLoggingOut(true);
     removePenggunaToken();
+
+    await logoutMutation();
 
     setTimeout(() => {
       router.push("/login");

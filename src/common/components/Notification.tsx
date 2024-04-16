@@ -138,9 +138,23 @@ export const Notification = ({ data, onUpdate }) => {
                       </div>
                     )}
                     {notification.tipe === 2 && <div>Ini feedback</div>}
-                    {notification.tipe === 3 && (
-                      <div>Ini Permintaan Perubahan Jadwal</div>
-                    )}
+                    {notification.tipe === 3 &&
+                      notification.isi["status"] == "disetujui" && (
+                        <div>
+                          {"Permintaan perubahan "}
+                          <a
+                            href={`/sesi/${notification.isi["sesiKelas"]}`}
+                            className="hover:text-blue-500 focus:text-blue-500"
+                          >
+                            Sesi kelas
+                          </a>
+                          {" disetujui"}
+                        </div>
+                      )}
+                    {notification.tipe === 3 &&
+                      notification.isi["status"] == "ditolak" && (
+                        <div>Permintaan pengajar pengganti ditolak</div>
+                      )}
                     {notification.tipe === 4 &&
                       notification.isi["status"] == "disetujui" && (
                         <div>
