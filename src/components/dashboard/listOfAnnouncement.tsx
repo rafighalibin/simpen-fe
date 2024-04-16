@@ -9,6 +9,7 @@ import {
 } from "../../font/font";
 import { useMutation } from "react-query";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
+import Loading from "../../app/loading";
 
 export const ListOfAnnouncement = ({ data }) => {
   const {
@@ -26,6 +27,23 @@ export const ListOfAnnouncement = ({ data }) => {
     judul: "",
     isi: "",
   });
+
+  const months = [
+    "Januari",
+    "Februari",
+    "Maret",
+    "April",
+    "Mei",
+    "Juni",
+    "Juli",
+    "Agustus",
+    "September",
+    "Oktober",
+    "November",
+    "Desember",
+  ];
+
+  const reversedListAnnouncement = listAnnouncement.slice().reverse();
 
   useEffect(() => {
     refetch();
@@ -55,6 +73,7 @@ export const ListOfAnnouncement = ({ data }) => {
       ),
     onSuccess: () => {
       refetch();
+      setFormState({ judul: "", isi: "" });
     },
   });
 
@@ -72,7 +91,7 @@ export const ListOfAnnouncement = ({ data }) => {
 
   return (
     <div>
-      <div className={`${styles.card2} p-4`}>
+      <div className={`${styles.card2} p-4 min-[40vh]:`}>
         <div className="flex justify-between items-center mb-4">
           <div
             style={InterMedium.style}
@@ -80,26 +99,35 @@ export const ListOfAnnouncement = ({ data }) => {
           >
             Daftar Pengumuman
           </div>
-          {(data && data.role === "operasional") ||
+          {(data && data.role === "operasional" && (
+            <button
+              className={`${styles.create_button} text-white hover:bg-[#215E9B] focus:bg-[#215E9B] px-3`}
+              onClick={handleOpenCreateModal}
+            >
+              +
+            </button>
+          )) ||
             (data && data.role === "akademik" && (
               <button
-                className={`${styles.create_button}`}
+                className={`${styles.create_button} text-white hover:bg-[#215E9B] focus:bg-[#215E9B] px-3`}
                 onClick={handleOpenCreateModal}
               >
-                + Buat Pengumuman
+                +
               </button>
             ))}
         </div>
-        <div className="mt-4">
+        <div className="mt-4 overflow-y-auto overflow-x-hidden max-h-[65vh]">
           {listAnnouncementLoading ? (
-            <div>Loading...</div>
+            <div>
+              <Loading />
+            </div>
           ) : error ? (
             <div>Error fetching data</div>
-          ) : !listAnnouncement && listAnnouncement.length === 0 ? (
+          ) : !listAnnouncement || listAnnouncement.length === 0 ? (
             <div>Tidak ada pengumuman</div>
           ) : (
             <div className="">
-              {listAnnouncement.map((announcement) => (
+              {reversedListAnnouncement.map((announcement) => (
                 <div
                   key={announcement.id}
                   className={`${styles.card3} py-2 px-3 hover:bg-[#fffbf0] focus:bg-[#fffbf0] mb-3`}
@@ -113,20 +141,16 @@ export const ListOfAnnouncement = ({ data }) => {
                     >
                       {announcement.judul}
                     </div>
-
                     <div
                       style={InterReguler.style}
-                      className={`${styles.announcement_date}`}
+                      className={`${styles.announcement_date} flex justify-between`}
                     >
-                      {announcement.tanggalPembuatan[2] +
-                        "-" +
-                        announcement.tanggalPembuatan[1] +
-                        "-" +
-                        announcement.tanggalPembuatan[0] +
-                        " pada " +
-                        announcement.tanggalPembuatan[3] +
-                        ":" +
-                        announcement.tanggalPembuatan[4]}
+                      <div>
+                        {`${announcement.tanggalPembuatan[2]}-${
+                          months[announcement.tanggalPembuatan[1] - 1]
+                        }-${announcement.tanggalPembuatan[0]}  `}
+                      </div>
+                      <div>{`${announcement.tanggalPembuatan[3]}:${announcement.tanggalPembuatan[4]}`}</div>
                     </div>
                   </div>
                 </div>
@@ -137,7 +161,7 @@ export const ListOfAnnouncement = ({ data }) => {
       </div>
       {isModalOpen && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
-          <div className={`${styles.modal} bg-white py-4 px-8 relative`}>
+          <div className={`${styles.modal} bg-white pt-4 pb-8 px-8 relative`}>
             <div
               className="absolute top-1 right-2 cursor-pointer"
               onClick={handleCloseModal}
@@ -170,78 +194,91 @@ export const ListOfAnnouncement = ({ data }) => {
             >
               {selectedAnnouncement.isi}
             </div>
-            {(data && data.role === "operasional") ||
-              (data && data.role === "akademik" && (
+            <div className=" ">
+              {(data && data.role === "operasional" && (
                 <button
-                  className={`${styles.create_button} mt-4`}
+                  className={`${styles.delete_button} mt-8 text-white px-2 py-1 hover:bg-[#a00e0e] focus:bg-[#a00e0e]`}
                   onClick={() =>
                     handleDeleteAnnouncement(selectedAnnouncement.id)
                   }
                 >
                   Hapus pengumuman
                 </button>
-              ))}
+              )) ||
+                (data && data.role === "akademik" && (
+                  <button
+                    className={`${styles.delete_button} mt-8 text-white px-2 py-1 hover:bg-[#a00e0e] focus:bg-[#a00e0e]`}
+                    onClick={() =>
+                      handleDeleteAnnouncement(selectedAnnouncement.id)
+                    }
+                  >
+                    Hapus pengumuman
+                  </button>
+                ))}
+            </div>
           </div>
         </div>
       )}
       {isCreateModalOpen && (
-        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
-          <div className={`${styles.modal} bg-white py-4 px-8 relative`}>
-            <div
-              className="absolute top-1 right-2 cursor-pointer"
-              onClick={handleCloseCreateModal}
-            >
-              &#x2715;
-            </div>
-            <div className="mt-4">
+        <form onSubmit={handleCreateAnnouncement}>
+          <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
+            <div className={`${styles.modal} bg-white py-4 px-8 relative`}>
               <div
-                style={InterMedium.style}
-                className={`${styles.title} mb-3 sm:ml-0 ml-1`}
+                className="absolute top-1 right-2 cursor-pointer"
+                onClick={handleCloseCreateModal}
               >
-                Judul pengumuman
+                &#x2715;
               </div>
-              <input
-                id="judul"
-                name="judul"
-                type="judul"
-                autoComplete="judul"
-                required
-                className={`${styles.placeholder} appearance-none relative block w-full px-3 sm:py-3 py-1 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:text-black focus:z-10`}
-                onChange={(e) =>
-                  setFormState({ ...formState, judul: e.target.value })
-                }
-                value={formState.judul}
-                style={InterReguler.style}
-              />
-            </div>
-            <div className="mt-4">
-              <div
-                style={InterMedium.style}
-                className={`${styles.title} mb-3 sm:ml-0 ml-1`}
+              <div className="mt-4">
+                <div
+                  style={InterMedium.style}
+                  className={`${styles.title} mb-3 sm:ml-0 ml-1`}
+                >
+                  Judul pengumuman
+                </div>
+                <input
+                  id="judul"
+                  name="judul"
+                  type="judul"
+                  autoComplete="judul"
+                  required
+                  className={`${styles.placeholder} appearance-none relative block w-full px-3 sm:py-3 py-1 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:text-black focus:z-10`}
+                  onChange={(e) =>
+                    setFormState({ ...formState, judul: e.target.value })
+                  }
+                  value={formState.judul}
+                  style={InterReguler.style}
+                />
+              </div>
+              <div className="mt-4">
+                <div
+                  style={InterMedium.style}
+                  className={`${styles.title} mb-3 sm:ml-0 ml-1`}
+                >
+                  Isi pengumuman
+                </div>
+                <textarea
+                  id="isi"
+                  name="isi"
+                  autoComplete="off"
+                  required
+                  className={`${styles.placeholder} appearance-none relative block w-full px-3 sm:py-3 py-1 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:text-black focus:z-10`}
+                  onChange={(e) =>
+                    setFormState({ ...formState, isi: e.target.value })
+                  }
+                  value={formState.isi}
+                  style={InterReguler.style}
+                />
+              </div>
+              <button
+                type="submit"
+                className={`${styles.upload_button} mt-8 mb-6 text-white px-2 py-1 hover:bg-[#215E9B] focus:bg-[#215E9B]`}
               >
-                Isi pengumuman
-              </div>
-              <textarea
-                id="isi"
-                name="isi"
-                autoComplete="off"
-                required
-                className={`${styles.placeholder} appearance-none relative block w-full px-3 sm:py-3 py-1 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:text-black focus:z-10`}
-                onChange={(e) =>
-                  setFormState({ ...formState, isi: e.target.value })
-                }
-                value={formState.isi}
-                style={InterReguler.style}
-              />
+                Unggah pengumuman
+              </button>
             </div>
-            <button
-              className={`${styles.create_button} mt-4`}
-              onClick={handleCreateAnnouncement}
-            >
-              Unggah pengumuman
-            </button>
           </div>
-        </div>
+        </form>
       )}
     </div>
   );
