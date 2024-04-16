@@ -81,7 +81,7 @@ export function Filter({
       {/* Text input with a datalist for string-type filters */}
       <div className="relative">
         <DebouncedInput
-          type="text"
+          type={"text"}
           value={(columnFilterValue ?? "") as string}
           onChange={(value) => column.setFilterValue(value)}
           placeholder={`${column.columnDef.header}`}
