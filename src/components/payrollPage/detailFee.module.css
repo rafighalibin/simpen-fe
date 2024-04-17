@@ -1,0 +1,54 @@
+.heading {
+    color: #000;
+    text-align: center;
+    font-size: 64px;
+    font-style: normal;
+    line-height: 120%;
+  }
+  
+  .card_form {
+    border-radius: 8px;
+    border: 0.5px solid var(--Stroke, #dfe4ea);
+    background: var(--White, #fff);
+    box-shadow: 0px 1px 3px 0px rgba(166, 175, 195, 0.4);
+  }
+  
+  .form_title {
+    color: var(--Dark-Dark, #111928);
+    font-size: 16px;
+    font-style: normal;
+    line-height: 24px; /* 150% */
+  }
+  
+  .form_placeholder {
+    color: var(--Dark-Dark-6, text-neutral/60);
+    font-size: 16px;
+    font-style: normal;
+    line-height: 24px; /* 150% */
+  }
+  
+  .form_paragraph {
+    color: var(--Dark-Dark-4, #4b5563);
+    font-size: 14px;
+    font-style: normal;
+    line-height: 22px; /* 157.143% */
+  }
+  
+  .btn {
+    display: inline-flex;
+    padding: 12px 24px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: 6px;
+    background: var(--Blue, #66a2dc);
+  }
+  
+  .button_tx {
+    color: var(--White-White, var(--White, #fff));
+    text-align: center;
+    font-size: 16px;
+    font-style: normal;
+    line-height: 24px; /* 150% */
+  }
+  

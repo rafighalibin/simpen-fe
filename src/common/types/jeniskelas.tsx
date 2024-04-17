@@ -1,5 +1,5 @@
 export type JenisKelas = {
-    id: number;
+    id: string;
     nama: string;
     pertemuan: string;
     tipe: string;
