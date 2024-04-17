@@ -124,7 +124,8 @@ const SesiAbsen = () => {
     setSesiChanged(sessionIndex);
   };
 
-  const handleButtonClick = (id, e) => { // Mengambil id sebagai parameter
+  const handleButtonClick = (id, e) => {
+    // Mengambil id sebagai parameter
     // Panggil mutateAsync dengan menyertakan id
     e.preventDefault();
     absenPengajarMutation(id)
@@ -217,8 +218,16 @@ const SesiAbsen = () => {
                           <button
                             className={`bg-transparent hover:bg-warning text-warning  hover:text-white py-2 px-4 border border-warning hover:border-transparent rounded-full `}
                             onClick={(e) => handleButtonClick(sesi.sesi_id, e)}
+                            disabled={absenPengajarIsLoading}
                           >
-                            Selesai
+                            {absenPengajarIsLoading ? (
+                              <div className="inset-0 flex items-center justify-center gap-2">
+                                <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6"></div>
+                                <span>On Progress</span>
+                              </div>
+                            ) : (
+                              "Selesai"
+                            )}
                           </button>
                         )}
                       </th>
