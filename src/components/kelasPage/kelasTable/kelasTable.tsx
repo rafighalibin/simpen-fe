@@ -31,16 +31,28 @@ export const KelasTable = () => {
   ) {
     return (
       <div className="flex flex-col space-y-8 my-10">
-        <div className="flex flex-row items-center justify-between">
-          <h1 className="text-6xl font-bold text-neutral/100">Daftar Kelas</h1>
-          <Link href="/kelas/add">
-            <button className="px-4 py-2 bg-primary/80 hover:bg-primary text-white rounded">
-              + Tambah Kelas
-            </button>
-          </Link>
+      <div className="flex flex-row items-center justify-between">
+        <h1 className="text-6xl font-bold text-neutral/100">Daftar Kelas</h1>
+        <div className="flex items-right justify-end space-x-4">
+        <Link href="/kelas/jenis">
+          <button className="px-4 py-2 bg-primary/80 hover:bg-primary text-white rounded">
+          Jenis Kelas
+          </button>
+        </Link>
+        <Link href="/kelas/program">
+          <button className="px-4 py-2 bg-primary/80 hover:bg-primary text-white rounded">
+          Program
+          </button>
+        </Link>
+        <Link href="/kelas/add">
+          <button className="px-4 py-2 bg-primary/80 hover:bg-primary text-white rounded">
+          + Tambah Kelas
+          </button>
+        </Link>
         </div>
+      </div>
 
-        <DataTableKelasOps columns={ColumnsKelasOps} data={listKelas} />
+      <DataTableKelasOps columns={ColumnsKelasOps} data={listKelas} />
       </div>
     );
   }
