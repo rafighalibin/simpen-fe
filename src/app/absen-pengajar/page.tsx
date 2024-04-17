@@ -10,7 +10,7 @@ const Page= () =>{
   const { checkPermission } = useAuthContext();
 
   return (
-    checkPermission(true, true, false) && (
+    checkPermission(true, true, true) && (
     <div className="px-[8vw] py-8">
       <Breadcrumbs />
         <DaftarAbsenPengajar/>

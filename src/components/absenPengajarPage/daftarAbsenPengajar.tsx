@@ -17,8 +17,10 @@ import Loading from "../../common/components/Loading";
 import { absenPengajarRead } from "../../common/types/absenPengajar";
 import styles from "./daftarAbsen.module.css";
 import { PeriodePayroll } from "../../common/types/PeriodePayroll";
+import { useAuthContext } from "../../common/utils/authContext";
 
 export const DaftarAbsenPengajar = () => {
+  const { pengguna } = useAuthContext();
   const [searchKeyword, setSearchKeyword] = useState("");
   const fetchWithToken = useFetchWithToken();
   const [itemsPerPage, setItemsPerPage] = useState(4);
@@ -84,7 +86,13 @@ export const DaftarAbsenPengajar = () => {
         return absenPengajar.jenisKelasName
           .toLowerCase()
           .includes(searchKeyword.toLowerCase());
-      } else if (searchType === "payroll") {
+      } else if (searchType === "fee") {
+        return absenPengajar.fee
+          .toString()
+          .toLowerCase()
+          .includes(searchKeyword.toLowerCase());
+      } 
+      else if (searchType === "payroll") {
         if (!searchKeyword) {
           // Jika tidak ada nilai yang dimasukkan, tampilkan semua data
           return true;
@@ -330,26 +338,45 @@ export const DaftarAbsenPengajar = () => {
   };
 
   const exportToCSV = (data) => {
-    // Buat header CSV
-    const csvHeader = 'Nama Pengajar,Kode Kelas,Program,Jenis Kelas,Tanggal Absen\n';
+    const groupedData = data.reduce((acc, curr) => {
+      const { pengajar, kodeKelas, programName, jenisKelasName, tanggalAbsen, fee } = curr;
+      const key = `${pengajar}-${kodeKelas}-${programName}-${jenisKelasName}-${formatLocalDateTime(tanggalAbsen).split('-').join('-')}`;
+      if (!acc[key]) {
+        acc[key] = { pengajar, kodeKelas, programName, jenisKelasName, tanggalAbsen, totalFee: fee };
+      } else {
+        acc[key].totalFee += fee;
+      }
+      return acc;
+    }, {});
   
-    // Konversi data menjadi baris-baris CSV
-    const csvData = data.map((item) => {
-      return `${item.pengajar},${item.kodeKelas},${item.programName},${item.jenisKelasName},${formatLocalDateTime(item.tanggalAbsen).split('-').join('-')}\n`;
+    const csvHeader = 'Nama Pengajar,Kode Kelas,Program,Jenis Kelas,Tanggal Absen,Total Fee\n';
+  
+    const csvData = Object.values(groupedData).map((item: { pengajar: string, kodeKelas: string, programName: string, jenisKelasName: string, tanggalAbsen: string, totalFee: number }) => {
+      return `${item.pengajar},${item.kodeKelas},${item.programName},${item.jenisKelasName},${formatLocalDateTime(item.tanggalAbsen).split('-').join('-')},${item.totalFee}\n`;
     }).join('');
   
-    // Gabungkan header dan data CSV
     const csvContent = csvHeader + csvData;
   
-    // Buat blob dengan data CSV
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
   
-    // Simpan blob sebagai file dengan nama 'export.csv'
     saveAs(blob, 'absen_pengajar.csv');
   };
 
   const handleExportClick = () => {
     exportToCSV(filteredAbsenPengajar);
+  }
+
+  function formatMoney(amount) {
+    // Menambahkan simbol mata uang (misalnya "Rp" untuk Rupiah)
+  
+    // Menggunakan fungsi toLocaleString() untuk memisahkan ribuan dan menetapkan format desimal
+    const formattedAmount = amount.toLocaleString("id-ID", {
+      style: "currency",
+      currency: "IDR", // Menggunakan kode mata uang ISO 4217 untuk Rupiah
+    });
+  
+    // Mengembalikan string yang diformat dengan simbol mata uang
+    return `${formattedAmount}`;
   }
 
   return (
@@ -409,6 +436,7 @@ export const DaftarAbsenPengajar = () => {
           <option value="kodeKelas">Cari berdasarkan Kode Kelas</option>
           <option value="program">Cari berdasarkan Program</option>
           <option value="jenisKelas">Cari berdasarkan Jenis Kelas</option>
+          <option value="fee">Cari berdasarkan Fee</option>
           <option value="tanggalAbsen">Cari berdasarkan Tanggal Absen</option>
           <option value="payroll">Cari berdasarkan Periode Payroll</option>
         </select>
@@ -450,7 +478,7 @@ export const DaftarAbsenPengajar = () => {
           searchKeyword !== "" &&
           searchType === "fee" ? ( // Jika hasil pencarian tag kosong
           <p className="text-red-500">
-            Pengajar dengan periode payroll {searchKeyword} tidak ditemukan.
+            Pengajar dengan fee Rp. {searchKeyword} tidak ditemukan.
           </p>
         ) : filteredAbsenPengajar.length === 0 &&
           searchKeyword !== "" &&
@@ -504,7 +532,7 @@ export const DaftarAbsenPengajar = () => {
                         {absen.jenisKelasName}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {absen.fee}
+                      {formatMoney(absen.fee)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {formatLocalDateTime(absen.tanggalAbsen)}
