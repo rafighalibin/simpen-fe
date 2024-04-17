@@ -55,18 +55,30 @@ export const DetailJenisKelas = () => {
     fetchAllKelasWithJenisKelas();
   }, []);
 
-  const handleEdit = async () => {
-    router.push(`/kelas/jenis/edit/${jenisKelasDetail.id}`);
-  };
-
   const { mutateAsync: deleteMutation } = useMutation({
-    mutationFn: () =>
-      fetchWithToken(`/kelas/jenis/${jenisKelasDetail.id}`, "DELETE").then((res) => res.json),
+    mutationFn: (id: string) =>
+      fetchWithToken(`/kelas/jenis/${id}`, "DELETE")
+        .then((res) => {
+          if (res.status === 500) {
+            alert("Jenis Kelas Internal Server Error. Ada Program yang berhubungan!");
+          }
+          else {
+            alert("Jenis Kelas berhasil dihapus");
+          }
+          return res.json();
+        })
+        .catch((error) => {
+          console.error(error);
+          throw error;
+        }),
+    onSuccess: () => {
+      window.location.href = "/kelas/jenis";
+    },
   });
 
   const handleDelete = async () => {
     if (window.confirm("Apa anda yakin ingin hapus jenis kelas ini?")) {
-      await deleteMutation();
+      await deleteMutation(jenisKelasDetail.id);
       localStorage.setItem("removeJenisKelasSuccess", `${jenisKelasDetail.nama}`);
       router.push("/kelas/jenis");
     }
@@ -142,13 +154,6 @@ export const DetailJenisKelas = () => {
           </div>
           )}
           <div className="flex justify-center gap-4 sm:mt-16 sm:mb-12">
-            <button
-              onClick={handleEdit}
-              className={`${styles.button_tx} ${styles.put_btn} hover:bg-[#A46B14] focus:bg-[#A46B14]`}
-              style={InterMedium.style}
-            >
-              Ubah Atribut Jenis Kelas
-            </button>
             <button
               onClick={handleDelete}
               className={`${styles.button_tx} ${styles.del_btn} hover:bg-[#A46B14] focus:bg-[#A46B14]`}
