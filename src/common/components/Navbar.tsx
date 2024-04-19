@@ -270,13 +270,24 @@ const Navbar = () => {
                     >
                       Pengajar
                     </a>
+                  </li>{" "}
+                  <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                    <a
+                      href="/murid"
+                      className={`${
+                        getRootPath(path) === "murid"
+                          ? "md:text-primaryForeground"
+                          : "md:text-info"
+                      }  md:hover:text-primaryForeground`}
+                    >
+                      Murid
+                    </a>
                   </li>
-
                   <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent  hover:bg-[#efefef]">
                     <a
                       href="/user/profile"
                       className={`${
-                        getRootPath(path) === "murid"
+                        getRootPath(path) === "user"
                           ? "md:text-primaryForeground"
                           : "md:text-info"
                       }  md:hover:text-primaryForeground`}
