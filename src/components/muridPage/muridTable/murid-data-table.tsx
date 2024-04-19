@@ -130,17 +130,6 @@ export function DataTable<TData, TValue>({
                 ))}
               </tr>
             ))}
-            <tr>
-              <td>
-                <Link href="/murid/add">
-                  <button
-                    className={`px-4 py-2 bg-primary/80 hover:bg-primary text-white rounded`}
-                  >
-                    + Tambah Murid
-                  </button>
-                </Link>
-              </td>
-            </tr>
           </thead>
         </table>
       )}
