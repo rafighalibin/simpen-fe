@@ -33,13 +33,15 @@ export const TagForm = () => {
 
   const { isLoading, error, data } = useQuery({
     queryKey: ["tags"],
-    queryFn: () =>
-      fetchWithToken(`/tag`).then(
-        (res) => res.json()
-      ),
+    queryFn: () => fetchWithToken(`/tag`).then((res) => res.json()),
   });
 
-  const { mutateAsync: addTagMutation, data: Tag, isSuccess } = useMutation({
+  const {
+    mutateAsync: addTagMutation,
+    data: Tag,
+    isSuccess,
+    isLoading: addTagIsLoading,
+  } = useMutation({
     mutationFn: () =>
       fetchWithToken("/tag", "POST", payload).then((res) => res.json()),
     onSuccess: (data) => {
@@ -63,10 +65,15 @@ export const TagForm = () => {
   };
 
   if (isLoading) {
-    return  <Loading />;;
+    return <Loading />;
   }
 
-  if (isSuccess){
+  const handleButtonClick = (e) => {
+    e.preventDefault();
+    handleAddTag();
+  };
+
+  if (isSuccess) {
     localStorage.setItem("tagSuccess", "true");
     localStorage.setItem("tagNama", nama);
     redirect(`/tag`);
@@ -112,41 +119,48 @@ export const TagForm = () => {
 
         <h1 className="text-5xl font-bold mb-6 text-center">Tambah Tag</h1>
 
-        <form
-          onSubmit={async (e) => {
-            e.preventDefault();
-            await handleAddTag();
-          }}
-        >
+        <form>
           <div className=" flex flex-col space-y-16 bg-white p-6 rounded-lg shadow-md">
             <div>
-            <label htmlFor="tagInput" className="block font-medium text-neutral/70">
-              Nama Tag
-            </label>
-            <input
-              required
-              type="text"
-              value={nama}
-              onChange={(e) => setNama(e.target.value)}
-              placeholder="Nama Tag"
-              className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
-            />
-            <p className="text-sm text-gray-500">
-              Pastikan membuat tagging yang tidak ambigu dengan tag lainnya.
-            </p>
-            </div>
-            
-            <div className="w-full flex justify-center pb-8">
+              <label
+                htmlFor="tagInput"
+                className="block font-medium text-neutral/70"
+              >
+                Nama Tag
+              </label>
               <input
+                required
+                type="text"
+                value={nama}
+                onChange={(e) => setNama(e.target.value)}
+                placeholder="Nama Tag"
+                className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
+              />
+              <p className="text-sm text-gray-500">
+                Pastikan membuat tagging yang tidak ambigu dengan tag lainnya.
+              </p>
+            </div>
+
+            <div className="w-full flex justify-center pb-8">
+              <button
                 type="submit"
                 value="Tambah Tag"
+                onClick={handleButtonClick}
                 className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
-              />
+                disabled={addTagIsLoading}
+              >
+                {addTagIsLoading ? (
+                  <div className="inset-0 flex items-center justify-center gap-2">
+                    <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6"></div>
+                    <span>On Progress</span>
+                  </div>
+                ) : (
+                  "Tambah Tag"
+                )}
+              </button>
             </div>
           </div>
         </form>
-
-        
       </div>
     </div>
   );
