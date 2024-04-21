@@ -12,6 +12,8 @@ import { MuridDetail, MuridSelect } from "../../../../common/types/murid";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "../../../../common/utils/authContext";
 import { set } from "react-hook-form";
+import { InterMedium } from "../../../../font/font";
+import styles from "./addKelas.module.css";
 
 const AddKelas = () => {
   const queryClient = useQueryClient();
@@ -25,6 +27,8 @@ const AddKelas = () => {
   const [jumlahLevel, setJumlahLevel] = useState(0);
   const [listJumlahLevel, setListJumlahLevel] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 
+
+  const [showTable, setShowTable] = useState(false);
   const [bahasa, setBahasa] = useState("");
   const [modaPertemuan, setModaPertemuan] = useState("");
   const [tipe, setTipe] = useState("");
@@ -72,13 +76,13 @@ const AddKelas = () => {
   const [listTipe, setListTipe] = useState([]);
   const [listMuridExisting, setListMuridExisting] = useState([]);
   const daysOfWeek = [
-    { id: 0, name: "Sunday" },
-    { id: 1, name: "Monday" },
-    { id: 2, name: "Tuesday" },
-    { id: 3, name: "Wednesday" },
-    { id: 4, name: "Thursday" },
-    { id: 5, name: "Friday" },
-    { id: 6, name: "Saturday" },
+    { id: 0, name: "Minggu" },
+    { id: 1, name: "Senin" },
+    { id: 2, name: "Selasa" },
+    { id: 3, name: "Rabu" },
+    { id: 4, name: "Kamis" },
+    { id: 5, name: "Jumat" },
+    { id: 6, name: "Sabtu" },
   ];
 
   const handleChangeMurid = (e) => {
@@ -538,10 +542,59 @@ const AddKelas = () => {
 
           {/* Display generated class dates */}
           <div className="form-control">
-            <label className="label">List Jadwal Kelas</label>
-            {listJadwalKelas.map((classDate, index) => (
-              <div key={index}>{classDate.toString()}</div>
-            ))}
+            <label className="label mr-4">List Jadwal Kelas</label>
+            <button
+              onClick={() => setShowTable(!showTable)}
+              className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
+            >
+              {showTable ? "Hide Table" : "Show Table"}
+            </button>
+            {showTable && (
+            <div className={` ${styles.card_form} mt-4`}>
+              <table className={`table-auto w-full`}>
+                <thead
+                className={`${styles.table_heading} ${styles.table_heading_text}`}
+                >
+                <tr>
+                  <th className="px-4 py-4 text-center" style={InterMedium.style}>
+                  NO
+                  </th>
+                  <th className="px-4 py-4 text-left" style={InterMedium.style}>
+                  HARI
+                  </th>
+                  <th className="px-4 py-4 text-left" style={InterMedium.style}>
+                  TANGGAL
+                  </th>
+                  <th className="px-4 py-4 text-left" style={InterMedium.style}>
+                  WAKTU
+                  </th>
+                </tr>
+                </thead>
+                <tbody>
+                {listJadwalKelas.map((classDate, index) => (
+                  <tr
+                  className={`${styles.table_items_text}`}
+                  style={InterMedium.style}
+                  key={classDate.id}
+                  >
+                  <td className="border-b px-4 py-2 text-center">
+                    {index + 1}
+                  </td>
+                  <td className="border-b px-4 py-2">
+                    {new Date(classDate).toLocaleDateString('id-ID', { weekday: 'long' })}
+                  </td>
+                  <td className="border-b px-4 py-2">
+                    {new Date(classDate).toLocaleDateString()}
+                  </td>
+                  <td className="border-b px-4 py-5">
+                    {new Date(classDate).toLocaleTimeString()}
+                  </td>
+                  </tr>
+                ))}
+                </tbody>
+              </table>
+            </div>
+            )}
           </div>
 
           <div className="form-control">
