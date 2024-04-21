@@ -91,12 +91,12 @@ export function DataTable<TData, TValue>({
   }, [getFilteredRowModel()]);
 
   return (
-    <div>
+    <div style={{ marginTop: 0 }}>
       <div className="flex items-center mb-6 w-full space-x-2">
         <DebouncedInput
           value={globalFilter ?? ""}
           onChange={(value) => setGlobalFilter(String(value))}
-          className="flex-grow px-2 py-2 border border-[#DFE4EA] text-[#637381] rounded"
+          className="flex-grow sm:px-2 sm:py-2 p-1 border border-[#DFE4EA] text-[#637381] rounded"
           placeholder="Search Kelas..."
         />
         {table.getHeaderGroups().map((headerGroup) => (
@@ -123,15 +123,15 @@ export function DataTable<TData, TValue>({
         ))}
       </div>
 
-      <div className="shadow-lg rounded-lg ">
+      <div className={` ${styles.card_form} `}>
         <table data-testid="" className="table-auto w-full">
-          <thead className="bg-baseForeground rounded-t-lg">
+        <thead className={`${styles.table_heading} ${styles.table_heading_text}`}>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className={`px-6 py-6 text-left bg-baseForeground ${
+                    className={` ${
                       header.index === 0
                         ? "rounded-tl-lg"
                         : header.index + 1 === headerGroup.headers.length
@@ -148,7 +148,7 @@ export function DataTable<TData, TValue>({
                       }}
                     >
                       {flexRender(
-                        header.column.columnDef.header,
+                        header.column.columnDef.header.toString().toUpperCase(),
                         header.getContext()
                       )}
                       {{
@@ -166,7 +166,7 @@ export function DataTable<TData, TValue>({
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="text-center bg-gray-100 py-4"
+                  className="text-center px-4 py-4"
                 >
                   No data found
                 </td>
