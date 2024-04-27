@@ -36,22 +36,17 @@ export const DaftarPengajar = () => {
     queryKey: ["listUser"],
     queryFn: () =>
       fetchWithToken(
-        `/user${
+        `/user/pengajar${
           availabilityFilter != null
-            ? `hari=${availabilityFilter.hari}&waktuStart=${availabilityFilter.waktuStart}&waktuEnd=${availabilityFilter.waktuEnd}`
+            ? `/availability?hari=${availabilityFilter.hari}&waktuStart=${availabilityFilter.waktuStart}&waktuEnd=${availabilityFilter.waktuEnd}`
             : ""
         }`
       ).then((res) => res.json()),
     onSuccess(data) {
       if (data) {
-        for (let i = 0; i < data.content.length; i++) {
-          if (data.content[i].role === "pengajar") {
-            data.content[i].user.forEach((element: PengajarDetail) => {
-              listPengajarExisting.push(element);
-            });
-          }
-        }
-        console.log(listPengajarExisting);
+        data.content.forEach((element: PengajarDetail) => {
+          listPengajarExisting.push(element);
+        });
       }
     },
   });
@@ -75,8 +70,17 @@ export const DaftarPengajar = () => {
   });
 
   useEffect(() => {
-    refetch();
-  }, [refetch]);
+    if (
+      availabilityFilter == null ||
+      (availabilityFilter != null &&
+        availabilityFilter.hari !== "" &&
+        availabilityFilter.waktuStart !== "" &&
+        availabilityFilter.waktuEnd !== "")
+    ) {
+      setListPengajarExisting([]);
+      refetch();
+    }
+  }, [refetch, availabilityFilter, searchType]);
 
   if (isLoading || TagLoading) {
     return <Loading />;
@@ -98,6 +102,14 @@ export const DaftarPengajar = () => {
       return pengajar.domisiliKota
         .toLowerCase()
         .includes(searchKeyword.toLowerCase());
+    } else if (searchType === "availability") {
+      if (
+        listPengajarExisting.find(
+          (pengajarExist) => pengajarExist.id === pengajar.id
+        )
+      ) {
+        return true;
+      }
     }
   });
 
@@ -224,6 +236,8 @@ export const DaftarPengajar = () => {
           onChange={(e) => {
             if (e.target.value === "availability") {
               setAvailabilityFilter(null as FilterAvailability);
+            } else {
+              setAvailabilityFilter(null as FilterAvailability);
             }
             setSearchType(e.target.value);
           }}
@@ -239,102 +253,92 @@ export const DaftarPengajar = () => {
         </button>
       </div>
       {searchType === "availability" && (
-        <div className="flex items-center gap-2">
-          <select
-            value={availabilityFilter?.hari}
-            defaultValue=""
-            onChange={(e) => {
-              if (availabilityFilter == null) {
-                setAvailabilityFilter({
-                  hari: e.target.value,
-                  waktuStart: "",
-                  waktuEnd: "",
-                });
-              } else {
-                setAvailabilityFilter({
-                  ...availabilityFilter,
-                  hari: e.target.value,
-                });
-              }
-            }}
-            className="px-4 py-2 mr-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
-          >
-            <option value="" defaultChecked disabled>
-              Pilih Hari
-            </option>
-            <option value="Monday">Senin</option>
-            <option value="Tuesday">Selasa</option>
-            <option value="Wednesday">Rabu</option>
-            <option value="Thursday">Kamis</option>
-            <option value="Friday">Jumat</option>
-            <option value="Saturday">Sabtu</option>
-            <option value="Sunday">Minggu</option>
-          </select>
-          <div className="flex items-center gap-4">
-            <input
-              type="time"
-              value={
-                availabilityFilter == null ? "" : availabilityFilter.waktuStart
-              }
+        <form onSubmit={(e) => e.preventDefault()}>
+          <div className="flex items-center gap-2">
+            <select
+              required
+              value={availabilityFilter?.hari}
+              defaultValue=""
               onChange={(e) => {
                 if (availabilityFilter == null) {
                   setAvailabilityFilter({
-                    hari: "",
-                    waktuStart: e.target.value,
+                    hari: e.target.value,
+                    waktuStart: "",
                     waktuEnd: "",
                   });
                 } else {
                   setAvailabilityFilter({
                     ...availabilityFilter,
-                    waktuStart: e.target.value,
+                    hari: e.target.value,
                   });
                 }
               }}
-              placeholder="Cari Pengajar"
-              className="flex-grow px-4 py-2  border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
-            />
-            <p className="font-medium text-neutral/70">to</p>
-            <input
-              type="time"
-              value={
-                availabilityFilter == null ? "" : availabilityFilter.waktuEnd
-              }
-              onChange={(e) => {
-                if (availabilityFilter == null) {
-                  setAvailabilityFilter({
-                    hari: "",
-                    waktuStart: "",
-                    waktuEnd: e.target.value,
-                  });
-                } else {
-                  setAvailabilityFilter({
-                    ...availabilityFilter,
-                    waktuEnd: e.target.value,
-                  });
-                }
-              }}
-              placeholder="Cari Pengajar"
-              className="flex-grow px-4 py-2  border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
-            />
-            <button
-              onClick={() => {
-                if (
-                  availabilityFilter != null &&
-                  availabilityFilter.hari !== "" &&
-                  availabilityFilter.waktuStart !== "" &&
-                  availabilityFilter.waktuEnd !== ""
-                ) {
-                  refetch();
-                } else {
-                  alert("Pastikan hari dan waktu sudah diisi");
-                }
-              }}
-              className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
+              className="px-4 py-2 mr-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
             >
-              Apply
-            </button>
+              <option value="" defaultChecked disabled>
+                Pilih Hari
+              </option>
+              <option value="Senin">Senin</option>
+              <option value="Selasa">Selasa</option>
+              <option value="Rabu">Rabu</option>
+              <option value="Kamis">Kamis</option>
+              <option value="Jumat">Jumat</option>
+              <option value="Sabtu">Sabtu</option>
+              <option value="Minggu">Minggu</option>
+            </select>
+            <div className="flex items-center gap-4">
+              <input
+                required
+                type="time"
+                value={
+                  availabilityFilter == null
+                    ? ""
+                    : availabilityFilter.waktuStart
+                }
+                onChange={(e) => {
+                  if (availabilityFilter == null) {
+                    setAvailabilityFilter({
+                      hari: "",
+                      waktuStart: e.target.value,
+                      waktuEnd: "",
+                    });
+                  } else {
+                    setAvailabilityFilter({
+                      ...availabilityFilter,
+                      waktuStart: e.target.value,
+                    });
+                  }
+                }}
+                placeholder="Cari Pengajar"
+                className="flex-grow px-4 py-2  border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
+              />
+              <p className="font-medium text-neutral/70">to</p>
+              <input
+                required
+                type="time"
+                value={
+                  availabilityFilter == null ? "" : availabilityFilter.waktuEnd
+                }
+                onChange={(e) => {
+                  if (availabilityFilter == null) {
+                    setAvailabilityFilter({
+                      hari: "",
+                      waktuStart: "",
+                      waktuEnd: e.target.value,
+                    });
+                  } else {
+                    setAvailabilityFilter({
+                      ...availabilityFilter,
+                      waktuEnd: e.target.value,
+                    });
+                  }
+                }}
+                placeholder="Cari Pengajar"
+                className="flex-grow px-4 py-2  border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
+              />
+            </div>
           </div>
-        </div>
+        </form>
       )}
 
       <div className="overflow-x-auto mt-4">
