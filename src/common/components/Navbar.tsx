@@ -50,6 +50,9 @@ const Navbar = () => {
   const { mutateAsync: logoutMutation } = useMutation({
     mutationFn: () =>
       fetchWithToken(`/auth/logout`, "PUT").then((res) => res.json),
+    onSuccess: () => {
+      removePenggunaToken();
+    },
   });
 
   const handleNotificationUpdate = async () => {
@@ -86,10 +89,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     setLoggingOut(true);
-    removePenggunaToken();
-
     await logoutMutation();
-
     setTimeout(() => {
       router.push("/login");
     }, 1000);

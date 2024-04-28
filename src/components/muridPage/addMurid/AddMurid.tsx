@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { useRouter } from "next/navigation";
 
 //import font and css
@@ -12,6 +12,7 @@ import styles from "./addForm.module.css";
 import useFetchWithToken from "../../../common/hooks/fetchWithToken";
 
 export const AddForm = () => {
+  const queryClient = useQueryClient();
   const fetchWithToken = useFetchWithToken();
   const [error, setError] = useState("");
   const [succces, setSuccess] = useState("");
@@ -36,6 +37,7 @@ export const AddForm = () => {
       if (data.code == 200) {
         console.log(data.content);
         setSuccess("Sukses mendaftarkan.");
+        queryClient.invalidateQueries("murid");
         setTimeout(() => {
           router.push("/murid");
         }, 1000);
