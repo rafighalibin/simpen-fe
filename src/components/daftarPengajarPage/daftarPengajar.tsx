@@ -357,7 +357,11 @@ export const DaftarPengajar = () => {
           <p className="text-red-500">
             Pengajar dengan domisili kota {searchKeyword} tidak ditemukan.
           </p>
-        ) : (
+        ) : searchType === "tag" && listPengajarExisting.every(pengajar => pengajar.listTag.length === 0) ? ( // Jika hasil pencarian tag kosong
+        <p className="text-red-500">
+          Belum ada pengajar yang memiliki tag.
+        </p>
+      ) : (
           <>
             <div className="grid grid-cols-4 gap-10 py-16 px-6">
               {displayedPengajar.map((pengajar, index) => (
