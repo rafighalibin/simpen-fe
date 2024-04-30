@@ -16,16 +16,6 @@ const hoursList = Array.from({ length: 24 }, (_, i) => {
   return `${hour}:00`;
 });
 
-const daysOfWeek = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-];
-
 const UpdateForm = () => {
   const fetchWithToken = useFetchWithToken();
   const { id } = useParams();
@@ -75,10 +65,7 @@ const UpdateForm = () => {
         tanggalSelesai: new Date(detailKelas.content.tanggalSelesai)
           .toISOString()
           .split("T")[0],
-        jam: new Date(detailKelas.content.tanggalMulai)
-          .toISOString()
-          .split("T")[1]
-          .substring(0, 5),
+        jam: new Date(detailKelas.content.tanggalMulai).toLocaleTimeString(),
         pengajarId: detailKelas.content.pengajarId,
         namaPengajar: detailKelas.content.namaPengajar,
         linkGroup: detailKelas.content.linkGroup,
@@ -120,6 +107,7 @@ const UpdateForm = () => {
     data: editResponse,
     isSuccess: editKelasSuccess,
     isError: editKelasError,
+    isLoading: editKelasIsLoading,
   } = useMutation({
     mutationFn: () =>
       fetchWithToken(`/kelas/${id}`, "PUT", formState).then((res) =>
@@ -271,12 +259,12 @@ const UpdateForm = () => {
               </label>
               <div className="flex mt-1 relative">
                 <input
-                  required
+                  disabled
                   type="date"
                   value={formState.tanggalMulai}
                   name="tanggalMulai"
                   onChange={handleChange}
-                  className="bg-base mt-1 p-2 w-full border rounded-md "
+                  className=" read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                 />
               </div>
             </div>
@@ -287,28 +275,14 @@ const UpdateForm = () => {
               </label>
               <div className="flex mt-1 relative">
                 <input
+                  disabled
                   type="date"
                   value={formState.tanggalSelesai}
                   onChange={handleChange}
-                  className="bg-base mt-1 p-2 w-full border rounded-md "
+                  className=" read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                 />
               </div>
             </div>
-          </div>
-
-          <div className="flex flex-row">
-            {daysOfWeek.map((day) => (
-              <div key={day} className="flex items-center mr-4">
-                <input
-                  disabled
-                  type="checkbox"
-                  className="bg-base -mb-0.5 p-2 w-full border rounded-md"
-                />
-                <label className="block font-medium text-neutral/70 ml-0.5">
-                  {day}
-                </label>
-              </div>
-            ))}
           </div>
 
           <div>
@@ -352,18 +326,6 @@ const UpdateForm = () => {
             )}
           </div>
 
-          <div>
-            <label className="block font-medium text-neutral/70">
-              Platform
-            </label>
-            <input
-              type="text"
-              value={formState.platform}
-              name="platform"
-              onChange={handleChange}
-              className=" bg-base mt-1 p-2 w-full border rounded-md"
-            />
-          </div>
           <div className="mt-5">
             {editKelasSuccess && (
               <div className="bg-[#DAF8E6] text-[#004434] text-sm px-4 py-2">
@@ -377,7 +339,7 @@ const UpdateForm = () => {
             )}
             {fetchDataError && (
               <div className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2">
-                gagal mengambil data sesi
+                gagal mengambil data kelas
               </div>
             )}
             {fieldsError && (
@@ -387,8 +349,19 @@ const UpdateForm = () => {
             )}
           </div>
           <div className="flex justify-center py-7 gap-4">
-            <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
-              Ubah Kelas
+            <button
+              type="submit"
+              className={`bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover disabled:opacity-50 relative`}
+              disabled={editKelasIsLoading}
+            >
+              {editKelasIsLoading ? (
+                <div className="inset-0 flex items-center justify-center gap-2">
+                  <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6"></div>
+                  <span>On Progress</span>
+                </div>
+              ) : (
+                "Tambah Murid"
+              )}
             </button>
 
             <Link href={`/kelas/${id}`}>

@@ -127,7 +127,7 @@ const Absen = () => {
               </>
             )}
             <Link href={`/kelas/${id}`}>
-              <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
+              <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-errorHover">
                 Detail Kelas
               </button>
             </Link>

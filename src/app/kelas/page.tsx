@@ -9,10 +9,12 @@ import { Breadcrumbs } from "../../components/breadcrumbs/breadcrumbs";
 
 const Page = () => {
   return (
+    <main className="pb-24">
     <div className="px-[8vw] py-8">
       <Breadcrumbs />
       <KelasTable />
     </div>
+    </main>
   );
 };
 

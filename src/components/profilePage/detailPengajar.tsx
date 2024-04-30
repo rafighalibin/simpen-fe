@@ -1,13 +1,8 @@
 "use client";
 
-import { useQuery } from "react-query";
-import useFetchWithToken from "../../common/hooks/fetchWithToken";
-import useFetchAllUser from "../../common/hooks/user/useFetchAllUser";
 import Loading from "../../common/components/Loading";
 import { useAuthContext } from "../../common/utils/authContext";
-import { useParams, usePathname, useRouter } from "next/navigation";
-import { PoppinsBold, InterMedium } from "../../font/font";
-import styles from "./DetailUser.module.css";
+import { useParams, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import useFetchPengajarDetail from "../../common/hooks/user/useFetchPengajarDetail";
 
@@ -17,15 +12,16 @@ const DetailPengajar = ({ buttons }) => {
   const path = usePathname();
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
-  const { isLoading: PengajarLoading, listPengajarExisting: pengajar, refetch } =
-    useFetchPengajarDetail();
+  const {
+    isLoading: PengajarLoading,
+    pengajar: pengajar,
+    refetch,
+  } = useFetchPengajarDetail(id);
 
-    console.log(pengajar);
-
-    useEffect(() => {
-      // Refetch data whenever component mounts
-      refetch();
-    }, [refetch]);
+  useEffect(() => {
+    // Refetch data whenever component mounts
+    refetch();
+  }, [refetch]);
 
   useEffect(() => {
     // Check if localStorage is available
@@ -44,24 +40,7 @@ const DetailPengajar = ({ buttons }) => {
   }, []);
 
   if (PengajarLoading) return <Loading />;
-
-  const cariIdSama = (data: any[], idYangDicari) => {
-    const hasilPencarian = [];
-
-    // Loop melalui setiap objek dalam data
-    for (let i = 0; i < data.length; i++) {
-      // Mengecek jika objek memiliki properti id dan nilai id yang sama dengan id yang dicari
-      if (data[i].id === idYangDicari) {
-        // Menyimpan objek yang cocok ke dalam array hasilPencarian
-        hasilPencarian.push(data[i]);
-        console.log(data[i]);
-      }
-    }
-    return hasilPencarian;
-  };
-  const specificUser = cariIdSama(pengajar, id)[0];
-  console.log(specificUser);
-
+  // return <div></div>;
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
     return date.toLocaleDateString("en-US");
@@ -81,10 +60,7 @@ const DetailPengajar = ({ buttons }) => {
               role="alert"
             >
               <strong className="font-bold">Sukses!</strong>
-              <span className="block sm:inline">
-                {" "}
-                Tag Berhasil diperbarui.
-              </span>
+              <span className="block sm:inline"> Tag Berhasil diperbarui.</span>
               <span
                 className="absolute top-0 bottom-0 right-0 px-4 py-3"
                 onClick={() => setShowSuccessAlert(false)}
@@ -109,7 +85,7 @@ const DetailPengajar = ({ buttons }) => {
             </div>
           </div>
         )}
-        { specificUser &&(
+        {pengajar && (
           <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-md rounded-lg ">
             <div className="flex justify-between flex-col items-center pb-8">
               <label className="block font-medium text-neutral/70">
@@ -123,27 +99,27 @@ const DetailPengajar = ({ buttons }) => {
                   accept="image/*"
                   className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                 />
-                  {!specificUser.fotoDiri && (
-                    <div className="bg-neutral/5 rounded-full flex items-center justify-center w-full h-full">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-12 h-12"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
-                        />
-                      </svg>
-                    </div>
-                  )}
-                {specificUser.fotoDiri && (
+                {!pengajar.fotoDiri && (
+                  <div className="bg-neutral/5 rounded-full flex items-center justify-center w-full h-full">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-12 h-12"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                      />
+                    </svg>
+                  </div>
+                )}
+                {pengajar.fotoDiri && (
                   <img
-                    src={specificUser.fotoDiri}
+                    src={pengajar.fotoDiri}
                     alt="Foto Diri"
                     className="object-cover w-full h-full"
                     style={{ borderRadius: "50%" }}
@@ -151,7 +127,7 @@ const DetailPengajar = ({ buttons }) => {
                 )}
               </div>
               <div className="flex flex-wrap gap-3 pt-8">
-                {specificUser.listTag.map((tag) => (
+                {pengajar.listTag.map((tag) => (
                   <div
                     key={tag.id}
                     className="flex items-center space-x-2 bg-gray-200 rounded-md p-2"
@@ -161,9 +137,7 @@ const DetailPengajar = ({ buttons }) => {
                 ))}
               </div>
             </div>
-              <div className="flex justify-end">
-              {buttons}
-            </div>
+            <div className="flex justify-end">{buttons}</div>
             <h1 className=" flex text-3xl font-bold text-neutral/100 ">
               Data Diri
             </h1>
@@ -176,7 +150,7 @@ const DetailPengajar = ({ buttons }) => {
                   disabled
                   type="text"
                   name="email"
-                  value={specificUser.email == null ? "" : specificUser.email}
+                  value={pengajar.email == null ? "" : pengajar.email}
                   className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                 />
               </div>
@@ -191,7 +165,7 @@ const DetailPengajar = ({ buttons }) => {
                     id="laki-laki"
                     name="jenisKelamin"
                     value="laki-laki"
-                    checked={specificUser.jenisKelamin === "laki-laki"}
+                    checked={pengajar.jenisKelamin === "laki-laki"}
                     className="mr-2"
                   />
                   <label htmlFor="laki-laki" className="mr-4">
@@ -203,7 +177,7 @@ const DetailPengajar = ({ buttons }) => {
                     id="perempuan"
                     name="jenisKelamin"
                     value="perempuan"
-                    checked={specificUser.jenisKelamin === "perempuan"}
+                    checked={pengajar.jenisKelamin === "perempuan"}
                     className="mr-2"
                   />
                   <label htmlFor="perempuan">Perempuan</label>
@@ -220,7 +194,7 @@ const DetailPengajar = ({ buttons }) => {
                     disabled
                     readOnly
                     type="text"
-                    value={specificUser.nama == null ? "" : specificUser.nama}
+                    value={pengajar.nama == null ? "" : pengajar.nama}
                     name="nama"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md "
                   />
@@ -235,7 +209,7 @@ const DetailPengajar = ({ buttons }) => {
                     disabled
                     type="text"
                     name="nik"
-                    value={specificUser.nik == null ? "" : specificUser.nik}
+                    value={pengajar.nik == null ? "" : pengajar.nik}
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
                 </div>
@@ -251,9 +225,7 @@ const DetailPengajar = ({ buttons }) => {
                 readOnly
                 type="text"
                 name="alamatKTP"
-                value={
-                  specificUser.alamatKTP == null ? "" : specificUser.alamatKTP
-                }
+                value={pengajar.alamatKTP == null ? "" : pengajar.alamatKTP}
                 className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
               />
             </div>
@@ -269,9 +241,7 @@ const DetailPengajar = ({ buttons }) => {
                     disabled
                     type="text"
                     value={
-                      specificUser.emailPribadi == null
-                        ? ""
-                        : specificUser.emailPribadi
+                      pengajar.emailPribadi == null ? "" : pengajar.emailPribadi
                     }
                     name="emailPribadi"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
@@ -290,9 +260,7 @@ const DetailPengajar = ({ buttons }) => {
                     type="text"
                     name="domisiliKota"
                     value={
-                      specificUser.domisiliKota == null
-                        ? ""
-                        : specificUser.domisiliKota
+                      pengajar.domisiliKota == null ? "" : pengajar.domisiliKota
                     }
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
@@ -309,9 +277,7 @@ const DetailPengajar = ({ buttons }) => {
                     readOnly
                     disabled
                     type="text"
-                    value={
-                      specificUser.noTelp == null ? "" : specificUser.noTelp
-                    }
+                    value={pengajar.noTelp == null ? "" : pengajar.noTelp}
                     name="noTelp"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
@@ -329,9 +295,9 @@ const DetailPengajar = ({ buttons }) => {
                     type="text"
                     name="backupPhoneNum"
                     value={
-                      specificUser.backupPhoneNum == null
+                      pengajar.backupPhoneNum == null
                         ? ""
-                        : specificUser.backupPhoneNum
+                        : pengajar.backupPhoneNum
                     }
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
@@ -349,9 +315,9 @@ const DetailPengajar = ({ buttons }) => {
                     disabled
                     type="text"
                     value={
-                      specificUser.namaKontakDarurat == null
+                      pengajar.namaKontakDarurat == null
                         ? ""
-                        : specificUser.namaKontakDarurat
+                        : pengajar.namaKontakDarurat
                     }
                     name="namaKontakDarurat"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
@@ -370,9 +336,9 @@ const DetailPengajar = ({ buttons }) => {
                     type="text"
                     name="noTelpDarurat"
                     value={
-                      specificUser.noTelpDarurat == null
+                      pengajar.noTelpDarurat == null
                         ? ""
-                        : specificUser.noTelpDarurat
+                        : pengajar.noTelpDarurat
                     }
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
@@ -389,9 +355,9 @@ const DetailPengajar = ({ buttons }) => {
                     aria-readonly
                     disabled
                     value={
-                      specificUser.pendidikanTerakhir == null
+                      pengajar.pendidikanTerakhir == null
                         ? ""
-                        : specificUser.pendidikanTerakhir
+                        : pengajar.pendidikanTerakhir
                     }
                     name="pendidikanTerakhir"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
@@ -409,9 +375,9 @@ const DetailPengajar = ({ buttons }) => {
                     type="text"
                     name="pekerjaanLainnya"
                     value={
-                      specificUser.pekerjaanLainnya == null
+                      pengajar.pekerjaanLainnya == null
                         ? ""
-                        : specificUser.pekerjaanLainnya
+                        : pengajar.pekerjaanLainnya
                     }
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
@@ -430,14 +396,14 @@ const DetailPengajar = ({ buttons }) => {
                   value={""}
                   className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                 />
-                {specificUser.fotoKtp && (
+                {pengajar.fotoKtp && (
                   <img
-                    src={specificUser.fotoKtp}
+                    src={pengajar.fotoKtp}
                     alt="Foto KTP"
                     className="object-cover w-full h-full"
                   />
                 )}
-                {!specificUser.fotoKtp && (
+                {!pengajar.fotoKtp && (
                   <div className="bg-neutral/5 w-full h-full flex items-center justify-center">
                     <svg
                       data-slot="icon"
@@ -473,9 +439,9 @@ const DetailPengajar = ({ buttons }) => {
                     disabled
                     type="text"
                     value={
-                      specificUser.tglMasukKontrak == null
+                      pengajar.tglMasukKontrak == null
                         ? ""
-                        : formatDate(specificUser.tglMasukKontrak)
+                        : formatDate(pengajar.tglMasukKontrak)
                     }
                     name="tglMasukKontrak"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
@@ -493,9 +459,7 @@ const DetailPengajar = ({ buttons }) => {
                     disabled
                     type="text"
                     name="namaBank"
-                    value={
-                      specificUser.namaBank == null ? "" : specificUser.namaBank
-                    }
+                    value={pengajar.namaBank == null ? "" : pengajar.namaBank}
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
                 </div>
@@ -511,11 +475,7 @@ const DetailPengajar = ({ buttons }) => {
                     readOnly
                     disabled
                     type="text"
-                    value={
-                      specificUser.noRekBank == null
-                        ? ""
-                        : specificUser.noRekBank
-                    }
+                    value={pengajar.noRekBank == null ? "" : pengajar.noRekBank}
                     name="noRekBank"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
                   />
@@ -531,9 +491,9 @@ const DetailPengajar = ({ buttons }) => {
                     disabled
                     type="text"
                     value={
-                      specificUser.namaPemilikRek == null
+                      pengajar.namaPemilikRek == null
                         ? ""
-                        : specificUser.namaPemilikRek
+                        : pengajar.namaPemilikRek
                     }
                     name="namaPemilikRek"
                     className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
@@ -554,14 +514,14 @@ const DetailPengajar = ({ buttons }) => {
                   // Gunakan fungsi handleFileChangeBukuTabungan untuk foto buku tabungan
                   className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                 />
-                {specificUser.fotoBukuTabungan && (
+                {pengajar.fotoBukuTabungan && (
                   <img
-                    src={specificUser.fotoBukuTabungan}
+                    src={pengajar.fotoBukuTabungan}
                     alt="Foto Buku Tabungan"
                     className="object-cover w-full h-full"
                   />
                 )}
-                {!specificUser.fotoBukuTabungan && (
+                {!pengajar.fotoBukuTabungan && (
                   <div className="bg-neutral/5 w-full h-full flex items-center justify-center">
                     <svg
                       data-slot="icon"
@@ -590,7 +550,7 @@ const DetailPengajar = ({ buttons }) => {
                 readOnly
                 type="text"
                 name="npwp"
-                value={specificUser.npwp == null ? "" : specificUser.npwp}
+                value={pengajar.npwp == null ? "" : pengajar.npwp}
                 className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
               />
             </div>
@@ -606,14 +566,14 @@ const DetailPengajar = ({ buttons }) => {
                   value={""}
                   className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                 />
-                {specificUser.fotoNpwp && (
+                {pengajar.fotoNpwp && (
                   <img
-                    src={specificUser.fotoNpwp}
+                    src={pengajar.fotoNpwp}
                     alt="Foto NPWP"
                     className="object-cover w-full h-full"
                   />
                 )}
-                {!specificUser.fotoNpwp && (
+                {!pengajar.fotoNpwp && (
                   <div className="bg-neutral/5 w-full h-full flex items-center justify-center">
                     <svg
                       data-slot="icon"

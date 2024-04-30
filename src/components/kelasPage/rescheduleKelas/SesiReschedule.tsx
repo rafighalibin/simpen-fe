@@ -71,7 +71,7 @@ const SesiReschedule = () => {
     isError: createRescheduleError,
   } = useMutation({
     mutationFn: () =>
-      fetchWithToken(`/reschedule/create/${id}`, "POST", payload).then((res) =>
+      fetchWithToken(`/reschedule/${id}`, "POST", payload).then((res) =>
         res.json()
       ),
     onSuccess: () => {

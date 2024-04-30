@@ -50,6 +50,9 @@ const Navbar = () => {
   const { mutateAsync: logoutMutation } = useMutation({
     mutationFn: () =>
       fetchWithToken(`/auth/logout`, "PUT").then((res) => res.json),
+    onSuccess: () => {
+      removePenggunaToken();
+    },
   });
 
   const handleNotificationUpdate = async () => {
@@ -86,10 +89,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     setLoggingOut(true);
-    removePenggunaToken();
-
     await logoutMutation();
-
     setTimeout(() => {
       router.push("/login");
     }, 1000);
@@ -136,39 +136,39 @@ const Navbar = () => {
               </span>
             </div>
 
-          <ul
-            className={`md:flex md:flex-grow md:items-center md:space-x-2  md:pl-7 text-[16px] right-7 absolute md:static md:z-auto z-[1] ${
-              styles.nav_items_tx
-            } ${navbar ? `top-[80px] ${styles.card} w-28` : "top-[-490px]"}`}
-            style={InterReguler.style}
-          >
-            {pengguna.role === "superadmin" && (
-              <>
-                <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
-                  <a
-                    href="/user"
-                    className={`${
-                      getRootPath(path) === "user"
-                        ? "md:text-primaryForeground"
-                        : "md:text-info"
-                    }  md:hover:text-primaryForeground`}
-                  >
-                    Akun
-                  </a>
-                </li>
+            <ul
+              className={`md:flex md:flex-grow md:items-center md:space-x-2  md:pl-7 text-[16px] right-7 absolute md:static md:z-auto z-[1] ${
+                styles.nav_items_tx
+              } ${navbar ? `top-[80px] ${styles.card} w-28` : "top-[-490px]"}`}
+              style={InterReguler.style}
+            >
+              {pengguna.role === "superadmin" && (
+                <>
+                  <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                    <a
+                      href="/user"
+                      className={`${
+                        getRootPath(path) === "user"
+                          ? "md:text-primaryForeground"
+                          : "md:text-info"
+                      }  md:hover:text-primaryForeground`}
+                    >
+                      Akun
+                    </a>
+                  </li>
 
-                <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
-                  <a
-                    href="/kelas"
-                    className={`${
-                      getRootPath(path) === "kelas"
-                        ? "md:text-primaryForeground"
-                        : "md:text-info"
-                    }  md:hover:text-primaryForeground`}
-                  >
-                    Kelas
-                  </a>
-                </li>
+                  <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                    <a
+                      href="/kelas"
+                      className={`${
+                        getRootPath(path) === "kelas"
+                          ? "md:text-primaryForeground"
+                          : "md:text-info"
+                      }  md:hover:text-primaryForeground`}
+                    >
+                      Kelas
+                    </a>
+                  </li>
 
                   <li className="p-2 hover:bg-[#efefef] md:hidden block">
                     <div
@@ -270,13 +270,24 @@ const Navbar = () => {
                     >
                       Pengajar
                     </a>
-                  </li>
-
-                  <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent  hover:bg-[#efefef]">
+                  </li>{" "}
+                  <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
                     <a
-                      href="/user/profile"
+                      href="/murid"
                       className={`${
                         getRootPath(path) === "murid"
+                          ? "md:text-primaryForeground"
+                          : "md:text-info"
+                      }  md:hover:text-primaryForeground`}
+                    >
+                      Murid
+                    </a>
+                  </li>
+                  <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent  hover:bg-[#efefef]">
+                    <a
+                      href="/profile"
+                      className={`${
+                        getRootPath(path) === "profile"
                           ? "md:text-primaryForeground"
                           : "md:text-info"
                       }  md:hover:text-primaryForeground`}
@@ -335,9 +346,9 @@ const Navbar = () => {
                   </li>
                   <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent  hover:bg-[#efefef]">
                     <a
-                      href="/user/profile"
+                      href="/profile"
                       className={`${
-                        getRootPath(path) === "user"
+                        getRootPath(path) === "profile"
                           ? "md:text-primaryForeground"
                           : "md:text-info"
                       }  md:hover:text-primaryForeground`}
@@ -380,13 +391,20 @@ const Navbar = () => {
                   </li>
                   <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
                     <a
-                      href="/user/profile"
+                      href="/profile"
                       className="md:text-info md:hover:text-primaryForeground"
                     >
                       Profil
                     </a>
                   </li>
-
+                  <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                    <a
+                      href="/profile/availability"
+                      className="md:text-info md:hover:text-primaryForeground"
+                    >
+                      Availability
+                    </a>
+                  </li>
                   <li className="p-2 hover:bg-[#efefef] md:hidden block">
                     <div
                       className={`text-[16px] ${styles.logout_tx} md:hidden block `}

@@ -73,8 +73,8 @@ const SesiGantiPengajar = () => {
     isError: createGantiPengajarError,
   } = useMutation({
     mutationFn: () =>
-      fetchWithToken(`/ganti-pengajar/create/${id}`, "POST", payload).then(
-        (res) => res.json()
+      fetchWithToken(`/ganti-pengajar/${id}`, "POST", payload).then((res) =>
+        res.json()
       ),
     onSuccess: () => {
       setIsChanged(false);
