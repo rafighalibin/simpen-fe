@@ -15,7 +15,7 @@ const DetailAkun = ({ buttons }) => {
 
   const { pengguna, isAuthenticated } = useAuthContext();
   const path = usePathname();
-  const [showSuccessAlert, setShowSuccessAlert] = useState(false); 
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
   const { isLoading, error, data } = useQuery({
     queryKey: ["detailAkun"],
@@ -66,17 +66,17 @@ const DetailAkun = ({ buttons }) => {
     fotoNpwp,
     namaKontakDarurat,
     noTelpDarurat,
-    role
+    role,
   } = data.content;
 
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
-    const day = date.getDate().toString().padStart(2, '0'); // Tambahkan nol di depan jika hanya satu digit
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Tambahkan nol di depan jika hanya satu digit
+    const day = date.getDate().toString().padStart(2, "0"); // Tambahkan nol di depan jika hanya satu digit
+    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Tambahkan nol di depan jika hanya satu digit
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
-  
+
   return (
     <div>
       <div className=" px-48 py-12 space-y-10 flex-grow flex flex-col justify-center">
@@ -84,38 +84,41 @@ const DetailAkun = ({ buttons }) => {
           Detail Akun
         </h1>
         {/* Success Alert */}
-      {showSuccessAlert && (
-        <div className="pb-2">
-        <div
-          className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
-          role="alert"
-        >
-          <strong className="font-bold">Sukses!</strong>
-          <span className="block sm:inline"> Profil Berhasil Diperbarui.</span>
-          <span
-            className="absolute top-0 bottom-0 right-0 px-4 py-3"
-            onClick={() => setShowSuccessAlert(false)}
-          >
-            <svg
-              className="fill-current h-6 w-6 text-green-500"
-              role="button"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
+        {showSuccessAlert && (
+          <div className="pb-2">
+            <div
+              className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
+              role="alert"
             >
-              <title>Close</title>
-              <path
-                fillRule="evenodd"
-                d="M14.348 5.652a.5.5 0 0 1 0 .707l-8 8a.5.5 0 1 1-.707-.707l8-8a.5.5 0 0 1 .707 0z"
-              />
-              <path
-                fillRule="evenodd"
-                d="M5.652 5.652a.5.5 0 0 0-.707 0l-8 8a.5.5 0 0 0 .707.707l8-8a.5.5 0 0 0 0-.707z"
-              />
-            </svg>
-          </span>
-        </div>
-        </div>
-      )}
+              <strong className="font-bold">Sukses!</strong>
+              <span className="block sm:inline">
+                {" "}
+                Profil Berhasil Diperbarui.
+              </span>
+              <span
+                className="absolute top-0 bottom-0 right-0 px-4 py-3"
+                onClick={() => setShowSuccessAlert(false)}
+              >
+                <svg
+                  className="fill-current h-6 w-6 text-green-500"
+                  role="button"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                >
+                  <title>Close</title>
+                  <path
+                    fillRule="evenodd"
+                    d="M14.348 5.652a.5.5 0 0 1 0 .707l-8 8a.5.5 0 1 1-.707-.707l8-8a.5.5 0 0 1 .707 0z"
+                  />
+                  <path
+                    fillRule="evenodd"
+                    d="M5.652 5.652a.5.5 0 0 0-.707 0l-8 8a.5.5 0 0 0 .707.707l8-8a.5.5 0 0 0 0-.707z"
+                  />
+                </svg>
+              </span>
+            </div>
+          </div>
+        )}
         {pengguna.role === "pengajar" && (
           <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-md rounded-lg ">
             <div className="flex flex-col items-center pb-16">
@@ -157,6 +160,13 @@ const DetailAkun = ({ buttons }) => {
                   </div>
                 )}
               </div>
+            </div>
+            <div className="flex flex-col items-end pb-16">
+              <a href="/profile/availability">
+                <button className="bg-info text-white px-6 py-2 rounded-md hover:bg-infoHover">
+                  Availability
+                </button>
+              </a>
             </div>
             <h1 className=" flex text-3xl font-bold text-neutral/100 ">
               Data Diri
@@ -588,118 +598,118 @@ const DetailAkun = ({ buttons }) => {
             {buttons}
           </div>
         )}
-        {(pengguna.role === "akademik" || pengguna.role ==="operasional") && (
-            <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-md rounded-lg">
-              <div className="grid grid-cols-2 gap-8">
-                <div>
-                  <div
-                    style={InterMedium.style}
-                    className={`${styles.title} mb-3`}
-                  >
-                    Nama
-                  </div>
+        {(pengguna.role === "akademik" || pengguna.role === "operasional") && (
+          <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-md rounded-lg">
+            <div className="grid grid-cols-2 gap-8">
+              <div>
+                <div
+                  style={InterMedium.style}
+                  className={`${styles.title} mb-3`}
+                >
+                  Nama
+                </div>
+                <input
+                  disabled
+                  placeholder={nama}
+                  className={`${styles.placeholder} appearance-none relative block w-full px-3 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
+                />
+              </div>
+              <div>
+                <div
+                  style={InterMedium.style}
+                  className={`${styles.title}  mb-3`}
+                >
+                  Email
+                </div>
+                <input
+                  disabled
+                  placeholder={email}
+                  className={`${styles.placeholder} appearance-none relative block w-full px-3 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
+                />
+              </div>
+              <div>
+                <div
+                  style={InterMedium.style}
+                  className={`${styles.title}  mb-3`}
+                >
+                  Email Pribadi
+                </div>
+                <input
+                  disabled
+                  placeholder={emailPribadi}
+                  className={`${styles.placeholder} appearance-none relative block w-full px-3 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
+                />
+              </div>
+              <div>
+                <div
+                  style={InterMedium.style}
+                  className={`${styles.title} mb-3`}
+                >
+                  Jenis Kelamin
+                </div>
+                <div className="flex items-center text-[#9CA3AF] pr-3 py-3">
                   <input
                     disabled
-                    placeholder={nama}
-                    className={`${styles.placeholder} appearance-none relative block w-full px-3 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
+                    type="radio"
+                    id="laki-laki"
+                    name="jenisKelamin"
+                    value="laki-laki"
+                    checked={jenisKelamin === "laki-laki"}
+                    className="mr-2"
                   />
-                </div>
-                <div>
-                  <div
-                    style={InterMedium.style}
-                    className={`${styles.title}  mb-3`}
-                  >
-                    Email
-                  </div>
+                  <label htmlFor="laki-laki" className="mr-4">
+                    Laki-laki
+                  </label>
                   <input
                     disabled
-                    placeholder={email}
-                    className={`${styles.placeholder} appearance-none relative block w-full px-3 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
+                    type="radio"
+                    id="perempuan"
+                    name="jenisKelamin"
+                    value="perempuan"
+                    checked={jenisKelamin === "perempuan"}
+                    className="mr-2"
                   />
-                </div>
-                <div>
-                  <div
-                    style={InterMedium.style}
-                    className={`${styles.title}  mb-3`}
-                  >
-                    Email Pribadi
-                  </div>
-                  <input
-                    disabled
-                    placeholder={emailPribadi}
-                    className={`${styles.placeholder} appearance-none relative block w-full px-3 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
-                  />
-                </div>
-                <div>
-                  <div
-                    style={InterMedium.style}
-                    className={`${styles.title} mb-3`}
-                  >
-                    Jenis Kelamin
-                  </div>
-                  <div className="flex items-center text-[#9CA3AF] pr-3 py-3">
-                    <input
-                      disabled
-                      type="radio"
-                      id="laki-laki"
-                      name="jenisKelamin"
-                      value="laki-laki"
-                      checked={jenisKelamin === "laki-laki"}
-                      className="mr-2"
-                    />
-                    <label htmlFor="laki-laki" className="mr-4">
-                      Laki-laki
-                    </label>
-                    <input
-                      disabled
-                      type="radio"
-                      id="perempuan"
-                      name="jenisKelamin"
-                      value="perempuan"
-                      checked={jenisKelamin === "perempuan"}
-                      className="mr-2"
-                    />
-                    <label htmlFor="perempuan">Perempuan</label>
-                  </div>
-                </div>
-                <div>
-                  <div
-                    style={InterMedium.style}
-                    className={`${styles.title}  mb-3`}
-                  >
-                    No. Telpon
-                  </div>
-                  <input
-                    disabled
-                    placeholder={noTelp}
-                    className={`${styles.placeholder} appearance-none relative block w-full px-3 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
-                  />
-                </div>
-                <div>
-                  <div
-                    style={InterMedium.style}
-                    className={`${styles.title} mb-3`}
-                  >
-                    Role
-                  </div>
-                  <input
-                    disabled
-                    placeholder={
-                      role === "pengajar"
-                        ? "Pengajar"
-                        : role === "akademik"
-                        ? "Akademik"
-                        : role === "operasional"
-                        ? "Operasional"
-                        : ""
-                    }
-                    className={`${styles.placeholder} appearance-none relative block w-full px-3 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
-                  />
+                  <label htmlFor="perempuan">Perempuan</label>
                 </div>
               </div>
-              {buttons}
+              <div>
+                <div
+                  style={InterMedium.style}
+                  className={`${styles.title}  mb-3`}
+                >
+                  No. Telpon
+                </div>
+                <input
+                  disabled
+                  placeholder={noTelp}
+                  className={`${styles.placeholder} appearance-none relative block w-full px-3 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
+                />
+              </div>
+              <div>
+                <div
+                  style={InterMedium.style}
+                  className={`${styles.title} mb-3`}
+                >
+                  Role
+                </div>
+                <input
+                  disabled
+                  placeholder={
+                    role === "pengajar"
+                      ? "Pengajar"
+                      : role === "akademik"
+                      ? "Akademik"
+                      : role === "operasional"
+                      ? "Operasional"
+                      : ""
+                  }
+                  className={`${styles.placeholder} appearance-none relative block w-full px-3 py-3 bg-[#F3F4F6] placeholder-[#9CA3AF]  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
+                />
+              </div>
             </div>
-          )}
+            {buttons}
+          </div>
+        )}
       </div>
     </div>
   );
