@@ -148,6 +148,12 @@ export const UpdateForm = () => {
       nikRef.current.focus();
       return; // Menghentikan proses submit jika terdapat kesalahan
     }
+    if(formState.password === "") {
+      formState.password = null;
+    }
+    if(formState.konfirmasiPassword === "") {
+      formState.konfirmasiPassword = null;
+    }
     if (formState.password !== formState.konfirmasiPassword) {
       console.log(formState.password, formState.konfirmasiPassword);
       passReff.current.focus();
@@ -269,7 +275,7 @@ export const UpdateForm = () => {
           Detail Akun
         </h1>
         {pengguna.role === "pengajar" && (
-          <form onSubmit={handleSubmit}>
+          <form>
             <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-lg rounded-lg ">
               <div className="flex flex-col items-center pb-16">
                 <label className="block font-medium text-neutral/70">
@@ -901,13 +907,10 @@ export const UpdateForm = () => {
               </p>
               <div className="flex justify-center py-4 gap-4">
                 <button
-                  type="submit"
+                  onClick={handleSubmit}
                   className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
                 >
                   Ubah Detail Akun
-                </button>
-                <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
-                  Cancel
                 </button>
               </div>
             </div>
@@ -1058,9 +1061,6 @@ export const UpdateForm = () => {
                   className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
                 >
                   Ubah Detail Akun
-                </button>
-                <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
-                  Cancel
                 </button>
               </div>
             </div>
