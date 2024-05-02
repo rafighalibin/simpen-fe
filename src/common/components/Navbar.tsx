@@ -283,8 +283,8 @@ const Navbar = () => {
                       }  md:hover:text-primaryForeground`}
                     >
                       Murid
-                    </li>
                   </a>
+                    </li>
                   <a
                     href="/profile"
                     className={`${
@@ -397,8 +397,8 @@ const Navbar = () => {
                   >
                     <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
                       Profil
-                    </a>
                   </li>
+                  </a>
                   <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
                     <a
                       href="/absen-pengajar"
@@ -414,6 +414,7 @@ const Navbar = () => {
                     >
                       Availability
                     </a>
+                    
                   </li>
                   <li className="p-2 hover:bg-[#efefef] md:hidden block">
                     <div
