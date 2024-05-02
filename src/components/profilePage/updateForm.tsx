@@ -1,7 +1,7 @@
 "use client";
 import { redirect } from "next/navigation";
 import { useMutation, useQuery } from "react-query";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect} from "react";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import { useQueryClient } from "react-query";
 import { useAuthContext } from "../../common/utils/authContext";
@@ -45,11 +45,25 @@ export const UpdateForm = () => {
     nikError: "",
   });
 
-  const { isLoading, error, data } = useQuery({
+  const { isLoading, error, data:detailAkun } = useQuery({
     queryKey: ["detailAkun"],
     queryFn: () => fetchWithToken(`/auth/login`).then((res) => res.json()),
-    onSuccess: (detailAkun) => {
-      console.log(detailAkun);
+  });
+
+  const {
+    mutateAsync: updateProfileMutation,
+    data: editResponse,
+    isSuccess,
+  } = useMutation({
+    mutationFn: () =>
+      fetchWithToken(`/user`, "PUT", formState).then((res) => res.json()),
+    onSuccess: () => {
+      console.log(formState);
+    },
+  });
+
+  useEffect(() => {
+    if (detailAkun) {
       setFormState((prev) => ({
         ...prev,
         id: detailAkun.content.id,
@@ -80,20 +94,8 @@ export const UpdateForm = () => {
         namaKontakDarurat: detailAkun.content.namaKontakDarurat,
         noTelpDarurat: detailAkun.content.noTelpDarurat,
       }));
-    },
-  });
-
-  const {
-    mutateAsync: updateProfileMutation,
-    data: editResponse,
-    isSuccess,
-  } = useMutation({
-    mutationFn: () =>
-      fetchWithToken(`/user`, "PUT", formState).then((res) => res.json()),
-    onSuccess: () => {
-      console.log(formState);
-    },
-  });
+    }
+  }, [detailAkun]);
 
   const handleConfirmPassword = () => {
     if (formState.password !== formState.konfirmasiPassword) {
@@ -257,7 +259,7 @@ export const UpdateForm = () => {
   if (isSuccess) {
     queryClient.invalidateQueries("detailAkun");
     localStorage.setItem("updateSuccess", "true");
-    redirect(`/user/profile`);
+    redirect(`/profile`);
   }
 
   return (
