@@ -28,6 +28,7 @@ const Navbar = () => {
   const { pengguna, isAuthenticated } = useAuthContext();
   const [navbar, setNavbar] = useState(false);
   const [dropdownKelas, setDropdownKelas] = useState(false);
+  const [dropdownPengajar, setDropdownPengajar] = useState(false);
 
   const path = usePathname();
   const {
@@ -232,30 +233,58 @@ const Navbar = () => {
                       )}
                     </div>
                   </li>
-                  <a
-                    href="/pengajar"
-                    className={`${
-                      getRootPath(path) === "pengajar"
-                        ? "md:text-primaryForeground"
-                        : "md:text-info"
-                    }  md:hover:text-primaryForeground`}
-                  >
-                    <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
-                      Pengajar
-                    </li>
-                  </a>
-                  <a
-                    href="/murid"
-                    className={`${
-                      getRootPath(path) === "murid"
-                        ? "md:text-primaryForeground"
-                        : "md:text-info"
-                    }  md:hover:text-primaryForeground`}
-                  >
-                    <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                  <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                    <div className="relative">
+                      {/* Main link for Pengajar */}
+                      <span
+                        className={`${
+                          getRootPath(path) === "user"
+                            ? "md:text-primaryForeground"
+                            : "md:text-info"
+                        }  md:hover:text-primaryForeground`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setDropdownPengajar(!dropdownPengajar);
+                        }}
+                      >
+                        Pengajar
+                      </span>
+                      {dropdownPengajar && (
+                        <div className="absolute top-full left-0 mt-2 w-48 bg-primary border border-[#DFE4EA] rounded-md shadow-lg z-10">
+                          <ul>
+                            <li className="p-2">
+                              <a
+                                href="/pengajar"
+                                className="text-sm md:text-base text-info hover:text-primaryForeground"
+                              >
+                                Daftar Pengajar
+                              </a>
+                            </li>
+                            <li className="p-2">
+                              <a
+                                href="/absen-pengajar"
+                                className="text-sm md:text-base text-info hover:text-primaryForeground"
+                              >
+                                Daftar Absen Pengajar
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </li>{" "}
+                  <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                    <a
+                      href="/murid"
+                      className={`${
+                        getRootPath(path) === "murid"
+                          ? "md:text-primaryForeground"
+                          : "md:text-info"
+                      }  md:hover:text-primaryForeground`}
+                    >
                       Murid
-                    </li>
                   </a>
+                    </li>
                   <a
                     href="/profile"
                     className={`${
@@ -368,8 +397,25 @@ const Navbar = () => {
                   >
                     <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
                       Profil
-                    </li>
+                  </li>
                   </a>
+                  <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                    <a
+                      href="/absen-pengajar"
+                      className="md:text-info md:hover:text-primaryForeground"
+                    >
+                      Absen
+                    </a>
+                  </li>
+                  <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                    <a
+                      href="/profile/availability"
+                      className="md:text-info md:hover:text-primaryForeground"
+                    >
+                      Availability
+                    </a>
+                    
+                  </li>
                   <li className="p-2 hover:bg-[#efefef] md:hidden block">
                     <div
                       className={`text-[16px] ${styles.logout_tx} md:hidden block `}

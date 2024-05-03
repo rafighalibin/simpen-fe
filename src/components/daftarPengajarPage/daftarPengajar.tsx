@@ -228,8 +228,6 @@ export const DaftarPengajar = () => {
           <option value="">Sort By</option>
           <option value="nama_asc">By Name (Asc)</option>
           <option value="nama_desc">By Name (Desc)</option>
-          <option value="jumlahPengajar">By Rating Kelas (Asc)</option>
-          <option value="jumlahPengajar">By Rating Kelas (Desc)</option>
         </select>
         <select
           value={searchType}
