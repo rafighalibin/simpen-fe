@@ -135,7 +135,7 @@ export const UpdateTagPengajar = () => {
           Assign Tag
         </h1>
         {
-          <form onSubmit={handleSubmit}>
+          <form>
             <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-md rounded-lg ">
               <div className="flex flex-col items-center pb-16">
                 <label className="block font-medium text-neutral/70">
@@ -309,13 +309,10 @@ export const UpdateTagPengajar = () => {
               </div>
               <div className="flex justify-center py-4 gap-4">
                 <button
-                  type="submit"
+                  onClick={handleSubmit}
                   className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
                 >
                   Tambah Tag
-                </button>
-                <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
-                  Cancel
                 </button>
               </div>
             </div>

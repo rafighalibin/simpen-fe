@@ -1,7 +1,7 @@
 "use client";
 import { redirect } from "next/navigation";
 import { useMutation, useQuery } from "react-query";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect} from "react";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import { useQueryClient } from "react-query";
 import { useAuthContext } from "../../common/utils/authContext";
@@ -45,11 +45,25 @@ export const UpdateForm = () => {
     nikError: "",
   });
 
-  const { isLoading, error, data } = useQuery({
+  const { isLoading, error, data:detailAkun } = useQuery({
     queryKey: ["detailAkun"],
     queryFn: () => fetchWithToken(`/auth/login`).then((res) => res.json()),
-    onSuccess: (detailAkun) => {
-      console.log(detailAkun);
+  });
+
+  const {
+    mutateAsync: updateProfileMutation,
+    data: editResponse,
+    isSuccess,
+  } = useMutation({
+    mutationFn: () =>
+      fetchWithToken(`/user`, "PUT", formState).then((res) => res.json()),
+    onSuccess: () => {
+      console.log(formState);
+    },
+  });
+
+  useEffect(() => {
+    if (detailAkun) {
       setFormState((prev) => ({
         ...prev,
         id: detailAkun.content.id,
@@ -80,20 +94,8 @@ export const UpdateForm = () => {
         namaKontakDarurat: detailAkun.content.namaKontakDarurat,
         noTelpDarurat: detailAkun.content.noTelpDarurat,
       }));
-    },
-  });
-
-  const {
-    mutateAsync: updateProfileMutation,
-    data: editResponse,
-    isSuccess,
-  } = useMutation({
-    mutationFn: () =>
-      fetchWithToken(`/user`, "PUT", formState).then((res) => res.json()),
-    onSuccess: () => {
-      console.log(formState);
-    },
-  });
+    }
+  }, [detailAkun]);
 
   const handleConfirmPassword = () => {
     if (formState.password !== formState.konfirmasiPassword) {
@@ -145,6 +147,12 @@ export const UpdateForm = () => {
       // Setelah menetapkan pesan kesalahan, fokuskan kembali ke input NIK
       nikRef.current.focus();
       return; // Menghentikan proses submit jika terdapat kesalahan
+    }
+    if(formState.password === "") {
+      formState.password = null;
+    }
+    if(formState.konfirmasiPassword === "") {
+      formState.konfirmasiPassword = null;
     }
     if (formState.password !== formState.konfirmasiPassword) {
       console.log(formState.password, formState.konfirmasiPassword);
@@ -257,7 +265,7 @@ export const UpdateForm = () => {
   if (isSuccess) {
     queryClient.invalidateQueries("detailAkun");
     localStorage.setItem("updateSuccess", "true");
-    redirect(`/user/profile`);
+    redirect(`/profile`);
   }
 
   return (
@@ -267,7 +275,7 @@ export const UpdateForm = () => {
           Detail Akun
         </h1>
         {pengguna.role === "pengajar" && (
-          <form onSubmit={handleSubmit}>
+          <form>
             <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-lg rounded-lg ">
               <div className="flex flex-col items-center pb-16">
                 <label className="block font-medium text-neutral/70">
@@ -899,13 +907,10 @@ export const UpdateForm = () => {
               </p>
               <div className="flex justify-center py-4 gap-4">
                 <button
-                  type="submit"
+                  onClick={handleSubmit}
                   className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
                 >
                   Ubah Detail Akun
-                </button>
-                <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
-                  Cancel
                 </button>
               </div>
             </div>
@@ -1056,9 +1061,6 @@ export const UpdateForm = () => {
                   className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
                 >
                   Ubah Detail Akun
-                </button>
-                <button className="bg-error text-white px-4 py-2 rounded-md hover:bg-errorHover">
-                  Cancel
                 </button>
               </div>
             </div>

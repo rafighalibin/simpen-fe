@@ -16,7 +16,7 @@ const Page = () => {
         buttons={
           <div className="flex justify-center pt-7 pb-2 gap-4">
             <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
-              <a href={`/user/profile/edit`}> Ubah Detail Akun </a>
+              <a href={`/profile/edit`}> Ubah Detail Akun </a>
             </button>
           </div>
         }

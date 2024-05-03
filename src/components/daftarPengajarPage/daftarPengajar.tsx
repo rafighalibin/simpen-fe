@@ -228,8 +228,6 @@ export const DaftarPengajar = () => {
           <option value="">Sort By</option>
           <option value="nama_asc">By Name (Asc)</option>
           <option value="nama_desc">By Name (Desc)</option>
-          <option value="jumlahPengajar">By Rating Kelas (Asc)</option>
-          <option value="jumlahPengajar">By Rating Kelas (Desc)</option>
         </select>
         <select
           value={searchType}
@@ -356,6 +354,21 @@ export const DaftarPengajar = () => {
         ) : filteredPengajar.length === 0 && searchType === "domisiliKota" ? ( // Jika hasil pencarian tag kosong
           <p className="text-red-500">
             Pengajar dengan domisili kota {searchKeyword} tidak ditemukan.
+          </p>
+        ) : searchType === "tag" &&
+          listPengajarExisting.every(
+            (pengajar) => pengajar.listTag.length === 0
+          ) ? ( // Jika hasil pencarian tag kosong
+          <p className="text-red-500">Belum ada pengajar yang memiliki tag.</p>
+        ) : searchType === "domisiliKota" &&
+          (listPengajarExisting.every(
+            (pengajar) => pengajar.domisiliKota == null
+          ) ||
+            listPengajarExisting.every(
+              (pengajar) => pengajar.domisiliKota == ""
+            )) ? (
+          <p className="text-red-500">
+            Belum ada pengajar yang Mengisi Domisili Kota.
           </p>
         ) : (
           <>

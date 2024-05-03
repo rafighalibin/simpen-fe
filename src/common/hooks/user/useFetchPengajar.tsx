@@ -11,9 +11,9 @@ const useFetchPengajar = () => {
 
   const { isLoading, error, data } = useQuery({
     queryKey: ["listUser"],
-    queryFn: () => fetchWithToken(`/user`).then((res) => res.json()),
+    queryFn: () => fetchWithToken(`/user/pengajar`).then((res) => res.json()),
     onSuccess: (data) => {
-      const listPengajarTemp: PengajarSelect[] = data.content[2].user.map(
+      const listPengajarTemp: PengajarSelect[] = data.content.map(
         (user: any) => ({
           value: user.id,
           label: user.nama,
