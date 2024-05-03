@@ -131,7 +131,7 @@ export const JenisKelasTable = () => {
                 </tr>
               </thead>
               </table>
-              <div style={{ textAlign: "center" }}>Error Fetching Jenis Kelas.</div>
+              <div style={{ textAlign: "center" }} className="px-4 py-4">Error Fetching Jenis Kelas.</div>
           </div>
       </div>
       );
@@ -188,7 +188,7 @@ export const JenisKelasTable = () => {
               </tr>
             </thead>
             </table>
-            <div style={{ textAlign: "center" }}>Belum ada Jenis Kelas.</div>
+            <div style={{ textAlign: "center" }} className="px-4 py-4">Belum ada Jenis Kelas.</div>
         </div>
     </div>
     );

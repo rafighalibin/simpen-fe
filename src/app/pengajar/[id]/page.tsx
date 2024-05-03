@@ -1,33 +1,36 @@
 "use client";
 
-import React from 'react'
-import {UpdateForm} from "../../../components/profilePage/updateForm"
-import  useFetchWithToken from "../../../common/hooks/fetchWithToken";
+import React from "react";
+import { UpdateForm } from "../../../components/profilePage/updateForm";
+import useFetchWithToken from "../../../common/hooks/fetchWithToken";
 import DetailPengajar from "../../../components/profilePage/detailPengajar";
 import { useAuthContext } from "../../../common/utils/authContext";
-import { Breadcrumbs } from '../../../components/breadcrumbs/breadcrumbs';
-import { useParams } from 'next/navigation';
+import { Breadcrumbs } from "../../../components/breadcrumbs/breadcrumbs";
+import { useParams } from "next/navigation";
 
-const Page= () =>{
+const Page = () => {
   const fetchWithToken = useFetchWithToken();
   const { checkPermission } = useAuthContext();
-  const {id} = useParams();
+  const { id } = useParams();
   return (
     checkPermission(true, true, false) && (
       <div className="px-[8vw] py-8">
-      <Breadcrumbs/>
-    <DetailPengajar
-    buttons={
-      <div className="flex justify-center pt-10 gap-4">
-        <button className="bg-info text-white px-6 py-2 rounded-md hover:bg-infoHover">
-          <a href={`/pengajar/${id}/tag`}> Update Tag </a>
-        </button>
+        <Breadcrumbs />
+        <DetailPengajar
+          buttons={
+            <div className="flex justify-center pt-10 gap-4">
+              <button className="bg-info text-white px-6 py-2 rounded-md hover:bg-infoHover">
+                <a href={`/pengajar/${id}/availability  `}> Availability </a>
+              </button>
+              <button className="bg-warning text-white px-6 py-2 rounded-md hover:bg-warningHover">
+                <a href={`/pengajar/${id}/tag`}> Update Tag </a>
+              </button>
+            </div>
+          }
+        />
       </div>
-    }
-  />
-  </div>
     )
-  )
-}
+  );
+};
 
 export default Page;

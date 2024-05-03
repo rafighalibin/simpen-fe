@@ -19,7 +19,7 @@ const useFetchPengajar = () => {
           label: user.nama,
         })
       );
-      listPengajarExisting.push(...listPengajarTemp);
+      setListPengajarExisting(listPengajarTemp);
     },
   });
 

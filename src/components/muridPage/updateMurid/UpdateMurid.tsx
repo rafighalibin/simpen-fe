@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useParams, useRouter } from "next/navigation";
 
 //import font and css
@@ -14,7 +14,7 @@ import useFetchWithToken from "../../../common/hooks/fetchWithToken";
 export const UpdateMurid = () => {
   const fetchWithToken = useFetchWithToken();
   const { id } = useParams();
-
+  const queryClient = useQueryClient();
   const [error, setError] = useState("");
   const [succces, setSuccess] = useState("");
   const router = useRouter();
@@ -64,6 +64,7 @@ export const UpdateMurid = () => {
     onSuccess: (data) => {
       if (data.code == 200) {
         setSuccess(data.message);
+        queryClient.invalidateQueries("murid");
         setTimeout(() => {
           router.push("/murid");
         }, 1000);

@@ -33,18 +33,10 @@ export const AddJenisKelasForm = () => {
     tipeFetched: [],
     bahasaFetched: []
   });
-  const [customModaPertemuan, setCustomModaPertemuan] = useState({
-    enabled: false,
-    value: '',
-  });
-  const [customBahasa, setCustomBahasa] = useState({
-    enabled: false, // Whether the custom bahasa option is selected
-    value: '', // The value of the custom bahasa
-  });
-  const [customTipe, setCustomTipe] = useState({
-    enabled: false,
-    value: '',
-  });
+  const [customModaPertemuan, setCustomModaPertemuan] = useState([]);
+  const [customBahasa, setCustomBahasa] = useState([]);
+  const [customTypes, setCustomTypes] = useState([]);
+
 
   useEffect(() => {
     const fetchExistingAttributes = async () => {
@@ -71,14 +63,21 @@ export const AddJenisKelasForm = () => {
     mutationFn: () =>
       fetchWithToken(`/kelas/jenis`, "POST", formState).then((res) => res.json()),
     onSuccess: (data) => {
-      if (data.code == 200) {
+      if (data.message == `Jenis Kelas with name ${formState.nama} has been updated`) {
+        console.log(data.content as JenisKelas);
+        setSuccess("Nama jenis kelas sudah ada sebelumnya. Sukses menambahkan atribut.");
+        setTimeout(() => {
+          router.push("/kelas/jenis");
+        }, 1000);
+      }
+      else if (data.code == 200) {
         console.log(data.content as JenisKelas);
         setSuccess("Sukses menambahkan.");
         setTimeout(() => {
           router.push("/kelas/jenis");
         }, 1000);
       } else if (data.code == 400) {
-        setError("Jenis Kelas sudah pernah ada atau terjadi kesalahan.");
+        setError("Jenis Kelas sudah pernah ada atau terjadi kesalahan pengisian data. Cek kembali!");
         console.error("Error:", error);
       }
     },
@@ -100,39 +99,43 @@ export const AddJenisKelasForm = () => {
     }
   };
   
-  // Custom ModaPertemuan Checkbox onChange
-  const handleCustomModaPertemuanCheckboxChange = (e) => {
-    const isEnabled = e.target.checked;
-    setCustomModaPertemuan(prev => ({ ...prev, enabled: isEnabled }));
-
-    setFormState(prevState => {
-      let newModaPertemuan = [...prevState.modaPertemuan];
-      // Remove previous custom ModaPertemuan if unchecking
-      if (!isEnabled) {
-        newModaPertemuan = prevState.modaPertemuan.filter(b => b !== customModaPertemuan.value);
+  // Custom Moda Checkbox onChange
+  const toggleCustomModaPertemuan = (index, isEnabled) => {
+    setCustomModaPertemuan(prev => {
+      let newCustomModaPertemuan = [...prev];
+      if (isEnabled) {
+        // Add a new custom moda slot with default values
+        newCustomModaPertemuan.push({ enabled: true, value: '' });
+      } else {
+        // Remove the custom moda and its value from the form state
+        newCustomModaPertemuan.splice(index, 1);
+        setFormState(prevState => ({
+          ...prevState,
+          modaPertemuan: prevState.modaPertemuan.filter(t => t !== prev[index].value)
+        }));
       }
-      // Add custom ModaPertemuan if checking and it's not empty (avoiding duplicates)
-      else if (isEnabled && customModaPertemuan.value && !prevState.modaPertemuan.includes(customModaPertemuan.value)) {
-        newModaPertemuan = [...prevState.modaPertemuan, customModaPertemuan.value.trim()];
-      }
-      return { ...prevState, modaPertemuan: newModaPertemuan };
+      return newCustomModaPertemuan;
     });
   };
 
-  // Custom ModaPertemuan Text Input onChange
-  const handleCustomModaPertemuanInputChange = (e) => {
-    const newValue = e.target.value.toUpperCase();
-    // Update customModaPertemuan state
-    setCustomModaPertemuan(prev => ({ ...prev, value: newValue }));
+  // Handler for custom moda value changes
+  const handleCustomModaPertemuanChange = (index, value) => {
+    setCustomModaPertemuan(prev => {
+      let newCustomModaPertemuan = [...prev];
+      newCustomModaPertemuan[index] = { ...newCustomModaPertemuan[index], value };
+      return newCustomModaPertemuan;
+    });
+  };
 
-    // Update formState if the custom ModaPertemuan checkbox is enabled
-    if (customModaPertemuan.enabled) {
-      setFormState(prevState => {
-        // Remove old custom ModaPertemuan value and add the new one
-        const newModaPertemuan = prevState.modaPertemuan.filter(b => b !== customModaPertemuan.value).concat(newValue.trim());
-        return { ...prevState, modaPertemuan: newModaPertemuan };
-      });
-    }
+  const handleCustomModaPertemuanBlur = (index) => {
+    const value = customModaPertemuan[index].value.trim();
+    setFormState(prevState => {
+      let newModaPertemuan = [...prevState.modaPertemuan];
+      if (!prevState.modaPertemuan.includes(value)) {
+        newModaPertemuan.push(value);
+      }
+      return { ...prevState, modaPertemuan: newModaPertemuan };
+    });
   };
 
   const handleBahasaChange = (e) => {
@@ -151,40 +154,45 @@ export const AddJenisKelasForm = () => {
     }
   };
 
-  // Custom Bahasa Checkbox onChange
-  const handleCustomBahasaCheckboxChange = (e) => {
-    const isEnabled = e.target.checked;
-    setCustomBahasa(prev => ({ ...prev, enabled: isEnabled }));
+  // Custom bahasa Checkbox onChange
+  const toggleCustomBahasa = (index, isEnabled) => {
+    setCustomBahasa(prev => {
+      let newCustomBahasa = [...prev];
+      if (isEnabled) {
+        // Add a new custom bahasa slot with default values
+        newCustomBahasa.push({ enabled: true, value: '' });
+      } else {
+        // Remove the custom bahasa and its value from the form state
+        newCustomBahasa.splice(index, 1);
+        setFormState(prevState => ({
+          ...prevState,
+          bahasa: prevState.bahasa.filter(t => t !== prev[index].value)
+        }));
+      }
+      return newCustomBahasa;
+    });
+  };
 
+  // Handler for custom bahasa value changes
+  const handleCustomBahasaChange = (index, value) => {
+    setCustomBahasa(prev => {
+      let newCustomBahasa = [...prev];
+      newCustomBahasa[index] = { ...newCustomBahasa[index], value };
+      return newCustomBahasa;
+    });
+  };
+
+  const handleCustomBahasaBlur = (index) => {
+    const value = customBahasa[index].value.trim();
     setFormState(prevState => {
       let newBahasa = [...prevState.bahasa];
-      // Remove previous custom Bahasa if unchecking
-      if (!isEnabled) {
-        newBahasa = prevState.bahasa.filter(b => b !== customBahasa.value);
-      }
-      // Add custom Bahasa if checking and it's not empty (avoiding duplicates)
-      else if (isEnabled && customBahasa.value && !prevState.bahasa.includes(customBahasa.value)) {
-        newBahasa = [...prevState.bahasa, customBahasa.value.trim()];
+      if (!prevState.bahasa.includes(value)) {
+        newBahasa.push(value);
       }
       return { ...prevState, bahasa: newBahasa };
     });
   };
-
-  // Custom Bahasa Text Input onChange
-  const handleCustomBahasaInputChange = (e) => {
-    const newValue = e.target.value.toUpperCase();
-    // Update customBahasa state
-    setCustomBahasa(prev => ({ ...prev, value: newValue }));
-
-    // Update formState if the custom Bahasa checkbox is enabled
-    if (customBahasa.enabled) {
-      setFormState(prevState => {
-        // Remove old custom Bahasa value and add the new one
-        const newBahasa = prevState.bahasa.filter(b => b !== customBahasa.value).concat(newValue.trim());
-        return { ...prevState, bahasa: newBahasa };
-      });
-    }
-  };
+  
 
   const handleTipeChange = (e) => {
     if (e.target.checked) {
@@ -203,38 +211,42 @@ export const AddJenisKelasForm = () => {
   };
   
   // Custom Tipe Checkbox onChange
-  const handleCustomTipeCheckboxChange = (e) => {
-    const isEnabled = e.target.checked;
-    setCustomTipe(prev => ({ ...prev, enabled: isEnabled }));
-
-    setFormState(prevState => {
-      let newTipe = [...prevState.tipe];
-      // Remove previous custom Tipe if unchecking
-      if (!isEnabled) {
-        newTipe = prevState.tipe.filter(b => b !== customTipe.value);
+  const toggleCustomType = (index, isEnabled) => {
+    setCustomTypes(prev => {
+      let newCustomTypes = [...prev];
+      if (isEnabled) {
+        // Add a new custom type slot with default values
+        newCustomTypes.push({ enabled: true, value: '' });
+      } else {
+        // Remove the custom type and its value from the form state
+        newCustomTypes.splice(index, 1);
+        setFormState(prevState => ({
+          ...prevState,
+          tipe: prevState.tipe.filter(t => t !== prev[index].value)
+        }));
       }
-      // Add custom Tipe if checking and it's not empty (avoiding duplicates)
-      else if (isEnabled && customTipe.value && !prevState.tipe.includes(customTipe.value)) {
-        newTipe = [...prevState.tipe, customTipe.value.trim()];
-      }
-      return { ...prevState, tipe: newTipe };
+      return newCustomTypes;
     });
   };
 
-  // Custom Tipe Text Input onChange
-  const handleCustomTipeInputChange = (e) => {
-    const newValue = e.target.value.toUpperCase();
-    // Update customTipe state
-    setCustomTipe(prev => ({ ...prev, value: newValue }));
+  // Handler for custom type value changes
+  const handleCustomTypeChange = (index, value) => {
+    setCustomTypes(prev => {
+      let newCustomTypes = [...prev];
+      newCustomTypes[index] = { ...newCustomTypes[index], value };
+      return newCustomTypes;
+    });
+  };
 
-    // Update formState if the custom Tipe checkbox is enabled
-    if (customTipe.enabled) {
-      setFormState(prevState => {
-        // Remove old custom Tipe value and add the new one
-        const newTipe = prevState.tipe.filter(b => b !== customTipe.value).concat(newValue.trim());
-        return { ...prevState, tipe: newTipe };
-      });
-    }
+  const handleCustomTypeBlur = (index) => {
+    const value = customTypes[index].value.trim();
+    setFormState(prevState => {
+      let newTipe = [...prevState.tipe];
+      if (!prevState.tipe.includes(value)) {
+        newTipe.push(value);
+      }
+      return { ...prevState, tipe: newTipe };
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -300,25 +312,30 @@ export const AddJenisKelasForm = () => {
                 </div>
               ))}
             </div>
-            <div className="flex items-center">
-                <input
-                  id="customModaPertemuan"
-                  name="customModaPertemuan"
-                  type="checkbox"
-                  checked={customModaPertemuan.enabled}
-                  onChange={handleCustomModaPertemuanCheckboxChange} // Updated to use the new handler
-                  className="mr-2"
-                />
-                <label htmlFor="customModaPertemuan">OTHER: </label>
-                {customModaPertemuan.enabled && (
-                  <input
-                    type="text"
-                    placeholder="Enter custom moda"
-                    value={customModaPertemuan.value}
-                    onChange={handleCustomModaPertemuanInputChange} // Ensure this handler is used
-                    className="ml-2"
-                  />
-                )}
+            <div>
+                {customModaPertemuan.map((customModaPertemuan, index) => (
+                  <div key={index} className="flex items-center mb-2">
+                    <input
+                      type="checkbox"
+                      checked={customModaPertemuan.enabled}
+                      onChange={(e) => toggleCustomModaPertemuan(index, e.target.checked)}
+                      className="mr-2"
+                    />
+                    {customModaPertemuan.enabled && (
+                      <input
+                        type="text"
+                        placeholder="Enter custom moda"
+                        value={customModaPertemuan.value}
+                        onChange={(e) => handleCustomModaPertemuanChange(index, e.target.value.toUpperCase())}
+                        onBlur={() => handleCustomModaPertemuanBlur(index)}
+                        className="mr-2"
+                      />
+                    )}
+                  </div>
+                ))}
+                <button onClick={() => toggleCustomModaPertemuan(customModaPertemuan.length, true)} className="mr-2" type="button">
+                  Add Custom Moda
+                </button>
               </div>
               <div
                 style={InterReguler.style}
@@ -349,25 +366,30 @@ export const AddJenisKelasForm = () => {
                 </div>
               ))}
             </div>
-            <div className="flex items-center">
-                <input
-                  id="customTipe"
-                  name="customTipe"
-                  type="checkbox"
-                  checked={customTipe.enabled}
-                  onChange={handleCustomTipeCheckboxChange} // Updated to use the new handler
-                  className="mr-2"
-                />
-                <label htmlFor="customTipe">OTHER: </label>
-                {customTipe.enabled && (
-                  <input
-                    type="text"
-                    placeholder="Enter custom tipe"
-                    value={customTipe.value}
-                    onChange={handleCustomTipeInputChange} // Ensure this handler is used
-                    className="ml-2"
-                  />
-                )}
+            <div>
+                {customTypes.map((customType, index) => (
+                  <div key={index} className="flex items-center mb-2">
+                    <input
+                      type="checkbox"
+                      checked={customType.enabled}
+                      onChange={(e) => toggleCustomType(index, e.target.checked)}
+                      className="mr-2"
+                    />
+                    {customType.enabled && (
+                      <input
+                        type="text"
+                        placeholder="Enter custom tipe"
+                        value={customType.value}
+                        onChange={(e) => handleCustomTypeChange(index, e.target.value.toUpperCase())}
+                        onBlur={() => handleCustomTypeBlur(index)}
+                        className="mr-2"
+                      />
+                    )}
+                  </div>
+                ))}
+                <button onClick={() => toggleCustomType(customTypes.length, true)} className="mr-2" type="button">
+                  Add Custom Tipe
+                </button>
               </div>
               <div
                 style={InterReguler.style}
@@ -397,25 +419,31 @@ export const AddJenisKelasForm = () => {
                   <label htmlFor={bahasa}>{bahasa}</label>
                 </div>
               ))}
-              <div className="flex items-center">
-                <input
-                  id="customBahasa"
-                  name="customBahasa"
-                  type="checkbox"
-                  checked={customBahasa.enabled}
-                  onChange={handleCustomBahasaCheckboxChange} // Updated to use the new handler
-                  className="mr-2"
-                />
-                <label htmlFor="customBahasa">OTHER: </label>
-                {customBahasa.enabled && (
-                  <input
-                    type="text"
-                    placeholder="Enter custom bahasa"
-                    value={customBahasa.value}
-                    onChange={handleCustomBahasaInputChange} // Ensure this handler is used
-                    className="ml-2"
-                  />
-                )}
+              </div>
+              <div>
+                {customBahasa.map((customBahasa, index) => (
+                  <div key={index} className="flex items-center mb-2">
+                    <input
+                      type="checkbox"
+                      checked={customBahasa.enabled}
+                      onChange={(e) => toggleCustomBahasa(index, e.target.checked)}
+                      className="mr-2"
+                    />
+                    {customBahasa.enabled && (
+                      <input
+                        type="text"
+                        placeholder="Enter custom bahasa"
+                        value={customBahasa.value}
+                        onChange={(e) => handleCustomBahasaChange(index, e.target.value.toUpperCase())}
+                        onBlur={() => handleCustomBahasaBlur(index)}
+                        className="mr-2"
+                      />
+                    )}
+                  </div>
+                ))}
+                <button onClick={() => toggleCustomBahasa(customBahasa.length, true)} className="mr-2" type="button">
+                  Add Custom Bahasa
+                </button>
               </div>
               <div
                 style={InterReguler.style}
@@ -423,7 +451,6 @@ export const AddJenisKelasForm = () => {
               >
                 Bahasa yang digunakan ketika kelas berlangsung.
               </div>
-            </div>
             <div className="mt-8">
               <div
                 style={InterMedium.style}

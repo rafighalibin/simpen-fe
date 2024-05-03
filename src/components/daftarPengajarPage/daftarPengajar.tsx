@@ -1,26 +1,24 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQueryClient,
-  useQuery,
-  useMutation,
-} from "react-query";
+import { useQuery } from "react-query";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
-import { PengajarDetail, PengajarSelect } from "../../common/types/pengajar";
+import { PengajarDetail } from "../../common/types/pengajar";
 import Loading from "../../common/components/Loading";
 import { TagDetail, TagSelect } from "../../common/types/tag";
 import Select from "react-select";
 import styles from "./daftarPengajar.module.css";
 import { useRouter } from "next/navigation";
+import { FilterAvailability } from "../../common/types/availability";
 
 export const DaftarPengajar = () => {
   const router = useRouter();
   const [searchKeyword, setSearchKeyword] = useState("");
   const [listTagExisting, setListTagExisting] = useState<TagSelect[]>([]);
   const [searchKeywords, setSearchKeywords] = useState([]);
+  const [waktuStart, setWaktuStart] = useState("");
+  const [waktuEnd, setWaktuEnd] = useState("");
+  const [daySelected, setDaySelected] = useState("");
   const [itemsPerPage, setItemsPerPage] = useState(8);
   const fetchWithToken = useFetchWithToken();
   const [searchType, setSearchType] = useState("nama");
@@ -30,19 +28,25 @@ export const DaftarPengajar = () => {
   const [listPengajarExisting, setListPengajarExisting] = useState<
     PengajarDetail[]
   >([]);
+  const [availabilityFilter, setAvailabilityFilter] = useState(
+    null as FilterAvailability
+  );
+
   const { isLoading, error, data, refetch } = useQuery({
     queryKey: ["listUser"],
-    queryFn: () => fetchWithToken(`/user`).then((res) => res.json()),
+    queryFn: () =>
+      fetchWithToken(
+        `/user/pengajar${
+          availabilityFilter != null
+            ? `/availability?hari=${availabilityFilter.hari}&waktuStart=${availabilityFilter.waktuStart}&waktuEnd=${availabilityFilter.waktuEnd}`
+            : ""
+        }`
+      ).then((res) => res.json()),
     onSuccess(data) {
       if (data) {
-        for (let i = 0; i < data.content.length; i++) {
-          if (data.content[i].role === "pengajar") {
-            data.content[i].user.forEach((element: PengajarDetail) => {
-              listPengajarExisting.push(element);
-            });
-          }
-        }
-        console.log(listPengajarExisting);
+        data.content.forEach((element: PengajarDetail) => {
+          listPengajarExisting.push(element);
+        });
       }
     },
   });
@@ -66,8 +70,17 @@ export const DaftarPengajar = () => {
   });
 
   useEffect(() => {
-    refetch();
-  }, [refetch]);
+    if (
+      availabilityFilter == null ||
+      (availabilityFilter != null &&
+        availabilityFilter.hari !== "" &&
+        availabilityFilter.waktuStart !== "" &&
+        availabilityFilter.waktuEnd !== "")
+    ) {
+      setListPengajarExisting([]);
+      refetch();
+    }
+  }, [refetch, availabilityFilter, searchType]);
 
   if (isLoading || TagLoading) {
     return <Loading />;
@@ -82,11 +95,21 @@ export const DaftarPengajar = () => {
           tag.nama.toLowerCase().includes(keyword.toLowerCase())
         )
       );
-    }else if (searchType === "domisiliKota"){
-      if(pengajar.domisiliKota === null){
+    } else if (searchType === "domisiliKota") {
+      if (pengajar.domisiliKota === null) {
         return false;
       }
-      return pengajar.domisiliKota.toLowerCase().includes(searchKeyword.toLowerCase());
+      return pengajar.domisiliKota
+        .toLowerCase()
+        .includes(searchKeyword.toLowerCase());
+    } else if (searchType === "availability") {
+      if (
+        listPengajarExisting.find(
+          (pengajarExist) => pengajarExist.id === pengajar.id
+        )
+      ) {
+        return true;
+      }
     }
   });
 
@@ -169,7 +192,7 @@ export const DaftarPengajar = () => {
     ) : null;
 
   return (
-    <div className="px-2 py-16 space-y-10 flex-grow flex flex-col justify-center">
+    <div className="px-2 py-16 space-y-4 flex-grow flex flex-col justify-center">
       <h1 className="text-6xl font-bold pb-4">Daftar Pengajar</h1>
       <div className="mt-4 flex items-center">
         {searchType === "tag" ? (
@@ -186,7 +209,7 @@ export const DaftarPengajar = () => {
               value: tag.label.toLowerCase(),
               label: tag.label,
             }))} // Mengonversi listTagExisting ke format yang sesuai dengan format yang diterima oleh Select
-            className="flex-grow px-4 py-2 mr-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
+            className="flex-grow px-4 py-2 mr-2 rounded-md focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
           />
         ) : (
           <input
@@ -210,17 +233,113 @@ export const DaftarPengajar = () => {
         </select>
         <select
           value={searchType}
-          onChange={(e) => setSearchType(e.target.value)}
+          onChange={(e) => {
+            if (e.target.value === "availability") {
+              setAvailabilityFilter(null as FilterAvailability);
+            } else {
+              setAvailabilityFilter(null as FilterAvailability);
+            }
+            setSearchType(e.target.value);
+          }}
           className="px-4 py-2 mr-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
         >
           <option value="nama">Cari berdasarkan Nama</option>
           <option value="tag">Cari berdasarkan Tag</option>
           <option value="domisiliKota">Cari berdasarkan Domisili Kota</option>
+          <option value="availability">Cari berdasarkan Availability</option>
         </select>
         <button className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover">
           <a href={`/tag`}>Daftar Tag</a>
         </button>
       </div>
+      {searchType === "availability" && (
+        <form onSubmit={(e) => e.preventDefault()}>
+          <div className="flex items-center gap-2">
+            <select
+              required
+              value={availabilityFilter?.hari}
+              defaultValue=""
+              onChange={(e) => {
+                if (availabilityFilter == null) {
+                  setAvailabilityFilter({
+                    hari: e.target.value,
+                    waktuStart: "",
+                    waktuEnd: "",
+                  });
+                } else {
+                  setAvailabilityFilter({
+                    ...availabilityFilter,
+                    hari: e.target.value,
+                  });
+                }
+              }}
+              className="px-4 py-2 mr-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
+            >
+              <option value="" defaultChecked disabled>
+                Pilih Hari
+              </option>
+              <option value="Senin">Senin</option>
+              <option value="Selasa">Selasa</option>
+              <option value="Rabu">Rabu</option>
+              <option value="Kamis">Kamis</option>
+              <option value="Jumat">Jumat</option>
+              <option value="Sabtu">Sabtu</option>
+              <option value="Minggu">Minggu</option>
+            </select>
+            <div className="flex items-center gap-4">
+              <input
+                required
+                type="time"
+                value={
+                  availabilityFilter == null
+                    ? ""
+                    : availabilityFilter.waktuStart
+                }
+                onChange={(e) => {
+                  if (availabilityFilter == null) {
+                    setAvailabilityFilter({
+                      hari: "",
+                      waktuStart: e.target.value,
+                      waktuEnd: "",
+                    });
+                  } else {
+                    setAvailabilityFilter({
+                      ...availabilityFilter,
+                      waktuStart: e.target.value,
+                    });
+                  }
+                }}
+                placeholder="Cari Pengajar"
+                className="flex-grow px-4 py-2  border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
+              />
+              <p className="font-medium text-neutral/70">to</p>
+              <input
+                required
+                type="time"
+                value={
+                  availabilityFilter == null ? "" : availabilityFilter.waktuEnd
+                }
+                onChange={(e) => {
+                  if (availabilityFilter == null) {
+                    setAvailabilityFilter({
+                      hari: "",
+                      waktuStart: "",
+                      waktuEnd: e.target.value,
+                    });
+                  } else {
+                    setAvailabilityFilter({
+                      ...availabilityFilter,
+                      waktuEnd: e.target.value,
+                    });
+                  }
+                }}
+                placeholder="Cari Pengajar"
+                className="flex-grow px-4 py-2  border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200"
+              />
+            </div>
+          </div>
+        </form>
+      )}
 
       <div className="overflow-x-auto mt-4">
         {noPengajarMessage}
@@ -235,10 +354,10 @@ export const DaftarPengajar = () => {
             Pengajar dengan tag yang dipilih tidak ditemukan.
           </p>
         ) : filteredPengajar.length === 0 && searchType === "domisiliKota" ? ( // Jika hasil pencarian tag kosong
-        <p className="text-red-500">
-          Pengajar dengan domisili kota {searchKeyword} tidak ditemukan.
-        </p>
-      ) : (
+          <p className="text-red-500">
+            Pengajar dengan domisili kota {searchKeyword} tidak ditemukan.
+          </p>
+        ) : (
           <>
             <div className="grid grid-cols-4 gap-10 py-16 px-6">
               {displayedPengajar.map((pengajar, index) => (

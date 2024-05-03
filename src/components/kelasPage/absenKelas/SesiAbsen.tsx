@@ -124,16 +124,12 @@ const SesiAbsen = () => {
     setSesiChanged(sessionIndex);
   };
 
-  const handleButtonClick = (id, e) => { // Mengambil id sebagai parameter
-    // Panggil mutateAsync dengan menyertakan id
+  const handleAbsenPengajar = (id, e) => {
     e.preventDefault();
-    absenPengajarMutation(id)
-      .then((response) => {
-        // Handle respons jika diperlukan
-      })
-      .catch((error) => {
-        // Handle error jika diperlukan
-      });
+    absenPengajarMutation(id);
+    if (isChanged) {
+      editAbsenMutation();
+    }
   };
 
   return (
@@ -158,7 +154,7 @@ const SesiAbsen = () => {
         </button>
       </div>
       <div className="my-5">
-        {editAbsenSuccess && !isChanged && (
+        {editAbsenSuccess && !isChanged && !absenPengajarSuccess && (
           <div className="bg-[#DAF8E6] text-[#004434] text-sm px-4 py-2">
             Berhasil update absen
           </div>
@@ -166,6 +162,7 @@ const SesiAbsen = () => {
         {absenPengajarSuccess && (
           <div className="bg-[#DAF8E6] text-[#004434] text-sm px-4 py-2">
             Pengajar Berhasil Absen
+            {editAbsenSuccess && !isChanged && " dan update absen"}
           </div>
         )}
         {editAbsenError && !isChanged && (
@@ -216,9 +213,19 @@ const SesiAbsen = () => {
                         {sesi.status === "Scheduled" && (
                           <button
                             className={`bg-transparent hover:bg-warning text-warning  hover:text-white py-2 px-4 border border-warning hover:border-transparent rounded-full `}
-                            onClick={(e) => handleButtonClick(sesi.sesi_id, e)}
+                            onClick={(e) =>
+                              handleAbsenPengajar(sesi.sesi_id, e)
+                            }
+                            disabled={absenPengajarIsLoading}
                           >
-                            Selesai
+                            {absenPengajarIsLoading ? (
+                              <div className="inset-0 flex items-center justify-center gap-2">
+                                <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6"></div>
+                                <span>On Progress</span>
+                              </div>
+                            ) : (
+                              "Selesai"
+                            )}
                           </button>
                         )}
                       </th>
