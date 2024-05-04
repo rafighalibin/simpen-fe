@@ -105,7 +105,7 @@ export const Notification = ({ data, onUpdate }) => {
                     className={`${styles.heading}`}
                   >
                     {notification.tipe === 1 && <div>Assign Kelas</div>}
-                    {notification.tipe === 2 && <div>Feedback</div>}
+                    {notification.tipe === 2 && <div>Feedback Akademik</div>}
                     {notification.tipe === 3 && (
                       <div>Permintaan Perubahan Jadwal</div>
                     )}
@@ -137,7 +137,16 @@ export const Notification = ({ data, onUpdate }) => {
                         </a>
                       </div>
                     )}
-                    {notification.tipe === 2 && <div>Ini feedback</div>}
+                    {notification.tipe === 2 && (
+                      <div>
+                        <a
+                          href={`/feedback/${notification.isi["feedbackId"]}`}
+                          className="hover:text-blue-500 focus:text-blue-500"
+                        >
+                          {notification.judul}
+                        </a>
+                      </div>
+                    )}
                     {notification.tipe === 3 &&
                       notification.isi["status"] == "disetujui" && (
                         <div>
