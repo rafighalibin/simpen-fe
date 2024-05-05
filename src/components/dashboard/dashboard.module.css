@@ -1,38 +1,66 @@
 .card1 {
   border-radius: 8px;
-  background: #215e9b;
-  width: 53vw;
-  height: 16vh;
+  background: #ffffff;
+  width: auto;
+  height: auto;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add box shadow */
+  border: 0.5px solid var(--Stroke, #dfe4ea);
+  align-items: center;
 }
 
 .card2 {
   border-radius: 8px;
   background: #ffffff;
-  /* width: 27vw; */
-  /* height: 70vh; */
+  width: 99vh;
+  height: 42vh;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add box shadow */
+  border: 0.5px solid var(--Stroke, #dfe4ea);
 }
 
 .card3 {
+  background: #ffffff;
+  width: auto;
+  height: auto;
+  border: 0.5px solid var(--Stroke, #dfe4ea);
+}
+
+.card4 {
   border-radius: 8px;
   background: #ffffff;
-  width: 22.4vw;
-  height: 9vh;
-  border: 1px solid #000000; /* Add border with desired color */
-  margin-right: 10px;
+  width: auto;
+  height: 60vh;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add box shadow */
+  border: 0.5px solid var(--Stroke, #dfe4ea);
+}
+
+.card5 {
+  border-radius: 8px;
+  background: #ffffff;
+  width: 48vh;
+  height: 37.75vh;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add box shadow */
+  border: 0.5px solid var(--Stroke, #dfe4ea);
+}
+
+.card6 {
+  border-radius: 8px;
+  background: #ffffff;
+  width: 99vh;
+  height: 37.75vh;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add box shadow */
+  border: 0.5px solid var(--Stroke, #dfe4ea);
 }
 
 .heading1 {
-  font-size: 30px;
+  font-size: 48px;
 }
 
 .heading_user {
-  font-size: 20px;
+  font-size: 24px;
 }
 
 .heading_announcement {
-  font-size: 16px;
+  font-size: 32px;
 }
 
 .announcement_title {
@@ -40,6 +68,11 @@
 }
 
 .announcement_date {
+  font-size: 14px;
+  color: grey;
+}
+
+.announcement_text {
   font-size: 14px;
 }
 
@@ -80,7 +113,7 @@
 }
 
 .upload_button {
-  border-radius: 15px;
+  border-radius: 8px;
   background: var(--Blue, #66a2dc);
 }
 

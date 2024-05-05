@@ -13,6 +13,7 @@ export const DetailJenisKelas = () => {
   const fetchWithToken = useFetchWithToken();
   const router = useRouter();
   const { id } = useParams(); // Correct usage based on your setup
+  const [showTable, setShowTable] = useState(false);
   
   const [jenisKelasDetail, setJenisKelasDetail] = useState(null);
   const [listAllKelasWithJenisKelas, setlistAllKelasWithJenisKelas] = useState(null);
@@ -84,6 +85,16 @@ export const DetailJenisKelas = () => {
     }
   };
 
+  const handleDetailClickProgram = (program) => {
+    const programId = program.id;
+    router.push(`/kelas/program/${programId}`);
+  };
+
+  const handleDetailClickKelas = (kelas) => {
+    const kelasId = kelas.id;
+    router.push(`/kelas/${kelasId}`);
+  };
+
   return (
     <div>
       <div className={`${styles.heading} text-center my-10`} style={PoppinsBold.style}>
@@ -107,50 +118,114 @@ export const DetailJenisKelas = () => {
             Tipe: {jenisKelasDetail.tipe}
           </div>
           <div style={InterMedium.style} className="mb-3">
-            <h3>List Program</h3>
-            <table className="w-full text-sm text-left text-gray-500">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+            <h3 className="mt-4 mb-4">List Program</h3>
+            <div className={` ${styles.card_form} `}>
+            <table className={`table-auto w-full`}>
+            <thead
+              className={`${styles.table_heading} ${styles.table_heading_text}`}
+            >
                 <tr>
-                  <th scope="col" className="px-6 py-3">Program Name</th>
-                  <th scope="col" className="px-6 py-3">Jumlah Level</th>
-                  <th scope="col" className="px-6 py-3">Jumlah Pertemuan</th>
+                <th className="px-4 py-4 text-center" style={InterMedium.style}>
+                    NO
+                </th>
+                <th className="px-4 py-4 text-left" style={InterMedium.style}>
+                  NAMA PROGRAM
+                </th>
+                <th className="px-4 py-4 text-left" style={InterMedium.style}>
+                  JUMLAH LEVEL
+                </th>
+                <th className="px-4 py-4 text-left" style={InterMedium.style}>
+                  JUMLAH PERTEMUAN
+                </th>
+                <th className="px-4 py-4 text-center" style={InterMedium.style}>
+                </th>
                 </tr>
               </thead>
               <tbody>
                 {jenisKelasDetail.listProgram.map((program, index) => (
-                  <tr key={index} className="bg-white border-b">
-                    <td className="px-6 py-4">{program.nama}</td>
-                    <td className="px-6 py-4">{program.jumlahLevel}</td>
-                    <td className="px-6 py-4">{program.jumlahPertemuan}</td>
+                  <tr
+                    className={`${styles.table_items_text}`}
+                    style={InterMedium.style}
+                    key={program.id}
+                  >
+                    <td className="border-b px-4 py-2 text-center">
+                      {index + 1}
+                    </td>
+                    <td className="border-b px-4 py-5">{program.nama}</td>
+                    <td className="border-b px-4 py-5">{program.jumlahLevel}</td>
+                    <td className="border-b px-4 py-5">{program.jumlahPertemuan}</td>
+                    <td className="border-b px-4 py-5">
+                      <button
+                        onClick={() => handleDetailClickProgram(program)}
+                        className={`bg-transparent hover:bg-[#215E9B] text-[#215E9B]  hover:text-white py-2 px-4 border border-[#215E9B] hover:border-transparent rounded-full`}
+                      >
+                        Detail
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
           {listAllKelasWithJenisKelas && (
           <div style={InterMedium.style} className="mb-3">
-            <h3>Total Kelas dengan Jenis Kelas ini: {listAllKelasWithJenisKelas.filter(kelas => kelas.jenisKelasName === jenisKelasDetail.nama).length}</h3>
-            <p>List Kelas</p>
-            <table className="w-full text-sm text-left text-gray-500">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+            <label className="label mr-4">List Kelas</label>
+            <button
+              onClick={() => setShowTable(!showTable)}
+              className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
+            >
+              {showTable ? "Hide Table" : "Show Table"}
+            </button>
+            {showTable && (
+            <div className={` ${styles.card_form} mt-4`}>
+            <table className={`table-auto w-full`}>
+            <thead
+              className={`${styles.table_heading} ${styles.table_heading_text}`}
+            >
                 <tr>
-                  <th scope="col" className="px-6 py-3">Kelas ID</th>
-                  <th scope="col" className="px-6 py-3">Pengajar</th>
-                  <th scope="col" className="px-6 py-3">Status</th>
+                <th className="px-4 py-4 text-center" style={InterMedium.style}>
+                    NO
+                </th>
+                <th className="px-4 py-4 text-left" style={InterMedium.style}>
+                    KELAS ID
+                </th>
+                <th className="px-4 py-4 text-left" style={InterMedium.style}>
+                    PENGAJAR
+                </th>
+                <th className="px-4 py-4 text-left" style={InterMedium.style}>
+                    STATUS
+                </th>
+                <th className="px-4 py-4 text-left" style={InterMedium.style}>
+                </th>
                 </tr>
               </thead>
               <tbody>
                 {listAllKelasWithJenisKelas.map((kelas, index) => (
                   kelas.jenisKelasName === jenisKelasDetail.nama && (
                     <tr key={index} className="bg-white border-b">
-                      <td className="px-6 py-4">{kelas.id}</td>
-                      <td className="px-6 py-4">{kelas.pengajar}</td>
-                      <td className="px-6 py-4">{kelas.status}</td>
+                      <td className="border-b px-4 py-2 text-center">
+                      {index + 1}
+                      </td>
+                      <td className="border-b px-4 py-5">{kelas.id}</td>
+                      <td className="border-b px-4 py-5">{kelas.pengajar}</td>
+                      <td className="border-b px-4 py-5">{kelas.status}</td>
+                      <td className="border-b px-4 py-5">
+                        <button
+                          onClick={() => handleDetailClickKelas(kelas)}
+                          className={`bg-transparent hover:bg-[#215E9B] text-[#215E9B]  hover:text-white py-2 px-4 border border-[#215E9B] hover:border-transparent rounded-full`}
+                        >
+                          Detail
+                        </button>
+                      </td>
                     </tr>
                   )
                 ))}
               </tbody>
             </table>
+          </div>
+          )}
+          <h3 className="mt-4">Total Kelas dengan Jenis Kelas ini: {listAllKelasWithJenisKelas.filter(kelas => kelas.jenisKelasName === jenisKelasDetail.nama).length}</h3>
           </div>
           )}
           <div className="flex justify-center gap-4 sm:mt-16 sm:mb-12">
