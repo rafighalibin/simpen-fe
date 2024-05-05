@@ -38,11 +38,18 @@ export const EditUserForm = ({ data }) => {
         (res) => res.json
       ),
     onSuccess: (data) => {
-      if (data) setSuccess("Informasi akun berhasil diubah.");
-      setTimeout(() => {
-        localStorage.setItem("editUserSuccess", `${formState.nama}`);
-        router.push("/user");
-      }, 1000);
+      if (data) {
+        setSuccess("Informasi akun berhasil diubah.");
+        setTimeout(() => {
+          localStorage.setItem("editUserSuccess", `${formState.nama}`);
+          router.push("/user");
+        }, 1000);
+      }
+    },
+    onError: (data) => {
+      if (data) {
+        setError("Gagal mengubah akun.");
+      }
     },
   });
 
