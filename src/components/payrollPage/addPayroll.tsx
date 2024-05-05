@@ -130,6 +130,7 @@ export const AddPayroll = () => {
         tipe: tipe,
         bahasa : bahasa,
         modaPertemuan: modaPertemuan,
+        programId: program,
       };
     
       const {isLoading: isLoadingJenisAttributes, data: dataJenisAttributes, refetch: getJenisKelas,} = useQuery({
@@ -394,7 +395,7 @@ export const AddPayroll = () => {
                         type="submit"
                         className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
                       >
-                        Buat Kelas
+                        Buat Fee
                       </button>
                     </form>
                 </div>
