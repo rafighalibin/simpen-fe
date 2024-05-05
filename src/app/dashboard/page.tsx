@@ -35,7 +35,8 @@ const App = () => {
   useEffect(() => {
     if (loggedUser) {
       const userNotifications = loggedUser.notifikasi || [];
-      setNotifications(userNotifications);
+      notifications.push(...userNotifications);
+      setNotifications((prev) => [...prev, userNotifications]);
     }
   }, [loggedUser]);
 

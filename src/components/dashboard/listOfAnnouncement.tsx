@@ -159,9 +159,9 @@ export const ListOfAnnouncement = ({ data }) => {
                       className={`${styles.announcement_date} flex justify-between`}
                     >
                       <div>
-                        {` ${announcement.tanggalPembuatan[2]}-${
+                        {` ${announcement.tanggalPembuatan[2]} ${
                           months[announcement.tanggalPembuatan[1] - 1]
-                        }-${announcement.tanggalPembuatan[0]}  `}
+                        } ${announcement.tanggalPembuatan[0]}  `}
                         pada
                         {` ${announcement.tanggalPembuatan[3]}:${announcement.tanggalPembuatan[4]} `}
                         oleh 
@@ -269,9 +269,9 @@ export const ListOfAnnouncement = ({ data }) => {
               className={`${styles.modal_tx_time}`}
             >
               {selectedAnnouncement.tanggalPembuatan[2] +
-                "-" +
-                selectedAnnouncement.tanggalPembuatan[1] +
-                "-" +
+                " " +
+                months[selectedAnnouncement.tanggalPembuatan[1] - 1] +
+                " " +
                 selectedAnnouncement.tanggalPembuatan[0] +
                 " pada " +
                 selectedAnnouncement.tanggalPembuatan[3] +
