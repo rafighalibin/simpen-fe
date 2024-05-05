@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./dashboard.module.css";
 import { PoppinsBold, PoppinsMedium, InterMedium } from "../../font/font";
 import { FiBook, FiBookOpen } from "react-icons/fi";
@@ -8,21 +8,22 @@ import { useAuthContext } from "../../common/utils/authContext";
 import { KelasRead } from "../../common/types/kelas";
 import Loading from "../../common/components/Loading";
 import { ReadPermintaanPerubahan } from "../../common/types/permintaanPerubahan";
+import useFetchAllFeedback from "../../common/hooks/feedback/useFetchAllFeedback";
 
 export const StatsAkad = () => {
   const { pengguna } = useAuthContext();
   const fetchWithToken = useFetchWithToken();
   
-  const { isLoading: isLoadingKelas, error: errorKelas, data: dataKelas } = useQuery({
-    queryKey: ["kelas"],
-    queryFn: () => fetchWithToken("/kelas").then((res) => res.json()),
-  });
+  const {
+    isLoading: listAllFeedbackLoading,
+    error,
+    listFeedback,
+    refetch,
+  } = useFetchAllFeedback();
 
-  if (isLoadingKelas) {
-    return <Loading />;
-  }
-
-  const listKelas: KelasRead[] = dataKelas.content;
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   const handleKelas = () => {
     window.location.href = "/kelas";
@@ -43,15 +44,15 @@ export const StatsAkad = () => {
             style={PoppinsBold.style}
             className={`${styles.heading_announcement} ml-5 mt-4 mb-2`}
           >
-            Total Rating Pengajar Pending
+            Total Feedback Pengajar Pending
           </div>
       </div>
       <div className="flex-wrap items-center align-middle">
           <div style={PoppinsBold.style} className={`${styles.heading} mt-12 ml-5 align-center items-center text-center text-8xl`}>
-            {listKelas.length}
+            {listFeedback.length}
           </div>
           <div style={PoppinsBold.style} className={`${styles.heading} mt-3 ml-5 align-center items-center text-center text-3xl`}>
-            Kelas
+            Pending
           </div>
           <div style={PoppinsBold.style} className={`${styles.heading} mt-3 ml-5 align-center items-center text-center`}>
           <button
@@ -59,7 +60,7 @@ export const StatsAkad = () => {
             className={`px-5 py-3 mt-3 ${styles.btn} ${styles.btn_tx} text-white hover:bg-[#215E9B] focus:bg-[#215E9B] px-3`}
             onClick={handleKelas}
           >
-            Lihat Daftar Pengajar
+            Lihat Daftar Feedback
           </button>
           </div>
           </div>
