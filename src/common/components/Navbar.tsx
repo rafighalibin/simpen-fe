@@ -251,20 +251,20 @@ const Navbar = () => {
                       </span>
                       {dropdownPengajar && (
                         <div className="absolute top-full left-0 w-48 rounded-md shadow-lg z-10">
-                        <ul>
-                          <li className="p-2 background-color: transparent"></li>
-                          <a href="/pengajar" className="text-sm">
-                            <li className="p-2 bg-primary text-info hover:bg-infoHover hover:text-primaryForeground">
-                              Daftar Pengajar
-                            </li>
-                          </a>
-                          <a href="/absen-pengajar" className="text-sm">
-                            <li className="p-2 bg-primary text-info hover:bg-infoHover hover:text-primaryForeground">
-                              Daftar Absen Pengajar
-                            </li>
-                          </a>
-                        </ul>
-                      </div>
+                          <ul>
+                            <li className="p-2 background-color: transparent"></li>
+                            <a href="/pengajar" className="text-sm">
+                              <li className="p-2 bg-primary text-info hover:bg-infoHover hover:text-primaryForeground">
+                                Daftar Pengajar
+                              </li>
+                            </a>
+                            <a href="/absen-pengajar" className="text-sm">
+                              <li className="p-2 bg-primary text-info hover:bg-infoHover hover:text-primaryForeground">
+                                Daftar Absen Pengajar
+                              </li>
+                            </a>
+                          </ul>
+                        </div>
                       )}
                     </div>
                   </li>{" "}
@@ -278,8 +278,8 @@ const Navbar = () => {
                       }  md:hover:text-primaryForeground`}
                     >
                       Murid
-                  </a>
-                    </li>
+                    </a>
+                  </li>
                   <a
                     href="/profile"
                     className={`${
@@ -342,6 +342,18 @@ const Navbar = () => {
                     </li>
                   </a>
                   <a
+                    href="/feedback"
+                    className={`${
+                      getRootPath(path) === "user"
+                        ? "md:text-primaryForeground"
+                        : "md:text-info"
+                    }  md:hover:text-primaryForeground`}
+                  >
+                    <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                      Feedback
+                    </li>
+                  </a>
+                  <a
                     href="/profile"
                     className={`${
                       getRootPath(path) === "profile"
@@ -392,7 +404,7 @@ const Navbar = () => {
                   >
                     <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
                       Profil
-                  </li>
+                    </li>
                   </a>
                   <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
                     <a
@@ -409,7 +421,6 @@ const Navbar = () => {
                     >
                       Availability
                     </a>
-                    
                   </li>
                   <li className="p-2 hover:bg-[#efefef] md:hidden block">
                     <div
