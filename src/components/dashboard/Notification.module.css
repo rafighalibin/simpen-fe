@@ -1,0 +1,19 @@
+.title {
+  font-size: 13px;
+  color: #004f9c;
+}
+
+.heading {
+  font-size: 15px;
+  color: #004f9c;
+  line-height: 110%;
+}
+
+.paragraph {
+  font-size: 12px;
+}
+
+.time_tx {
+  font-size: 10px;
+  color: #707070;
+}

@@ -1,18 +1,12 @@
 import React, { useState } from "react";
-import {
-  PoppinsBold,
-  PoppinsMedium,
-  InterMedium,
-  InterReguler,
-} from "../../font/font";
-import styles from "./Notification.module.css";
-import { useMutation } from "react-query";
-import useFetchWithToken from "../hooks/fetchWithToken";
+import styles from "./dashboard.module.css";
+import { PoppinsBold, PoppinsMedium, InterMedium, InterReguler } from "../../font/font";
+import { FiBell } from "react-icons/fi";
+import useFetchWithToken from "../../common/hooks/fetchWithToken";
 
 export const Notification = ({ data, onUpdate }) => {
   const fetchWithToken = useFetchWithToken();
   const [notifications, setNotifications] = useState(data);
-  const [formState, setFormState] = useState();
 
   notifications.sort((a, b) => {
     const dateA = new Date(
@@ -79,17 +73,23 @@ export const Notification = ({ data, onUpdate }) => {
   }
 
   return (
-    <div className="px-4 text-16px md:block hidden relative  ">
-      <div className="flex items-center"></div>
-      {notifications.length > 0 && (
-        <div className="absolute z-10 top-full right-10 mt-3 bg-white border border-gray-200 rounded-lg shadow-md max-h-[3  0vh] overflow-y-auto">
+    <div className={`${styles.card4} p-5`}>
+      <div className="flex items-center align-middle">
+        <div>
+          <FiBell size={32} className="align-middle mt-2 ml-4" /> {/* Profile icon */}
+        </div>
           <div
-            className={`pl-2 pt-2 ${styles.title} text-center`}
-            style={PoppinsMedium.style}
+            style={PoppinsBold.style}
+            className={`${styles.heading_announcement} ml-5 mt-4 mb-2`}
           >
-            Notifikasi untuk Anda
+            Notifikasi
           </div>
-          <ul className="pt-2">
+        </div>
+        <div className="overflow-y-auto overflow-x-hidden max-h-[65vh]">
+          {!notifications || notifications.length === 0 ? (
+            <div className="mt-5 ml-5 align-center items-center text-center">Tidak ada Notifikasi.</div>
+          ) : (
+            <ul className="pt-2">
             {notifications.map((notification, index) => (
               <li
                 key={index}
@@ -133,7 +133,7 @@ export const Notification = ({ data, onUpdate }) => {
                           href={`/kelas/${notification.isi["idKelas"]}`}
                           className="hover:text-blue-500 focus:text-blue-500"
                         >
-                          Kelas baru
+                          kelas baru
                         </a>
                       </div>
                     )}
@@ -155,7 +155,7 @@ export const Notification = ({ data, onUpdate }) => {
                             href={`/sesi/${notification.isi["sesiKelas"]}`}
                             className="hover:text-blue-500 focus:text-blue-500"
                           >
-                            Sesi Kelas
+                            Sesi kelas
                           </a>
                           {" disetujui"}
                         </div>
@@ -171,7 +171,7 @@ export const Notification = ({ data, onUpdate }) => {
                             href={`/sesi/${notification.isi["sesiKelas"]}`}
                             className="hover:text-blue-500 focus:text-blue-500"
                           >
-                            Sesi Kelas
+                            Sesi kelas
                           </a>
                           {" digantikan oleh " + notification.isi["pengganti"]}
                         </div>
@@ -235,8 +235,9 @@ export const Notification = ({ data, onUpdate }) => {
               </li>
             ))}
           </ul>
+          )}
         </div>
-      )}
     </div>
   );
 };
+
