@@ -25,12 +25,8 @@ export const StatsAkad = () => {
     refetch();
   }, [refetch]);
 
-  const handleKelas = () => {
-    window.location.href = "/kelas";
-  };
-
-  const handlePerubahanKelas = () => {
-    window.location.href = `/perubahan-kelas`;
+  const handleFeedback = () => {
+    window.location.href = "/feedback";
   };
 
   return (
@@ -58,7 +54,7 @@ export const StatsAkad = () => {
           <button
             style={InterMedium.style}
             className={`px-5 py-3 mt-3 ${styles.btn} ${styles.btn_tx} text-white hover:bg-[#215E9B] focus:bg-[#215E9B] px-3`}
-            onClick={handleKelas}
+            onClick={handleFeedback}
           >
             Lihat Daftar Feedback
           </button>
