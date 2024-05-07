@@ -7,6 +7,7 @@ import { DataTable as DataTableMurid } from "./murid-data-table";
 import { columns as ColumnsMurid } from "./columns";
 import { useAuthContext } from "../../../common/utils/authContext";
 import Link from "next/link";
+import styles from "./MuridTable.module.css";
 
 export const MuridTable = () => {
   const fetchWithToken = useFetchWithToken();
@@ -23,9 +24,9 @@ export const MuridTable = () => {
   const listMurid: MuridRead[] = data.content;
 
   return (
-    <div className="flex flex-col space-y-8 my-10">
+    <div className="flex flex-col space-y-8">
       <div className="flex flex-row items-center justify-between">
-        <h1 className=" flex justify-start text-6xl font-bold text-neutral/100 ">
+        <h1 className={` ${styles.heading} text-xl font-bold my-10 `}>
           Daftar Murid
         </h1>
         <Link href="/murid/add">
