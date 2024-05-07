@@ -4,19 +4,28 @@ import { useRouter } from "next/navigation";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import styles from ".././DetailUser/DetailUser.module.css";
 import { PoppinsBold } from "../../font/font";
+import { useFetchRatingByPengajar } from "../../common/hooks/feedback/useFetchRatingByPengajar";
 
 export const FormFeedback = ({ data }) => {
   const fetchWithToken = useFetchWithToken();
-  const [error, setError] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const [success, setSuccess] = useState("");
   const router = useRouter();
+  const {
+    isLoading: listAllRating,
+    error,
+    rating,
+    refetch,
+  } = useFetchRatingByPengajar(data.idPengajar);
   const [formState, setFormState] = useState({
     id: data.id,
     isi: "",
     rating: 0,
   });
 
-  console.log(formState);
+  let listRatingMurid = rating.listRatingMurid;
+
+  console.log(listRatingMurid);
 
   useEffect(() => {
     if (data) {
@@ -49,8 +58,8 @@ export const FormFeedback = ({ data }) => {
         setSuccess("");
         router.push("/feedback");
       }, 1000);
-    } catch (error) {
-      setError(error.message);
+    } catch (errorMsg) {
+      setErrorMsg(errorMsg.message);
     }
   };
 
@@ -62,6 +71,31 @@ export const FormFeedback = ({ data }) => {
       >
         Isi Feedback
       </div>
+
+      {/* Table displaying rating data */}
+      <table className="w-full mb-4">
+        <thead>
+          <tr>
+            <th>Nama Program</th>
+            <th>Jenis Kelas</th>
+            <th>Rating</th>
+            <th>Link Playlist</th>
+          </tr>
+        </thead>
+        <tbody>
+          {listRatingMurid &&
+            listRatingMurid.map((ratingMurid, idx) => (
+              <tr key={idx}>
+                <td>{ratingMurid.program.nama}</td>
+                <td>{ratingMurid.jenisKelas.nama}</td>
+                <td>{ratingMurid.rating}</td>
+                <td>{ratingMurid.linkPlaylist}</td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
+
+      {/* Feedback form */}
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label htmlFor="isi" className="block mb-1">
@@ -101,7 +135,7 @@ export const FormFeedback = ({ data }) => {
             Submit
           </button>
         </div>
-        {error && <div className="text-red-500">{error}</div>}
+        {errorMsg && <div className="text-red-500">{errorMsg}</div>}
         {success && <div className="text-green-500">{success}</div>}
       </form>
     </div>

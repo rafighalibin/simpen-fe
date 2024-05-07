@@ -1,18 +1,27 @@
 import React, { useState } from "react";
-import {
-  PoppinsBold,
-  PoppinsMedium,
-  InterMedium,
-  InterReguler,
-} from "../../font/font";
-import styles from "./Notification.module.css";
-import { useMutation } from "react-query";
-import useFetchWithToken from "../hooks/fetchWithToken";
+import styles from "./dashboard.module.css";
+import { PoppinsBold, PoppinsMedium, InterMedium, InterReguler } from "../../font/font";
+import { FiBell } from "react-icons/fi";
+import useFetchWithToken from "../../common/hooks/fetchWithToken";
 
 export const Notification = ({ data, onUpdate }) => {
   const fetchWithToken = useFetchWithToken();
   const [notifications, setNotifications] = useState(data);
-  const [formState, setFormState] = useState();
+
+  const months = [
+    "Januari",
+    "Februari",
+    "Maret",
+    "April",
+    "Mei",
+    "Juni",
+    "Juli",
+    "Agustus",
+    "September",
+    "Oktober",
+    "November",
+    "Desember",
+  ];
 
   notifications.sort((a, b) => {
     const dateA = new Date(
@@ -79,47 +88,53 @@ export const Notification = ({ data, onUpdate }) => {
   }
 
   return (
-    <div className="px-4 text-16px md:block hidden relative  ">
-      <div className="flex items-center"></div>
-      {notifications.length > 0 && (
-        <div className="absolute z-10 top-full right-10 mt-3 bg-white border border-gray-200 rounded-lg shadow-md max-h-[3  0vh] overflow-y-auto">
+    <div className={`${styles.card4}`}>
+      <div className="flex items-center p-4 ml-2 align-middle">
+        <div>
+          <FiBell size={32} className="align-middle mt-2 ml-4" /> {/* Profile icon */}
+        </div>
           <div
-            className={`pl-2 pt-2 ${styles.title} text-center`}
-            style={PoppinsMedium.style}
+            style={PoppinsBold.style}
+            className={`${styles.heading_announcement} ml-5 mt-4 mb-2`}
           >
-            Notifikasi untuk Anda
+            Notifikasi
           </div>
-          <ul className="pt-2">
+        </div>
+        <div className="overflow-y-auto overflow-x-hidden max-h-[65vh]">
+          {!notifications || notifications.length === 0 ? (
+            <div className="mt-5 ml-5 align-center items-center text-center">Tidak ada Notifikasi.</div>
+          ) : (
+            <ul className="">
             {notifications.map((notification, index) => (
               <li
                 key={index}
-                className={`p-2 border border-gray-200 ${
+                className={`${styles.card3} ${
                   !notification.opened ? "bg-[#e6f2ff] " : "bg-white"
-                } hover:bg-[#fff8e1] focus:bg-[#fff8e1]`}
+                } hover:bg-[#A8D4FF] focus:bg-[#A8D4FF]`}
                 onClick={() => handleIsOpened(notification.id)}
                 style={{ cursor: "pointer" }}
               >
-                <div>
+                <div className={`ml-10 mt-3 mr-5 mb-3`}>
                   <div
                     style={PoppinsBold.style}
                     className={`${styles.heading}`}
                   >
-                    {notification.tipe === 1 && <div>Assign Kelas</div>}
-                    {notification.tipe === 2 && <div>Feedback Akademik</div>}
+                    {notification.tipe === 1 && <div className={`text-[#215E9B]`}>Assign Kelas</div>}
+                    {notification.tipe === 2 && <div className={`text-[#215E9B]`}>Feedback Akademik</div>}
                     {notification.tipe === 3 && (
-                      <div>Permintaan Perubahan Jadwal</div>
+                      <div className={`text-[#215E9B]`}>Permintaan Perubahan Jadwal</div>
                     )}
                     {notification.tipe === 4 && (
-                      <div>Permintaan Pengajar Pengganti</div>
+                      <div className={`text-[#215E9B]`}>Permintaan Pengajar Pengganti</div>
                     )}
                     {notification.tipe === 5 && (
-                      <div>Permintaan Perubahan Jadwal</div>
+                      <div className={`text-[#215E9B]`}>Permintaan Perubahan Jadwal</div>
                     )}
                     {notification.tipe === 6 && (
-                      <div>Permintaan Pengajar Pengganti</div>
+                      <div className={`text-[#215E9B]`}>Permintaan Pengajar Pengganti</div>
                     )}
-                    {notification.tipe === 7 && <div>Assign PIC Akademik</div>}
-                    {notification.tipe === 8 && <div>Akun Tidak Aktif</div>}
+                    {notification.tipe === 7 && <div className={`text-[#215E9B]`}>Assign PIC Akademik</div>}
+                    {notification.tipe === 8 && <div className={`text-[#215E9B]`}>Akun Tidak Aktif</div>}
                   </div>
                   <div
                     className={`${styles.paragraph}`}
@@ -131,9 +146,10 @@ export const Notification = ({ data, onUpdate }) => {
 
                         <a
                           href={`/kelas/${notification.isi["idKelas"]}`}
-                          className="hover:text-blue-500 focus:text-blue-500"
+                          className="hover:text-blue-500 focus:text-blue-500 text-[#215E9B]"
+                          style={PoppinsBold.style}
                         >
-                          Kelas baru
+                          Kelas Baru
                         </a>
                       </div>
                     )}
@@ -141,17 +157,7 @@ export const Notification = ({ data, onUpdate }) => {
                       <div>
                         <a
                           href={`/feedback/${notification.isi["feedbackId"]}`}
-                          className="hover:text-blue-500 focus:text-blue-500"
-                        >
-                          {notification.judul}
-                        </a>
-                      </div>
-                    )}
-                    {notification.tipe === 2 && (
-                      <div>
-                        <a
-                          href={`/feedback/${notification.isi["feedbackId"]}`}
-                          className="hover:text-blue-500 focus:text-blue-500"
+                          className="hover:text-blue-500 focus:text-blue-500 text-[#215E9B]"
                         >
                           {notification.judul}
                         </a>
@@ -163,7 +169,7 @@ export const Notification = ({ data, onUpdate }) => {
                           {"Permintaan perubahan "}
                           <a
                             href={`/sesi/${notification.isi["sesiKelas"]}`}
-                            className="hover:text-blue-500 focus:text-blue-500"
+                            className="hover:text-blue-500 focus:text-blue-500 text-[#215E9B]"
                           >
                             Sesi Kelas
                           </a>
@@ -179,7 +185,7 @@ export const Notification = ({ data, onUpdate }) => {
                         <div>
                           <a
                             href={`/sesi/${notification.isi["sesiKelas"]}`}
-                            className="hover:text-blue-500 focus:text-blue-500"
+                            className="hover:text-blue-500 focus:text-blue-500 text-[#215E9B]"
                           >
                             Sesi Kelas
                           </a>
@@ -232,9 +238,9 @@ export const Notification = ({ data, onUpdate }) => {
                     style={InterReguler.style}
                   >
                     {notification.tanggalPembuatan[2] +
-                      "-" +
-                      notification.tanggalPembuatan[1] +
-                      "-" +
+                      " " +
+                      months[notification.tanggalPembuatan[1] - 1] +
+                      " " +
                       notification.tanggalPembuatan[0] +
                       " pada " +
                       notification.tanggalPembuatan[3] +
@@ -245,8 +251,9 @@ export const Notification = ({ data, onUpdate }) => {
               </li>
             ))}
           </ul>
+          )}
         </div>
-      )}
     </div>
   );
 };
+

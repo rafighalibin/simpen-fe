@@ -133,6 +133,7 @@ return (
                         Jumlah Pertemuan
                     </div>
                     <input
+                        disabled
                         id="jumlah-pertemuan"
                         name="jumlah-pertemuan"
                         type="jumlah-pertemuan"

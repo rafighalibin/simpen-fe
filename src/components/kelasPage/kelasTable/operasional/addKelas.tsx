@@ -12,14 +12,16 @@ import { MuridDetail, MuridSelect } from "../../../../common/types/murid";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "../../../../common/utils/authContext";
 import { set } from "react-hook-form";
-import { InterMedium } from "../../../../font/font";
+import { InterMedium, InterReguler } from "../../../../font/font";
 import styles from "./addKelas.module.css";
+import { get } from "http";
 
 const AddKelas = () => {
   const queryClient = useQueryClient();
   const fetchWithToken = useFetchWithToken();
   const { pengguna } = useAuthContext();
 
+  const [error, setError] = useState("");
   const router = useRouter();
 
   const [programId, setProgramId] = useState("");
@@ -50,8 +52,15 @@ const AddKelas = () => {
   const [muridSelected, setMuridSelected] = useState<MuridSelect[]>([]);
   const [muridValues, setMuridValues] = useState([]);
 
-  const [level, setLevel] = useState(0);
+  const [level, setLevel] = useState(1);
+
   const [platform, setPlatform] = useState("");
+  const [listCabang, setListCabang] = useState([]);
+  const [cabang, setCabang] = useState("");
+
+  const [listRuangan, setListRuangan] = useState([]);
+  const [ruangan, setRuangan] = useState("");
+
   const [linkGroup, setLinkGroup] = useState("");
 
   const payload = {
@@ -91,7 +100,7 @@ const AddKelas = () => {
     setMuridValues(murid);
   };
 
-  const { mutateAsync: addKelasMutation, data, error} = useMutation({
+  const { mutateAsync: addKelasMutation, data, error: errorAddKelas} = useMutation({
     mutationFn: () =>
       fetchWithToken("/kelas", "POST", payload).then((res) => res.json()),
     onSuccess: (data) => {
@@ -123,7 +132,7 @@ const AddKelas = () => {
     },
   });
 
-  const {} = useQuery({
+  const { isLoading: isLoadingMurid, data: dataMurid} = useQuery({
     queryKey: ["listMurid"],
     queryFn: () => fetchWithToken("/murid").then((res) => res.json()),
     onSuccess: (listMurid) => {
@@ -140,6 +149,7 @@ const AddKelas = () => {
     tipe: tipe,
     bahasa : bahasa,
     modaPertemuan: modaPertemuan,
+    programId : programId,
   };
 
   const {isLoading: isLoadingJenisAttributes, data: dataJenisAttributes, refetch: getJenisKelas,} = useQuery({
@@ -152,9 +162,18 @@ const AddKelas = () => {
       ).then((res) => res.json()),
     onSuccess: (data) => {
       console.log(data);
-      const jenisKelas = data.content as JenisKelas;
-      setJenisKelas(jenisKelas);
-      setJenisKelasId(jenisKelas.id);
+      if(data.content.hasFee == true){
+        setError("");
+        const jenisKelas = data.content as JenisKelas;
+        console.log("jenisKelas" + jenisKelas);
+        setJenisKelas(jenisKelas);
+        setJenisKelasId(jenisKelas.id);
+      } else {
+        setError("Jenis Kelas belum memiliki fee, silahkan menambahkan fee terlebih dahulu!");
+      }
+    },
+    onError: (error) => {
+      console.log(error);
     },
     enabled: !!jenisKelasNama && !!tipe && !!modaPertemuan && !!bahasa,
   });
@@ -180,11 +199,7 @@ const AddKelas = () => {
     enabled: !!jenisKelasNama,
   });
 
-  const {
-    isLoading: isLoadingJenis,
-    data: dataListJenisKelas,
-    refetch: getListJenisKelas,
-  } = useQuery({
+  const {isLoading: isLoadingJenis, data: dataListJenisKelas, refetch: getListJenisKelas,} = useQuery({
     queryKey: ["listJenis", programId],
     queryFn: () =>
       fetchWithToken(`/kelas/program/${programId}/jenis-kelas`, "GET").then(
@@ -198,6 +213,33 @@ const AddKelas = () => {
       setListJenisKelas(listJenisKelasTemp);
     },
     enabled: !!programId,
+  });
+
+  const {isLoading: isLoadingCabang, data: dataCabang, refetch: getCabang} = useQuery({
+    queryKey: ["cabang"],
+    queryFn: () => fetchWithToken("/platform?ruangan&cabang", "GET").then((res) => res.json()),
+    onSuccess: (data) => {
+      const listCabangTemp = data.content.map((cabang) => ({
+        value: cabang,
+        label: cabang,
+      }));
+      setListCabang(listCabangTemp);
+    },
+    enabled: !!modaPertemuan,
+  });
+
+  const {isLoading: isLoadingRuangan, data: dataRuangan, refetch: getRuangan} = useQuery({
+    queryKey: ["ruangan"],
+    queryFn: () => fetchWithToken(`/platform/ruangan/${cabang}`, "GET").then((res) => res.json()),
+    onSuccess: (data) => {
+      console.log(data)
+      const listRuanganTemp = data.content.map((ruangan) => ({
+        value: ruangan.id,
+        label: ruangan.nama,
+      }));
+      setListRuangan(listRuanganTemp);
+    },
+    enabled: !!cabang,
   });
 
   const handleDayChange = (dayId) => {
@@ -258,7 +300,6 @@ const AddKelas = () => {
     }
   };
   
-
   useEffect(() => {
     generateClassDates();
   }, [selectedDays, selectedTime, tanggalMulai]);
@@ -281,12 +322,12 @@ const AddKelas = () => {
       getJenisKelas();
     }
   }, [bahasa, tipe, modaPertemuan]);
-
+  
   useEffect(() => {
-    if (jenisKelasId) {
-      console.log(jenisKelasId);
+    if (cabang) {
+      getRuangan();
     }
-  }, [jenisKelasId]);
+  }, [cabang]);
 
   const handleChangeProgram = (e) => {
     const selectedProgramId = e.value;
@@ -309,11 +350,28 @@ const AddKelas = () => {
     setJenisKelasId(e.value);
   }
 
+  const handleChangeModaPertemuan = (e) => {
+    getCabang();
+    setModaPertemuan(e);
+  }
+
+  const handleCabangChange = (e) => {
+    setCabang(e.value);
+  }
+
+  const handleChangePlatform = (e) => {
+    setPlatform(e.value);
+  }
+
   return (
     <div>
       {isLoadingProgram ||
       isLoadingJenis ||
       isLoadingJenisAttributes ||
+      isLoadingJenisKelas ||
+      isLoadingCabang ||
+      isLoadingMurid ||
+      isLoadingRuangan ||
       listUserLoading ? (
         <div className="loading-overlay">
           <div className="spinner"></div>
@@ -445,7 +503,7 @@ const AddKelas = () => {
                   name="moda_pertemuan"
                   value={modaItem}
                   onChange={(e) => {
-                    setModaPertemuan(e.target.value);
+                    handleChangeModaPertemuan(e.target.value);
                   }}
                   className="mr-1"
                 />
@@ -476,6 +534,18 @@ const AddKelas = () => {
                   </label>
               </div>
             ))}
+          </div>
+
+          
+          <div className="mt-5">
+            {error && (
+              <div
+                className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2"
+                style={InterReguler.style}
+              >
+                {error}
+              </div>
+            )}
           </div>
 
           <div className="form-control flex flex-row">
@@ -685,16 +755,58 @@ const AddKelas = () => {
             />
           </div>
 
-          <div className="form-control">
-            <label className="label">Platform</label>
-            <input
-              required
-              type="text"
-              className="bg-base mt-1 p-2 w-full border rounded-md"
-              value={platform}
-              onChange={(e) => setPlatform(e.target.value)}
-            />
-          </div>
+          {modaPertemuan === "OFFLINE" && (
+            <div className="">
+              <div>
+                <label className="label">Cabang</label>
+                <Select
+                  required
+                  defaultValue={cabang}
+                  name="colors"
+                  onChange={handleCabangChange}
+                  options={listCabang}
+                  className="bg-base mt-1 p-1 w-full border rounded-md"
+                  classNamePrefix="select"
+                  styles={{
+                    control: (provided) => ({
+                      ...provided,
+                      border: "none",
+                      boxShadow: "none",
+                      backgroundColor: "none",
+                    }),
+                    multiValue: (provided) => ({
+                      ...provided,
+                      backgroundColor: "#EDF6FF",
+                    }),
+                  }}
+                />
+              </div>
+              <div className="form-control mt-6">
+                <label className="label">Ruangan</label>
+                <Select
+                  required
+                  defaultValue={ruangan}
+                  name="colors"
+                  onChange={handleChangePlatform}
+                  options={listRuangan}
+                  className="bg-base mt-1 p-1 w-full border rounded-md"
+                  classNamePrefix="select"
+                  styles={{
+                    control: (provided) => ({
+                      ...provided,
+                      border: "none",
+                      boxShadow: "none",
+                      backgroundColor: "none",
+                    }),
+                    multiValue: (provided) => ({
+                      ...provided,
+                      backgroundColor: "#EDF6FF",
+                    }),
+                  }}
+                  />
+              </div>
+            </div>
+          )}
 
           <div className="form-control">
             <label className="label">Link Group</label>
@@ -709,7 +821,8 @@ const AddKelas = () => {
 
           <button
             type="submit"
-            className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
+            className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover disabled:bg-neutral/20 disabled:cursor-not-allowed"
+            disabled={ error != "" ? true : false}
           >
             Buat Kelas
           </button>

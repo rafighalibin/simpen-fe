@@ -7,8 +7,13 @@ import { InterMedium, PoppinsBold } from "../../font/font";
 import Loading from "../../app/loading";
 import { SearchPengajar } from "./SearchPengajar";
 import { useRouter } from "next/navigation";
+import useFetchWithToken from "../../common/hooks/fetchWithToken";
+
+import { useMutation } from "react-query";
 
 export const FeedbackListTable = () => {
+  const fetchWithToken = useFetchWithToken();
+
   const {
     isLoading: listAllFeedbackLoading,
     error,
@@ -106,6 +111,18 @@ export const FeedbackListTable = () => {
     router.push(`/feedback/${feedbackId}`);
   };
 
+  const { mutateAsync: deleteMutation } = useMutation({
+    mutationFn: (id) =>
+      fetchWithToken(`/feedback/${id}`, "DELETE").then((res) => res.json),
+  });
+
+  const handleDelete = async (feedback) => {
+    if (window.confirm("Apa anda yakin ingin menghapus?")) {
+      await deleteMutation(feedback.id);
+      router.push("/user");
+    }
+  };
+
   return (
     <div>
       <div
@@ -169,6 +186,10 @@ export const FeedbackListTable = () => {
                       className="px-4 py-4 text-left hidden md:table-cell"
                       style={InterMedium.style}
                     ></th>
+                    <th
+                      className="px-4 py-4 text-left hidden md:table-cell"
+                      style={InterMedium.style}
+                    ></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -219,6 +240,14 @@ export const FeedbackListTable = () => {
                               Ubah Feedback
                             </button>
                           )}
+                        </td>
+                        <td className="border-b px-4 py-5 md:table-cell hidden">
+                          <button
+                            onClick={() => handleDelete(feedback)}
+                            className={`bg-transparent hover:bg-[#215E9B] text-[#215E9B] focus:bg-[#215E9B] focus:text-white hover:text-white py-2 px-4 border border-[#215E9B] hover:border-transparent rounded-full`}
+                          >
+                            Hapus
+                          </button>
                         </td>
                       </tr>
                     ))}
