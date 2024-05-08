@@ -5,7 +5,7 @@ import useFetchAllFeedback from "../../common/hooks/feedback/useFetchAllFeedback
 import styles from "./FeedbackListTable.module.css";
 import { InterMedium, PoppinsBold } from "../../font/font";
 import Loading from "../../app/loading";
-import { SearchPengajar } from "./SearchPengajar";
+import { SearchPengajar } from "./SearchFeedback";
 import { useRouter } from "next/navigation";
 
 export const FeedbackListTable = () => {

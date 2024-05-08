@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import styles from "./FeedbackListTable.module.css";
 import { InterMedium, PoppinsBold } from "../../font/font";
 import Loading from "../../app/loading";
-import { SearchPengajar } from "./SearchPengajar";
+import { SearchFeedback } from "./SearchFeedback";
 import { useRouter } from "next/navigation";
 import useFetchAllFeedbackPengajar from "../../common/hooks/feedback/useFetchAllFeedbackPengajar";
 import { useAuthContext } from "../../common/utils/authContext";
@@ -117,7 +117,7 @@ export const FeedbackListPengajarTable = () => {
         Daftar Feedback Pengajar
       </div>
       <div>
-        <SearchPengajar sQ={searchQuery} ssQ={setSearchQuery} />
+        <SearchFeedback sQ={searchQuery} ssQ={setSearchQuery} />
       </div>
       <div>
         {!filteredFeedbacks ? (
