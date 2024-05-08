@@ -61,7 +61,6 @@ const Absen = () => {
     tanggalSelesai,
     pengajarId,
     linkGroup,
-    linkPlaylist,
     listMurid,
     level,
     platform,
@@ -248,7 +247,7 @@ const Absen = () => {
               className="bg-info text-white px-4  rounded-md hover:bg-infoHover"
               onClick={(e) => handleSubmitPlaylist()}
             >
-              Update Playlist
+              Update
             </button>
           </div>
           <div className="mt-5">

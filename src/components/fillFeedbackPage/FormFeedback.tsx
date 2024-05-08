@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useMutation } from "react-query";
 import { useRouter } from "next/navigation";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
-import styles from ".././DetailUser/DetailUser.module.css";
+import styles from "./FormFeedback.module.css";
 import { PoppinsBold } from "../../font/font";
 import { useFetchRatingByPengajar } from "../../common/hooks/feedback/useFetchRatingByPengajar";
 
@@ -80,6 +80,7 @@ export const FormFeedback = ({ data }) => {
             <th>Jenis Kelas</th>
             <th>Rating</th>
             <th>Link Playlist</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -90,6 +91,13 @@ export const FormFeedback = ({ data }) => {
                 <td>{ratingMurid.jenisKelas.nama}</td>
                 <td>{ratingMurid.rating}</td>
                 <td>{ratingMurid.linkPlaylist}</td>
+                <td>
+                <a href={`https://${ratingMurid.linkPlaylist}`} target="_blank">
+                <button className="bg-info text-white text-nowrap mt-1 px-4 py-2 rounded-md hover:bg-infoHover">
+                  Open Playlist
+                </button>
+                </a>
+                </td>
               </tr>
             ))}
         </tbody>

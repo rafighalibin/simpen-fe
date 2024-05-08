@@ -14,6 +14,7 @@ import { useAuthContext } from "../../common/utils/authContext";
 const DetailKelas = () => {
   const fetchWithToken = useFetchWithToken();
   const { id } = useParams();
+  const [playlistKelas, setPlaylistKelas] = useState(null);
   const { pengguna: userLoggedIn } = useAuthContext();
   const router = useRouter();
   const [muridRendered, setMuridRendered] = useState(false);
@@ -26,6 +27,7 @@ const DetailKelas = () => {
         window.alert(data.message);
         router.push("/dashboard");
       }
+      setPlaylistKelas(data.content.linkPlaylist);
       data.content.listMurid.forEach((e) => {
         muridSelected.push({
           value: e,
@@ -66,6 +68,7 @@ const DetailKelas = () => {
     tanggalSelesai,
     pengajarId,
     linkGroup,
+    linkPlaylist,
     listMurid,
     level,
     zoom,
@@ -86,6 +89,7 @@ const DetailKelas = () => {
       await deleteMutation();
     }
   };
+
   return (
     <div>
       <h1 className=" flex justify-center text-5xl font-bold text-neutral/100 my-10">
@@ -208,6 +212,27 @@ const DetailKelas = () => {
             className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full rounded-md"
           />
         </div>
+
+        {playlistKelas !== null && (
+          <div>
+            <label className="block font-medium text-neutral/70">
+              Link Playlist
+            </label>
+            <div className="flex space-x-4">
+              <input
+                disabled
+                type="text"
+                value={playlistKelas}
+                className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full rounded-md"
+              />
+              <a href={`https://${playlistKelas}`} target="_blank">
+                <button className="bg-info text-white text-nowrap mt-1 px-4 py-2 rounded-md hover:bg-infoHover">
+                  Open Playlist
+                </button>
+              </a>
+            </div>
+          </div>
+        )}
 
         <div className="p-2">
           <DataTableMurid

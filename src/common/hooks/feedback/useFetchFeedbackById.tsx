@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import useFetchWithToken from "../fetchWithToken";
-import { User } from "../../types/user";
 import { useQuery } from "react-query";
 import { Feedback } from "../../types/feedback";
 
