@@ -6,36 +6,46 @@ import styles from "./FormFeedback.module.css";
 import { InterMedium, PoppinsBold } from "../../font/font";
 import { useFetchRatingByPengajar } from "../../common/hooks/feedback/useFetchRatingByPengajar";
 
-export const FormFeedback = ({ data }) => {
+export const FormFeedback = ({ data: dataPass }) => {
   const fetchWithToken = useFetchWithToken();
   const [errorMsg, setErrorMsg] = useState("");
+  const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [rating, setRating] = useState(null);
   const router = useRouter();
-  const {
-    isLoading: listAllRating,
-    error,
-    rating,
-    refetch,
-  } = useFetchRatingByPengajar(data.idPengajar);
   const [formState, setFormState] = useState({
-    id: data.id,
+    id: dataPass.id,
     isi: "",
     rating: 0,
   });
 
-  let listRatingMurid = rating.listRatingMurid;
+  useEffect(() => {
+    const fetchRating = async () => {
+      try {
+        const response = await fetchWithToken(`/rating/${dataPass.idPengajar}`); // Use dynamic endpoint based on `id`
+        const data = await response.json();
+        if (response.ok) {
+          setRating(data.content);
+        } else {
+          throw new Error(data.message || "Failed to fetch data");
+        }
+      } catch (error) {
+        setErrorMsg("Failed to fetch jenis kelas detail: " + error.message);
+      }
+    };
 
-  console.log(listRatingMurid);
+    fetchRating();
+  }, [dataPass]);
 
   useEffect(() => {
-    if (data) {
+    if (dataPass) {
       setFormState({
-        id: data.id,
-        rating: data.rating || 0,
-        isi: data.isi || "",
+        id: dataPass.id,
+        rating: dataPass.rating || 0,
+        isi: dataPass.isi || "",
       });
     }
-  }, [data]);
+  }, [dataPass]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -58,8 +68,8 @@ export const FormFeedback = ({ data }) => {
         setSuccess("");
         window.location.href = "/feedback"
       }, 1000);
-    } catch (errorMsg) {
-      setErrorMsg(errorMsg.message);
+    } catch (error) {
+      setError(error.message);
     }
   };
 
@@ -97,8 +107,7 @@ export const FormFeedback = ({ data }) => {
           </tr>
         </thead>
         <tbody>
-          {listRatingMurid &&
-            listRatingMurid.map((ratingMurid, idx) => (
+        {rating && rating.listRatingMurid.sort((a, b) => b.tanggalSelesai - a.tanggalSelesai).map((ratingMurid, idx) => (
               <tr key={idx}>
                 <td className="border-b px-4 py-2 text-center">{idx + 1}</td>
                 <td className="border-b px-4 py-4 text-left">{ratingMurid.program.nama}</td>
@@ -162,7 +171,6 @@ export const FormFeedback = ({ data }) => {
             Unggah Feedback
           </button>
         </div>
-        {error && <div className="text-red-500">{error}</div>}
         {success && <div className="text-green-500">{success}</div>}
         </div>
       </form>

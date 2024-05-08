@@ -6,19 +6,30 @@ import styles from "./FormFeedback.module.css";
 import { InterMedium, PoppinsBold } from "../../font/font";
 import { useFetchRatingByPengajar } from "../../common/hooks/feedback/useFetchRatingByPengajar";
 
-export const DetailFeedback = ({ data }) => {
+export const DetailFeedback = ({ data: dataPass }) => {
   const fetchWithToken = useFetchWithToken();
   const [errorMsg, setErrorMsg] = useState("");
   const [success, setSuccess] = useState("");
+  const [rating, setRating] = useState(null);
   const router = useRouter();
-  const {
-    isLoading: listAllRating,
-    error,
-    rating,
-    refetch,
-  } = useFetchRatingByPengajar(data.idPengajar);
 
-  let listRatingMurid = rating.listRatingMurid;
+  useEffect(() => {
+    const fetchRating = async () => {
+      try {
+        const response = await fetchWithToken(`/rating/${dataPass.idPengajar}`); // Use dynamic endpoint based on `id`
+        const data = await response.json();
+        if (response.ok) {
+          setRating(data.content);
+        } else {
+          throw new Error(data.message || "Failed to fetch data");
+        }
+      } catch (error) {
+        setErrorMsg("Failed to fetch jenis kelas detail: " + error.message);
+      }
+    };
+
+    fetchRating();
+  }, [dataPass]); // Add dataPass.idPengajar as a dependency
 
   // Function to convert timestamps to readable dates
   const formatDate = (timestamp) => {
@@ -55,8 +66,7 @@ export const DetailFeedback = ({ data }) => {
           </tr>
         </thead>
         <tbody>
-          {listRatingMurid &&
-            listRatingMurid.map((ratingMurid, idx) => (
+          {rating && rating.listRatingMurid.sort((a, b) => b.tanggalSelesai - a.tanggalSelesai).map((ratingMurid, idx) => (
               <tr key={idx}>
                 <td className="border-b px-4 py-2 text-center">{idx + 1}</td>
                 <td className="border-b px-4 py-4 text-left">{ratingMurid.program.nama}</td>
@@ -93,7 +103,7 @@ export const DetailFeedback = ({ data }) => {
                 type="text"
                 name="namaKelas"
                 id="namaKelas"
-                value={data?.namaProgram}
+                value={rating?.namaPengajar}
                 disabled
                 className="w-full px-3 py-2 border rounded"
               />
@@ -109,7 +119,7 @@ export const DetailFeedback = ({ data }) => {
                 type="text"
                 name="rating"
                 id="rating"
-                value={data.rating}
+                value={dataPass.rating}
                 disabled
                 className="w-full px-3 py-2 border rounded"
               />
@@ -126,7 +136,7 @@ export const DetailFeedback = ({ data }) => {
               <textarea
                 name="isi"
                 id="isi"
-                value={data.isi}
+                value={dataPass.isi}
                 disabled
                 className="w-full px-3 py-2 border rounded"
               />

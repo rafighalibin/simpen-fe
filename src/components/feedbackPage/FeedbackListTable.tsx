@@ -5,7 +5,7 @@ import useFetchAllFeedback from "../../common/hooks/feedback/useFetchAllFeedback
 import styles from "./FeedbackListTable.module.css";
 import { InterMedium, PoppinsBold } from "../../font/font";
 import Loading from "../../app/loading";
-import { SearchPengajar } from "./SearchFeedback";
+import { SearchFeedback } from "./SearchFeedback";
 import { useRouter } from "next/navigation";
 
 export const FeedbackListTable = () => {
@@ -115,7 +115,7 @@ export const FeedbackListTable = () => {
         Daftar Feedback
       </div>
       <div>
-        <SearchPengajar sQ={searchQuery} ssQ={setSearchQuery} />
+        <SearchFeedback sQ={searchQuery} ssQ={setSearchQuery} />
       </div>
       <div>
         {!filteredFeedbacks ? (
