@@ -18,6 +18,7 @@ export type Kelas = {
   tanggalSelesai: string;
   pengajarId: number;
   linkGroup: string;
+  linkPlaylist: string;
   listMurid: string;
   level: string;
   platform: string;

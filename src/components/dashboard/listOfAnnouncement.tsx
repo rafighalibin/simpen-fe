@@ -362,7 +362,7 @@ export const ListOfAnnouncement = ({ data }) => {
               </div>
               <button
                 type="submit"
-                className={`px-4 py-2 ${styles.upload_button} mt-8 mb-6 text-white px-2 py-1 hover:bg-[#215E9B] focus:bg-[#215E9B]`}
+                className={`px-4 py-2 ${styles.upload_button} mt-8 mb-6 text-white hover:bg-[#215E9B] focus:bg-[#215E9B]`}
               >
                 Unggah Pengumuman
               </button>

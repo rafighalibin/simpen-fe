@@ -100,13 +100,13 @@ export const Notification = ({ data, onUpdate }) => {
             Notifikasi
           </div>
         </div>
-        <div className="overflow-y-auto overflow-x-hidden max-h-[65vh]">
+        <div className="overflow-y-auto overflow-x-hidden max-h-[50vh]">
           {!notifications || notifications.length === 0 ? (
             <div className="mt-5 ml-5 align-center items-center text-center">Tidak ada Notifikasi.</div>
           ) : (
-            <ul className="">
+            <div className="overflow-y-auto overflow-x-hidden max-h-[65vh]">
             {notifications.map((notification, index) => (
-              <li
+              <div
                 key={index}
                 className={`${styles.card3} ${
                   !notification.opened ? "bg-[#e6f2ff] " : "bg-white"
@@ -248,9 +248,9 @@ export const Notification = ({ data, onUpdate }) => {
                       notification.tanggalPembuatan[4]}
                   </div>
                 </div>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
           )}
         </div>
     </div>

@@ -1,8 +1,8 @@
 import React, { useRef, useState } from "react";
 import { InterReguler } from "../../font/font";
-import styles from "./SearchPengajar.module.css";
+import styles from "./SearchFeedback.module.css";
 
-export const SearchPengajar = (props) => {
+export const SearchFeedback = (props) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const timeout = useRef(null);
@@ -32,7 +32,7 @@ export const SearchPengajar = (props) => {
       >
         <input
           type="text"
-          placeholder=" Cari Pengajar"
+          placeholder=" Cari Feedback Pengajar"
           value={searchQuery}
           onChange={handleSearchChange}
           className={`flex-grow sm:px-2 sm:py-2 p-1 ${styles.placeholder} ${styles.field}`}
