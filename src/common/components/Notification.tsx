@@ -147,6 +147,16 @@ export const Notification = ({ data, onUpdate }) => {
                         </a>
                       </div>
                     )}
+                    {notification.tipe === 2 && (
+                      <div>
+                        <a
+                          href={`/feedback/${notification.isi["feedbackId"]}`}
+                          className="hover:text-blue-500 focus:text-blue-500"
+                        >
+                          {notification.judul}
+                        </a>
+                      </div>
+                    )}
                     {notification.tipe === 3 &&
                       notification.isi["status"] == "disetujui" && (
                         <div>

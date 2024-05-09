@@ -5,9 +5,10 @@ import React, { useEffect } from "react";
 import { useFetchFeedbackById } from "../../../common/hooks/feedback/useFetchFeedbackById";
 import { Breadcrumbs } from "../../../components/breadcrumbs/breadcrumbs";
 import Loading from "../../loading";
-import { FormFeedback } from "../../../components/fillFeedbackPage/FormFeedback";
+import { DetailFeedback } from "../../../components/feedbackPage/DetailFeedback";
 
-const FeedbackFillPage = () => {
+
+const FeedbackDetailPage = () => {
   const { id } = useParams();
   const {
     isLoading: feedbackoading,
@@ -30,9 +31,9 @@ const FeedbackFillPage = () => {
   return (
     <div className="px-[8vw] py-8">
       <Breadcrumbs excludeId={true} />
-      {feedbackoading ? <Loading /> : <FormFeedback data={feedback} />}
+      {feedbackoading ? <Loading /> : <DetailFeedback data={feedback} />}
     </div>
   );
 };
 
-export default FeedbackFillPage;
+export default FeedbackDetailPage;

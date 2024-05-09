@@ -1,20 +1,22 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import useFetchAllFeedback from "../../common/hooks/feedback/useFetchAllFeedback";
 import styles from "./FeedbackListTable.module.css";
 import { InterMedium, PoppinsBold } from "../../font/font";
 import Loading from "../../app/loading";
-import { SearchPengajar } from "./SearchPengajar";
+import { SearchFeedback } from "./SearchFeedback";
 import { useRouter } from "next/navigation";
+import useFetchAllFeedbackPengajar from "../../common/hooks/feedback/useFetchAllFeedbackPengajar";
+import { useAuthContext } from "../../common/utils/authContext";
 
-export const FeedbackListTable = () => {
+export const FeedbackListPengajarTable = () => {
+  const { pengguna } = useAuthContext();
   const {
     isLoading: listAllFeedbackLoading,
     error,
     listFeedback,
     refetch,
-  } = useFetchAllFeedback();
+  } = useFetchAllFeedbackPengajar(pengguna.id);
   const [filteredFeedbacks, setFilteredFeedbacks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -112,10 +114,10 @@ export const FeedbackListTable = () => {
         className={` ${styles.heading} md:my-10 my-6`}
         style={PoppinsBold.style}
       >
-        Daftar Feedback
+        Daftar Feedback Pengajar
       </div>
       <div>
-        <SearchPengajar sQ={searchQuery} ssQ={setSearchQuery} />
+        <SearchFeedback sQ={searchQuery} ssQ={setSearchQuery} />
       </div>
       <div>
         {!filteredFeedbacks ? (
@@ -145,19 +147,13 @@ export const FeedbackListTable = () => {
                       className="px-4 py-4 text-left"
                       style={InterMedium.style}
                     >
-                      PENGAJAR
-                    </th>
-                    <th
-                      className="px-4 py-4 text-left"
-                      style={InterMedium.style}
-                    >
                       KELAS
                     </th>
                     <th
                       className="px-4 py-4 text-left hidden md:table-cell"
                       style={InterMedium.style}
                     >
-                      RATING
+                      TANGGAL SELESAI
                     </th>
                     <th
                       className="px-4 py-4 text-left hidden md:table-cell"
@@ -185,13 +181,10 @@ export const FeedbackListTable = () => {
                           {indexOfFirstItem + index + 1}
                         </td>
                         <td className="border-b px-4 py-5">
-                          {feedback.namaPengajar}
-                        </td>
-                        <td className="border-b px-4 py-5">
                           {feedback.namaProgram}
                         </td>
                         <td className="border-b px-4 py-5 hidden md:table-cell">
-                          {feedback.rating}
+                          {feedback.tanggalPembuatan[2] + "/" + feedback.tanggalPembuatan[1] + "/" + feedback.tanggalPembuatan[0]}
                         </td>
                         {!feedback.finished ? (
                           <td className="border-b px-4 py-5 hidden md:table-cell text-red-500">
@@ -202,24 +195,19 @@ export const FeedbackListTable = () => {
                             Finished
                           </td>
                         )}
-
-                        <td className="border-b px-4 py-5 md:table-cell hidden">
-                          {!feedback.finished ? (
+                        {!feedback.finished ? (
+                          <td className="border-b px-4 py-5 hidden md:table-cell text-red-500">
+                          </td>
+                        ) : (
+                          <td className="border-b px-4 py-5 md:table-cell hidden">
                             <button
                               onClick={() => handleDetailClick(feedback)}
                               className={`bg-transparent hover:bg-[#215E9B] text-[#215E9B] focus:bg-[#215E9B] focus:text-white hover:text-white py-2 px-4 border border-[#215E9B] hover:border-transparent rounded-full`}
                             >
-                              Isi Feedback
+                              Detail
                             </button>
-                          ) : (
-                            <button
-                              onClick={() => handleDetailClick(feedback)}
-                              className={`bg-transparent hover:bg-[#215E9B] text-[#215E9B] focus:bg-[#215E9B] focus:text-white hover:text-white py-2 px-4 border border-[#215E9B] hover:border-transparent rounded-full`}
-                            >
-                              Ubah Feedback
-                            </button>
-                          )}
                         </td>
+                        )}
                       </tr>
                     ))}
                 </tbody>
