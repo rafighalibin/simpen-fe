@@ -277,8 +277,8 @@ const Navbar = () => {
                       }  md:hover:text-primaryForeground`}
                     >
                       Murid
-                  </a>
-                    </li>
+                    </a>
+                  </li>
                   <a
                     href="/profile"
                     className={`${
@@ -341,6 +341,18 @@ const Navbar = () => {
                     </li>
                   </a>
                   <a
+                    href="/feedback"
+                    className={`${
+                      getRootPath(path) === "user"
+                        ? "md:text-primaryForeground"
+                        : "md:text-info"
+                    }  md:hover:text-primaryForeground`}
+                  >
+                    <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                      Feedback
+                    </li>
+                  </a>
+                  <a
                     href="/profile"
                     className={`${
                       getRootPath(path) === "profile"
@@ -391,7 +403,7 @@ const Navbar = () => {
                   >
                     <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
                       Profil
-                  </li>
+                    </li>
                   </a>
                   <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
                     <a
@@ -408,8 +420,19 @@ const Navbar = () => {
                     >
                       Availability
                     </a>
-                    
                   </li>
+                  <a
+                    href="/feedback"
+                    className={`${
+                      getRootPath(path) === "user"
+                        ? "md:text-primaryForeground"
+                        : "md:text-info"
+                    }  md:hover:text-primaryForeground`}
+                  >
+                    <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                      Feedback
+                    </li>
+                  </a>
                   <li className="p-2 hover:bg-[#efefef] md:hidden block">
                     <div
                       className={`text-[16px] ${styles.logout_tx} md:hidden block `}

@@ -49,7 +49,10 @@ const SesiAbsen = () => {
         "PUT",
         formState[sesiChanged]
       ).then((res) => res.json()),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      if (data.status != "OK") {
+        window.alert(data.message);
+      }
       setIsChanged(false);
       queryClient.invalidateQueries("sesiKelas");
     },

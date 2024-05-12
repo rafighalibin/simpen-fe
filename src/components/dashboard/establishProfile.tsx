@@ -7,21 +7,21 @@ export const EstablishProfile = ({ data }) => {
   const userData = data ? data : "Nama tidak tersedia";
 
   return (
-    <div className={`${styles.card1} p-5 text-white`}>
-      <div className="ml-3">
-        <div style={PoppinsMedium.style} className={`${styles.heading1}`}>
-          {"Selamat datang di "}
-          <span style={PoppinsBold.style}>Sistem Informasi Mitra Pengajar</span>
+    <div className={`${styles.card1} p-5`}>
+      <div className="ml-5 mt-2 mb-5 mr-8">
+        <div style={PoppinsMedium.style} className={`${styles.heading1} text-nowrap`}>
+          <span style={PoppinsBold.style}>Selamat Datang, 👋</span>
         </div>
-        <div className=" flex items-center">
-          <div>
-            <FiUser size={24} /> {/* Profile icon */}
-          </div>
-          <div className={`${styles.heading_user} ml-5 mt-1`}>
-            {userData.nama} sebagai {userData.role}{" "}
-          </div>
+        {userData.nama && userData.nama.match(/[a-zA-Z]/) && (
+        <div className={`${styles.heading_user}`}>
+            <span>{userData.nama}!</span>
+        </div>
+        )}
+        <div className={`${styles.heading_user}`}>
+            <span>sebagai <span style={PoppinsBold.style}>{userData.role}</span></span>
         </div>
       </div>
     </div>
   );
 };
+

@@ -133,7 +133,17 @@ export const Notification = ({ data, onUpdate }) => {
                           href={`/kelas/${notification.isi["idKelas"]}`}
                           className="hover:text-blue-500 focus:text-blue-500"
                         >
-                          kelas baru
+                          Kelas baru
+                        </a>
+                      </div>
+                    )}
+                    {notification.tipe === 2 && (
+                      <div>
+                        <a
+                          href={`/feedback/${notification.isi["feedbackId"]}`}
+                          className="hover:text-blue-500 focus:text-blue-500"
+                        >
+                          {notification.judul}
                         </a>
                       </div>
                     )}
@@ -155,7 +165,7 @@ export const Notification = ({ data, onUpdate }) => {
                             href={`/sesi/${notification.isi["sesiKelas"]}`}
                             className="hover:text-blue-500 focus:text-blue-500"
                           >
-                            Sesi kelas
+                            Sesi Kelas
                           </a>
                           {" disetujui"}
                         </div>
@@ -171,7 +181,7 @@ export const Notification = ({ data, onUpdate }) => {
                             href={`/sesi/${notification.isi["sesiKelas"]}`}
                             className="hover:text-blue-500 focus:text-blue-500"
                           >
-                            Sesi kelas
+                            Sesi Kelas
                           </a>
                           {" digantikan oleh " + notification.isi["pengganti"]}
                         </div>

@@ -1,0 +1,47 @@
+.heading {
+  color: #000;
+  text-align: left;
+  font-size: 64px;
+  font-style: normal;
+  line-height: 120%;
+}
+
+.table_heading {
+  border-radius: 10px 10px 0px 0px;
+  background: #f9fafb;
+}
+
+.table_heading_text {
+  color: var(--Dark-Dark, #111928);
+  font-size: 15px;
+  font-style: normal;
+  line-height: 26px; /* 173.333% */
+}
+
+.table_items_text {
+  color: var(--Dark-Dark, #111928);
+  font-size: 14px;
+  font-style: normal;
+  line-height: 22px; /* 157.143% */
+}
+
+.card_form {
+  border-radius: 8px;
+  border: 0.5px solid var(--Stroke, #dfe4ea);
+  background: var(--White, #fff);
+  box-shadow: 0px 1px 3px 0px rgba(166, 175, 195, 0.4);
+}
+
+.pagination_tx {
+  color: var(--White-White, var(--White, #fff));
+  text-align: center;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 18px; /* 112.5% */
+}
+
+.pagination_container {
+  border-radius: 10px;
+  border: 1px solid var(--Stroke, #dfe4ea);
+  background: var(--White, #fff);
+}
