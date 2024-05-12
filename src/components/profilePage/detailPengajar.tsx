@@ -92,13 +92,6 @@ const DetailPengajar = ({ buttons }) => {
                 Foto Diri
               </label>
               <div className="mt-1 relative w-48 h-48 flex items-center justify-center rounded-full overflow-hidden">
-                <input
-                  disabled
-                  type="file"
-                  value={""}
-                  accept="image/*"
-                  className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-                />
                 {!pengajar.fotoDiri && (
                   <div className="bg-neutral/5 rounded-full flex items-center justify-center w-full h-full">
                     <svg
@@ -122,7 +115,8 @@ const DetailPengajar = ({ buttons }) => {
                     src={pengajar.fotoDiri}
                     alt="Foto Diri"
                     className="object-cover w-full h-full"
-                    style={{ borderRadius: "50%" }}
+                    style={{ borderRadius: "50%", cursor: "pointer" }}
+                   onClick={() => window.open(pengajar.fotoDiri, '_blank')}
                   />
                 )}
               </div>
@@ -389,18 +383,13 @@ const DetailPengajar = ({ buttons }) => {
                 Foto KTP
               </label>
               <div className="mt-1 relative w-full h-80 flex items-center justify-center rounded-lg overflow-hidden">
-                <input
-                  disabled
-                  type="file"
-                  accept="image/*"
-                  value={""}
-                  className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-                />
                 {pengajar.fotoKtp && (
                   <img
                     src={pengajar.fotoKtp}
                     alt="Foto KTP"
                     className="object-cover w-full h-full"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => window.open(pengajar.fotoKtp, '_blank')}
                   />
                 )}
                 {!pengajar.fotoKtp && (
@@ -506,19 +495,13 @@ const DetailPengajar = ({ buttons }) => {
                 Foto Buku Tabungan
               </label>
               <div className="mt-1 relative w-full h-80 flex items-center justify-center rounded-lg overflow-hidden">
-                <input
-                  disabled
-                  type="file"
-                  accept="image/*"
-                  value={""}
-                  // Gunakan fungsi handleFileChangeBukuTabungan untuk foto buku tabungan
-                  className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-                />
                 {pengajar.fotoBukuTabungan && (
                   <img
                     src={pengajar.fotoBukuTabungan}
                     alt="Foto Buku Tabungan"
                     className="object-cover w-full h-full"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => window.open(pengajar.fotoBukuTabungan, '_blank')}
                   />
                 )}
                 {!pengajar.fotoBukuTabungan && (
@@ -559,18 +542,13 @@ const DetailPengajar = ({ buttons }) => {
                 Foto NPWP
               </label>
               <div className="mt-1 relative w-full h-80 flex items-center justify-center rounded-lg overflow-hidden">
-                <input
-                  disabled
-                  type="file"
-                  accept="image/*"
-                  value={""}
-                  className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-                />
                 {pengajar.fotoNpwp && (
                   <img
                     src={pengajar.fotoNpwp}
                     alt="Foto NPWP"
                     className="object-cover w-full h-full"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => window.open(pengajar.fotoNpwp, '_blank')}
                   />
                 )}
                 {!pengajar.fotoNpwp && (
