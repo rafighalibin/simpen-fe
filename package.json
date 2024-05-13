@@ -22,6 +22,7 @@
     "axios": "^1.6.7",
     "core-js": "^3.36.0",
     "file-saver": "^2.0.5",
+    "image-compressor": "^2.0.3",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "mui-datatables": "^4.3.0",

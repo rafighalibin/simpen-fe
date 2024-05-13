@@ -7,6 +7,7 @@ import { useQueryClient } from "react-query";
 import { useAuthContext } from "../../common/utils/authContext";
 import Loading from "../../common/components/Loading";
 
+
 export const UpdateForm = () => {
   const fetchWithToken = useFetchWithToken();
   const queryClient = useQueryClient();
@@ -162,64 +163,122 @@ export const UpdateForm = () => {
     updateProfileMutation();
   };
 
+  function compressImage(file) {
+    return new Promise((resolve, reject) => {
+      const maxWidth = 800; // Atur lebar maksimum yang diinginkan
+      const maxHeight = 600; // Atur tinggi maksimum yang diinginkan
+      const image = new Image();
+  
+      image.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = image.width;
+        let height = image.height;
+  
+        if (width > height) {
+          if (width > maxWidth) {
+            height *= maxWidth / width;
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width *= maxHeight / height;
+            height = maxHeight;
+          }
+        }
+  
+        canvas.width = width;
+        canvas.height = height;
+  
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(image, 0, 0, width, height);
+  
+        canvas.toBlob(
+          (blob) => {
+            resolve(new File([blob], file.name, { type: 'image/jpeg', lastModified: Date.now() }));
+          },
+          'image/jpeg',
+          0.7 // Kualitas kompresi (0.0 - 1.0), atur sesuai kebutuhan
+        );
+      };
+  
+      image.onerror = (error) => {
+        reject(error);
+      };
+  
+      image.src = URL.createObjectURL(file);
+    });
+  }
+
   const handleFotoDiriChange = (e) => {
     formState.fotoDiri = e.target.files[0];
 
-    getBase64(formState.fotoDiri)
-      .then((result) => {
-        setFormState((prevState) => ({
-          ...prevState,
-          fotoDiri: result,
-        }));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+     compressImage(formState.fotoDiri)
+    .then((compressedFile) => {
+      return getBase64(compressedFile);
+    })
+    .then((result) => {
+      setFormState((prevState) => ({
+        ...prevState,
+        fotoDiri: result,
+      }));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   };
 
   const handleFotoKtpChange = (e) => {
     formState.fotoKtp = e.target.files[0];
 
-    getBase64(formState.fotoKtp)
-      .then((result) => {
-        setFormState((prevState) => ({
-          ...prevState,
-          fotoKtp: result,
-        }));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    compressImage(formState.fotoKtp)
+    .then((compressedFile) => {
+      return getBase64(compressedFile);
+    })
+    .then((result) => {
+      setFormState((prevState) => ({
+        ...prevState,
+        fotoKtp: result,
+      }));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   };
 
   const handleFotoBukuTabunganChange = (e) => {
     formState.fotoBukuTabungan = e.target.files[0];
 
-    getBase64(formState.fotoBukuTabungan)
-      .then((result) => {
-        setFormState((prevState) => ({
-          ...prevState,
-          fotoBukuTabungan: result,
-        }));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    compressImage(formState.fotoBukuTabungan)
+    .then((compressedFile) => {
+      return getBase64(compressedFile);
+    })
+    .then((result) => {
+      setFormState((prevState) => ({
+        ...prevState,
+        fotoBukuTabungan: result,
+      }));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   };
 
   const handleFotoNPWPChange = (e) => {
     formState.fotoNpwp = e.target.files[0];
 
-    getBase64(formState.fotoNpwp)
-      .then((result) => {
-        setFormState((prevState) => ({
-          ...prevState,
-          fotoNpwp: result,
-        }));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    compressImage(formState.fotoNpwp)
+    .then((compressedFile) => {
+      return getBase64(compressedFile);
+    })
+    .then((result) => {
+      setFormState((prevState) => ({
+        ...prevState,
+        fotoNpwp: result,
+      }));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   };
 
   function getBase64(file) {
