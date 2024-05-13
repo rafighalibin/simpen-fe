@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { useMutation } from "react-query";
 import { useRouter } from "next/navigation";
 
-
 //import font and css
 import { PoppinsBold, InterMedium, InterReguler } from "../../font/font";
 import styles from "./addJenisKelasForm.module.css";
@@ -17,7 +16,7 @@ import { JenisKelas } from "../../common/types/jeniskelas";
 export const AddJenisKelasForm = () => {
   const fetchWithToken = useFetchWithToken();
   const { listAllUser } = useFetchAllUsers();
-  listAllUser.filter(user => user.role === 'akademik');
+  listAllUser.filter((user) => user.role === "akademik");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const router = useRouter();
@@ -26,22 +25,23 @@ export const AddJenisKelasForm = () => {
     modaPertemuan: [],
     tipe: [],
     bahasa: [],
-    picAkademikId: ""
+    picAkademikId: "",
   });
   const [formStateFetched, setFormStateFetched] = useState({
     modaPertemuanFetched: [],
     tipeFetched: [],
-    bahasaFetched: []
+    bahasaFetched: [],
   });
   const [customModaPertemuan, setCustomModaPertemuan] = useState([]);
   const [customBahasa, setCustomBahasa] = useState([]);
   const [customTypes, setCustomTypes] = useState([]);
 
-
   useEffect(() => {
     const fetchExistingAttributes = async () => {
       try {
-        const response = await fetchWithToken('/kelas/jenis/existing-attributes');
+        const response = await fetchWithToken(
+          "/kelas/jenis/existing-attributes"
+        );
         const data = await response.json();
         // Update the form state with the existing attributes
         setFormStateFetched((prevState) => ({
@@ -54,32 +54,40 @@ export const AddJenisKelasForm = () => {
         setError("Failed to fetch existing attributes");
       }
     };
-  
+
     fetchExistingAttributes();
   }, []);
-  
 
   const { mutateAsync: addJenisKelasMutation, data: response } = useMutation({
     mutationFn: () =>
-      fetchWithToken(`/kelas/jenis`, "POST", formState).then((res) => res.json()),
+      fetchWithToken(`/kelas/jenis`, "POST", formState).then((res) =>
+        res.json()
+      ),
     onSuccess: (data) => {
-      if (data.message == `Jenis Kelas with name ${formState.nama} has been updated`) {
+      if (
+        data.message ==
+        `Jenis Kelas with name ${formState.nama} has been updated`
+      ) {
         console.log(data.content as JenisKelas);
-        setSuccess("Nama jenis kelas sudah ada sebelumnya. Sukses menambahkan atribut.");
+        setSuccess(
+          "Nama jenis kelas sudah ada sebelumnya. Sukses menambahkan atribut."
+        );
         setTimeout(() => {
           router.push("/kelas/jenis");
         }, 1000);
-      }
-      else if (data.code == 200) {
+      } else if (data.code == 200) {
         console.log(data.content as JenisKelas);
         setSuccess("Sukses menambahkan.");
         setTimeout(() => {
           router.push("/kelas/jenis");
         }, 1000);
-      } else if (data.code == 400) {
-        setError("Jenis Kelas sudah pernah ada atau terjadi kesalahan pengisian data. Cek kembali!");
-        console.error("Error:", error);
       }
+    },
+    onError: (error) => {
+      setError(
+        "Jenis Kelas sudah pernah ada atau terjadi kesalahan pengisian data. Cek kembali!"
+      );
+      console.error("Error:", error);
     },
   });
 
@@ -94,24 +102,28 @@ export const AddJenisKelasForm = () => {
     } else {
       setFormState({
         ...formState,
-        modaPertemuan: formState.modaPertemuan.filter((m) => m !== e.target.value),
+        modaPertemuan: formState.modaPertemuan.filter(
+          (m) => m !== e.target.value
+        ),
       });
     }
   };
-  
+
   // Custom Moda Checkbox onChange
   const toggleCustomModaPertemuan = (index, isEnabled) => {
-    setCustomModaPertemuan(prev => {
+    setCustomModaPertemuan((prev) => {
       let newCustomModaPertemuan = [...prev];
       if (isEnabled) {
         // Add a new custom moda slot with default values
-        newCustomModaPertemuan.push({ enabled: true, value: '' });
+        newCustomModaPertemuan.push({ enabled: true, value: "" });
       } else {
         // Remove the custom moda and its value from the form state
         newCustomModaPertemuan.splice(index, 1);
-        setFormState(prevState => ({
+        setFormState((prevState) => ({
           ...prevState,
-          modaPertemuan: prevState.modaPertemuan.filter(t => t !== prev[index].value)
+          modaPertemuan: prevState.modaPertemuan.filter(
+            (t) => t !== prev[index].value
+          ),
         }));
       }
       return newCustomModaPertemuan;
@@ -120,16 +132,19 @@ export const AddJenisKelasForm = () => {
 
   // Handler for custom moda value changes
   const handleCustomModaPertemuanChange = (index, value) => {
-    setCustomModaPertemuan(prev => {
+    setCustomModaPertemuan((prev) => {
       let newCustomModaPertemuan = [...prev];
-      newCustomModaPertemuan[index] = { ...newCustomModaPertemuan[index], value };
+      newCustomModaPertemuan[index] = {
+        ...newCustomModaPertemuan[index],
+        value,
+      };
       return newCustomModaPertemuan;
     });
   };
 
   const handleCustomModaPertemuanBlur = (index) => {
     const value = customModaPertemuan[index].value.trim();
-    setFormState(prevState => {
+    setFormState((prevState) => {
       let newModaPertemuan = [...prevState.modaPertemuan];
       if (!prevState.modaPertemuan.includes(value)) {
         newModaPertemuan.push(value);
@@ -156,17 +171,17 @@ export const AddJenisKelasForm = () => {
 
   // Custom bahasa Checkbox onChange
   const toggleCustomBahasa = (index, isEnabled) => {
-    setCustomBahasa(prev => {
+    setCustomBahasa((prev) => {
       let newCustomBahasa = [...prev];
       if (isEnabled) {
         // Add a new custom bahasa slot with default values
-        newCustomBahasa.push({ enabled: true, value: '' });
+        newCustomBahasa.push({ enabled: true, value: "" });
       } else {
         // Remove the custom bahasa and its value from the form state
         newCustomBahasa.splice(index, 1);
-        setFormState(prevState => ({
+        setFormState((prevState) => ({
           ...prevState,
-          bahasa: prevState.bahasa.filter(t => t !== prev[index].value)
+          bahasa: prevState.bahasa.filter((t) => t !== prev[index].value),
         }));
       }
       return newCustomBahasa;
@@ -175,7 +190,7 @@ export const AddJenisKelasForm = () => {
 
   // Handler for custom bahasa value changes
   const handleCustomBahasaChange = (index, value) => {
-    setCustomBahasa(prev => {
+    setCustomBahasa((prev) => {
       let newCustomBahasa = [...prev];
       newCustomBahasa[index] = { ...newCustomBahasa[index], value };
       return newCustomBahasa;
@@ -184,7 +199,7 @@ export const AddJenisKelasForm = () => {
 
   const handleCustomBahasaBlur = (index) => {
     const value = customBahasa[index].value.trim();
-    setFormState(prevState => {
+    setFormState((prevState) => {
       let newBahasa = [...prevState.bahasa];
       if (!prevState.bahasa.includes(value)) {
         newBahasa.push(value);
@@ -192,7 +207,6 @@ export const AddJenisKelasForm = () => {
       return { ...prevState, bahasa: newBahasa };
     });
   };
-  
 
   const handleTipeChange = (e) => {
     if (e.target.checked) {
@@ -209,20 +223,20 @@ export const AddJenisKelasForm = () => {
       });
     }
   };
-  
+
   // Custom Tipe Checkbox onChange
   const toggleCustomType = (index, isEnabled) => {
-    setCustomTypes(prev => {
+    setCustomTypes((prev) => {
       let newCustomTypes = [...prev];
       if (isEnabled) {
         // Add a new custom type slot with default values
-        newCustomTypes.push({ enabled: true, value: '' });
+        newCustomTypes.push({ enabled: true, value: "" });
       } else {
         // Remove the custom type and its value from the form state
         newCustomTypes.splice(index, 1);
-        setFormState(prevState => ({
+        setFormState((prevState) => ({
           ...prevState,
-          tipe: prevState.tipe.filter(t => t !== prev[index].value)
+          tipe: prevState.tipe.filter((t) => t !== prev[index].value),
         }));
       }
       return newCustomTypes;
@@ -231,7 +245,7 @@ export const AddJenisKelasForm = () => {
 
   // Handler for custom type value changes
   const handleCustomTypeChange = (index, value) => {
-    setCustomTypes(prev => {
+    setCustomTypes((prev) => {
       let newCustomTypes = [...prev];
       newCustomTypes[index] = { ...newCustomTypes[index], value };
       return newCustomTypes;
@@ -240,7 +254,7 @@ export const AddJenisKelasForm = () => {
 
   const handleCustomTypeBlur = (index) => {
     const value = customTypes[index].value.trim();
-    setFormState(prevState => {
+    setFormState((prevState) => {
       let newTipe = [...prevState.tipe];
       if (!prevState.tipe.includes(value)) {
         newTipe.push(value);
@@ -313,38 +327,52 @@ export const AddJenisKelasForm = () => {
               ))}
             </div>
             <div>
-                {customModaPertemuan.map((customModaPertemuan, index) => (
-                  <div key={index} className="flex items-center mb-2">
+              {customModaPertemuan.map((customModaPertemuan, index) => (
+                <div key={index} className="flex items-center mb-2">
+                  <input
+                    type="checkbox"
+                    checked={customModaPertemuan.enabled}
+                    onChange={(e) =>
+                      toggleCustomModaPertemuan(index, e.target.checked)
+                    }
+                    className="mr-2"
+                  />
+                  {customModaPertemuan.enabled && (
                     <input
-                      type="checkbox"
-                      checked={customModaPertemuan.enabled}
-                      onChange={(e) => toggleCustomModaPertemuan(index, e.target.checked)}
+                      type="text"
+                      placeholder="Enter custom moda"
+                      value={customModaPertemuan.value}
+                      onChange={(e) =>
+                        handleCustomModaPertemuanChange(
+                          index,
+                          e.target.value.toUpperCase()
+                        )
+                      }
+                      onBlur={() => handleCustomModaPertemuanBlur(index)}
                       className="mr-2"
                     />
-                    {customModaPertemuan.enabled && (
-                      <input
-                        type="text"
-                        placeholder="Enter custom moda"
-                        value={customModaPertemuan.value}
-                        onChange={(e) => handleCustomModaPertemuanChange(index, e.target.value.toUpperCase())}
-                        onBlur={() => handleCustomModaPertemuanBlur(index)}
-                        className="mr-2"
-                      />
-                    )}
-                  </div>
-                ))}
-                <button onClick={() => toggleCustomModaPertemuan(customModaPertemuan.length, true)} className="mr-2" type="button">
-                  Add Custom Moda
-                </button>
-              </div>
-              <div
-                style={InterReguler.style}
-                className={`${styles.form_paragraph} mt-2`}
+                  )}
+                </div>
+              ))}
+              <button
+                onClick={() =>
+                  toggleCustomModaPertemuan(customModaPertemuan.length, true)
+                }
+                className="mr-2"
+                type="button"
               >
-                Moda adalah identifier platform daring atau luring (cth: online atau offline).
-              </div>
+                Add Custom Moda
+              </button>
             </div>
-            <div className="mt-8">
+            <div
+              style={InterReguler.style}
+              className={`${styles.form_paragraph} mt-2`}
+            >
+              Moda adalah identifier platform daring atau luring (cth: online
+              atau offline).
+            </div>
+          </div>
+          <div className="mt-8">
             <div
               style={InterMedium.style}
               className={`${styles.form_title} mb-3`}
@@ -367,45 +395,55 @@ export const AddJenisKelasForm = () => {
               ))}
             </div>
             <div>
-                {customTypes.map((customType, index) => (
-                  <div key={index} className="flex items-center mb-2">
+              {customTypes.map((customType, index) => (
+                <div key={index} className="flex items-center mb-2">
+                  <input
+                    type="checkbox"
+                    checked={customType.enabled}
+                    onChange={(e) => toggleCustomType(index, e.target.checked)}
+                    className="mr-2"
+                  />
+                  {customType.enabled && (
                     <input
-                      type="checkbox"
-                      checked={customType.enabled}
-                      onChange={(e) => toggleCustomType(index, e.target.checked)}
+                      type="text"
+                      placeholder="Enter custom tipe"
+                      value={customType.value}
+                      onChange={(e) =>
+                        handleCustomTypeChange(
+                          index,
+                          e.target.value.toUpperCase()
+                        )
+                      }
+                      onBlur={() => handleCustomTypeBlur(index)}
                       className="mr-2"
                     />
-                    {customType.enabled && (
-                      <input
-                        type="text"
-                        placeholder="Enter custom tipe"
-                        value={customType.value}
-                        onChange={(e) => handleCustomTypeChange(index, e.target.value.toUpperCase())}
-                        onBlur={() => handleCustomTypeBlur(index)}
-                        className="mr-2"
-                      />
-                    )}
-                  </div>
-                ))}
-                <button onClick={() => toggleCustomType(customTypes.length, true)} className="mr-2" type="button">
-                  Add Custom Tipe
-                </button>
-              </div>
-              <div
-                style={InterReguler.style}
-                className={`${styles.form_paragraph} mt-2`}
+                  )}
+                </div>
+              ))}
+              <button
+                onClick={() => toggleCustomType(customTypes.length, true)}
+                className="mr-2"
+                type="button"
               >
-                Tipe adalah identifier banyaknya peserta kelas (cth: reguler atau private).
-              </div>
+                Add Custom Tipe
+              </button>
             </div>
-            <div className="mt-8">
-              <div
-                style={InterMedium.style}
-                className={`${styles.form_title} mb-3`}
-              >
-                Bahasa
-              </div>
-              <div>
+            <div
+              style={InterReguler.style}
+              className={`${styles.form_paragraph} mt-2`}
+            >
+              Tipe adalah identifier banyaknya peserta kelas (cth: reguler atau
+              private).
+            </div>
+          </div>
+          <div className="mt-8">
+            <div
+              style={InterMedium.style}
+              className={`${styles.form_title} mb-3`}
+            >
+              Bahasa
+            </div>
+            <div>
               {formStateFetched.bahasaFetched.map((bahasa, index) => (
                 <div key={index} className="flex items-center">
                   <input
@@ -419,38 +457,49 @@ export const AddJenisKelasForm = () => {
                   <label htmlFor={bahasa}>{bahasa}</label>
                 </div>
               ))}
-              </div>
-              <div>
-                {customBahasa.map((customBahasa, index) => (
-                  <div key={index} className="flex items-center mb-2">
+            </div>
+            <div>
+              {customBahasa.map((customBahasa, index) => (
+                <div key={index} className="flex items-center mb-2">
+                  <input
+                    type="checkbox"
+                    checked={customBahasa.enabled}
+                    onChange={(e) =>
+                      toggleCustomBahasa(index, e.target.checked)
+                    }
+                    className="mr-2"
+                  />
+                  {customBahasa.enabled && (
                     <input
-                      type="checkbox"
-                      checked={customBahasa.enabled}
-                      onChange={(e) => toggleCustomBahasa(index, e.target.checked)}
+                      type="text"
+                      placeholder="Enter custom bahasa"
+                      value={customBahasa.value}
+                      onChange={(e) =>
+                        handleCustomBahasaChange(
+                          index,
+                          e.target.value.toUpperCase()
+                        )
+                      }
+                      onBlur={() => handleCustomBahasaBlur(index)}
                       className="mr-2"
                     />
-                    {customBahasa.enabled && (
-                      <input
-                        type="text"
-                        placeholder="Enter custom bahasa"
-                        value={customBahasa.value}
-                        onChange={(e) => handleCustomBahasaChange(index, e.target.value.toUpperCase())}
-                        onBlur={() => handleCustomBahasaBlur(index)}
-                        className="mr-2"
-                      />
-                    )}
-                  </div>
-                ))}
-                <button onClick={() => toggleCustomBahasa(customBahasa.length, true)} className="mr-2" type="button">
-                  Add Custom Bahasa
-                </button>
-              </div>
-              <div
-                style={InterReguler.style}
-                className={`${styles.form_paragraph} mt-2`}
+                  )}
+                </div>
+              ))}
+              <button
+                onClick={() => toggleCustomBahasa(customBahasa.length, true)}
+                className="mr-2"
+                type="button"
               >
-                Bahasa yang digunakan ketika kelas berlangsung.
-              </div>
+                Add Custom Bahasa
+              </button>
+            </div>
+            <div
+              style={InterReguler.style}
+              className={`${styles.form_paragraph} mt-2`}
+            >
+              Bahasa yang digunakan ketika kelas berlangsung.
+            </div>
             <div className="mt-8">
               <div
                 style={InterMedium.style}
@@ -469,29 +518,31 @@ export const AddJenisKelasForm = () => {
                 style={InterReguler.style}
               >
                 <option value="">Pilih PIC Akademik</option>
-                {listAllUser.filter((user) => user.role === "akademik").map((user) => (
-                  <option key={user.id} value={user.id}>
-                    {user.nama}
-                  </option>
-                ))}
+                {listAllUser
+                  .filter((user) => user.role === "akademik")
+                  .map((user) => (
+                    <option key={user.id} value={user.id}>
+                      {user.nama}
+                    </option>
+                  ))}
               </select>
             </div>
             <div className="mt-5">
               {success && (
-              <div
-                className="bg-[#DAF8E6] text-[#004434] text-sm px-4 py-2"
-                style={InterReguler.style}
-              >
-                {success}
-              </div>
+                <div
+                  className="bg-[#DAF8E6] text-[#004434] text-sm px-4 py-2"
+                  style={InterReguler.style}
+                >
+                  {success}
+                </div>
               )}
               {error && (
-              <div
-                className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2"
-                style={InterReguler.style}
-              >
-                {error}
-              </div>
+                <div
+                  className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2"
+                  style={InterReguler.style}
+                >
+                  {error}
+                </div>
               )}
               <div className="flex justify-center mt-9">
                 <button
@@ -503,9 +554,9 @@ export const AddJenisKelasForm = () => {
                 </button>
               </div>
             </div>
-            </div>
-            </form>
           </div>
-          </div>
-        );
+        </form>
+      </div>
+    </div>
+  );
 };

@@ -360,7 +360,7 @@ const UpdateForm = () => {
                   <span>On Progress</span>
                 </div>
               ) : (
-                "Tambah Murid"
+                "Update Kelas"
               )}
             </button>
 
