@@ -11,6 +11,7 @@ export const CreateAvailability = () => {
   const [schedule, setSchedule] = useState([]);
   const [payload, setPayload] = useState([] as UpdateAvailability[]);
   const [lastUpdate, setLastUpdate] = useState(new Date());
+  const [loadSchedule, setLoadSchedule] = useState(false);
   const {
     mutateAsync: updateAvailabilityMutation,
     isLoading: updateAvailabilityIsLoading,
@@ -45,6 +46,7 @@ export const CreateAvailability = () => {
 
     setSchedule(newSchedule);
   };
+
   useEffect(() => {
     if (fetchAvailabilityResponse) {
       let tempSchedule = [] as Date[];
@@ -57,8 +59,13 @@ export const CreateAvailability = () => {
       let e = fetchAvailabilityResponse.content.lastUpdate;
       let dateInstance = new Date(e[0], e[1] - 1, e[2], e[3], e[4]);
       setLastUpdate(dateInstance);
+      setLoadSchedule(true);
     }
-  }, [fetchAvailabilityResponse]);
+  }, [
+    fetchAvailabilityResponse,
+    fetchAvailabilitySuccess,
+    fetchAvailabilityIsLoading,
+  ]);
 
   function handleSubmit() {
     updateAvailabilityMutation();
@@ -75,7 +82,7 @@ export const CreateAvailability = () => {
       </h1>
       <div className="bg-base flex flex-col space-y-4 px-8 py-12 shadow-lg rounded-lg border">
         <div className="px-20">
-          {schedule.length !== 0 && (
+          {loadSchedule && (
             <ScheduleSelector
               startDate={new Date(2024, 0, 1)}
               selection={schedule}
@@ -111,12 +118,6 @@ export const CreateAvailability = () => {
             className="bg-info text-white px-8 py-2 rounded-md hover:bg-infoHover"
           >
             Update
-          </button>
-          <button
-            onClick={handleClear}
-            className="bg-error text-white px-8 py-2 rounded-md hover:bg-errorHover"
-          >
-            Clear
           </button>
         </div>
       </div>
