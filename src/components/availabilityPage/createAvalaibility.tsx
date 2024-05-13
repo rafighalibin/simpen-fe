@@ -91,7 +91,7 @@ export const CreateAvailability = () => {
               maxTime={22}
               hourlyChunks={1}
               onChange={handleChange}
-              dateFormat="d/MM/YYYY"
+              dateFormat="dddd"
               timeFormat="HH:mm"
             />
           )}
