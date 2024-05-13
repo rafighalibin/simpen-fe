@@ -32,8 +32,12 @@ export const AvailabilityPengajar = () => {
       });
 
       let e = data.content.lastUpdate;
-      let dateInstance = new Date(e[0], e[1] - 1, e[2], e[3], e[4]);
-      setLastUpdate(dateInstance);
+      if (e === null) {
+        setLastUpdate(new Date());
+      } else {
+        let dateInstance = new Date(e[0], e[1] - 1, e[2], e[3], e[4]);
+        setLastUpdate(dateInstance);
+      }
       setLoadSchedule(true);
     },
   });
