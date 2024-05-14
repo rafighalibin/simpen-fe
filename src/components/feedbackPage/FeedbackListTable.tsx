@@ -7,6 +7,7 @@ import { InterMedium, PoppinsBold } from "../../font/font";
 import Loading from "../../app/loading";
 import { SearchFeedback } from "./SearchFeedback";
 import { useRouter } from "next/navigation";
+import { FiStar } from "react-icons/fi";
 
 export const FeedbackListTable = () => {
   const {
@@ -200,7 +201,7 @@ export const FeedbackListTable = () => {
                           {feedback.tanggalPembuatan[2] + "/" + feedback.tanggalPembuatan[1] + "/" + feedback.tanggalPembuatan[0]}
                         </td>
                         <td className="border-b px-4 py-5 hidden md:table-cell">
-                          {feedback.rating}
+                          <FiStar className="inline fill-yellow-300 text-yellow-300" /> {feedback.rating}
                         </td>
                         {!feedback.finished ? (
                           <td className="border-b px-4 py-5 hidden md:table-cell text-red-500">

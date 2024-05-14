@@ -4,6 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import styles from "./FormFeedback.module.css";
 import { InterMedium, PoppinsBold } from "../../font/font";
+import { FiStar } from "react-icons/fi";
 import { useFetchRatingByPengajar } from "../../common/hooks/feedback/useFetchRatingByPengajar";
 
 export const FormFeedback = ({ data: dataPass }) => {
@@ -101,7 +102,7 @@ export const FormFeedback = ({ data: dataPass }) => {
             <th className="px-4 py-4 text-left" style={InterMedium.style}>NAMA PROGRAM</th>
             <th className="px-4 py-4 text-left" style={InterMedium.style}>JENIS KELAS</th>
             <th className="px-4 py-4 text-left" style={InterMedium.style}>TANGGAL SELESAI</th>
-            <th className="px-4 py-4 text-left" style={InterMedium.style}>RATING MURID</th>
+            <th className="px-4 py-4 text-left" style={InterMedium.style}>AVG RATING MURID</th>
             <th className="px-4 py-4 text-left" style={InterMedium.style}>LINK PLAYLIST</th>
             <th className="px-4 py-4 text-left" style={InterMedium.style}></th>
           </tr>
@@ -113,7 +114,7 @@ export const FormFeedback = ({ data: dataPass }) => {
                 <td className="border-b px-4 py-4 text-left">{ratingMurid.program.nama}</td>
                 <td className="border-b px-4 py-4 text-left">{ratingMurid.jenisKelas.nama}</td>
                 <td className="border-b px-4 py-4 text-left">{formatDate(ratingMurid.tanggalSelesai)}</td>
-                <td className="border-b px-4 py-4 text-left">{ratingMurid.rating}</td>
+                <td className="border-b px-4 py-4 text-left"><FiStar className="inline fill-yellow-300 text-yellow-300" /> {ratingMurid.rating}</td>
                 <td className="border-b px-4 py-4 text-left">{ratingMurid.linkPlaylist}</td>
                 <td className="border-b px-4 py-4 text-left">
                 {ratingMurid.linkPlaylist ? (
@@ -159,9 +160,11 @@ export const FormFeedback = ({ data: dataPass }) => {
             max="5"
             step="1"
             onChange={handleChange}
-            className={`w-full hover:bg-[#215E9B] focus:bg-[#215E9B] ${styles.rating}`}
+            className={`w-full hover:bg-info focus:bg-info ${styles.rating}`}
           />
-          <div className="text-center">{formState.rating}</div>
+          <div className="text-center items-center">
+            <FiStar className="inline fill-yellow-300 text-yellow-300" /> {formState.rating}{" "}
+          </div>
         </div>
         <div className="text-center">
           <button
