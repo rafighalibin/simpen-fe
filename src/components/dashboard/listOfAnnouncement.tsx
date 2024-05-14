@@ -101,7 +101,7 @@ export const ListOfAnnouncement = ({ data }) => {
 
   return (
     <div>
-      <div className={`${styles.card2} min-[40vh]:`}>
+      <div className={`${styles.card2} basis-28 flex-wrap`}>
         <div className="flex items-center p-4 ml-2 align-middle">
         <div>
           <FiInfo size={32} className="align-middle mt-1.5 ml-2" /> {/* Profile icon */}
@@ -129,7 +129,6 @@ export const ListOfAnnouncement = ({ data }) => {
               </button>
             ))}
         </div>
-        <div className="overflow-y-auto overflow-x-hidden max-h-[65vh]">
           {listAnnouncementLoading ? (
             <div>
               <Loading />
@@ -181,7 +180,7 @@ export const ListOfAnnouncement = ({ data }) => {
             <div className="ml-8 align-middle items-center ">
               <button
                 style={InterMedium.style}
-                className={`px-5 py-3 mt-5 ${styles.btn} ${styles.btn_tx} text-white hover:bg-[#215E9B] focus:bg-[#215E9B] px-3`}
+                className={`px-5 py-3 mt-5 mb-5 ${styles.btn} ${styles.btn_tx} text-white hover:bg-[#215E9B] focus:bg-[#215E9B] px-3`}
                 onClick={() => handleOpenModalList()}
               >
                 Lihat Pengumuman Lainnya
@@ -190,7 +189,6 @@ export const ListOfAnnouncement = ({ data }) => {
             )}
             </div>
           )}
-        </div>
       </div>
       {isModalListOpen && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">

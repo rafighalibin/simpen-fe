@@ -126,7 +126,7 @@ export const DetailJenisKelas = () => {
             >
                 <tr>
                 <th className="px-4 py-4 text-center" style={InterMedium.style}>
-                    NO
+                  NO
                 </th>
                 <th className="px-4 py-4 text-left" style={InterMedium.style}>
                   NAMA PROGRAM

@@ -19,7 +19,7 @@ export const UserListTable = () => {
     refetch,
   } = useFetchAllUser();
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
   const [sortBy, setSortBy] = useState("");
   const [filterBy, setFilterBy] = useState("");
   const [searchQuery, setSearchQuery] = useState("");

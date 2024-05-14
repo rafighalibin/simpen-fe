@@ -7,7 +7,6 @@ import { Breadcrumbs } from "../../../components/breadcrumbs/breadcrumbs";
 import Loading from "../../loading";
 import { DetailFeedback } from "../../../components/feedbackPage/DetailFeedback";
 
-
 const FeedbackDetailPage = () => {
   const { id } = useParams();
   const {

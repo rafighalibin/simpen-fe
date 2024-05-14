@@ -36,7 +36,7 @@ export const StatsPengajar = () => {
   };
 
   return (
-    <div className="mr-8 flex">
+    <div className="flex-grow grid grid-flow-row-dense grid-cols-2">
     <div className={`${styles.card5} p-5 mr-8`}>
       <div className="flex items-center align-middle">
       <div>
@@ -44,7 +44,7 @@ export const StatsPengajar = () => {
         </div>
           <div
             style={PoppinsBold.style}
-            className={`${styles.heading_announcement} ml-5 mt-4 mb-2`}
+            className={`${styles.heading_announcement} ml-5 mt-4 mb-2 mr-5`}
           >
             Total Kelas Aktif
           </div>
