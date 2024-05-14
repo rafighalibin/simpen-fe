@@ -220,7 +220,6 @@ export const FeedbackListTable = () => {
                             feedback.tanggalPembuatan[0]}
                         </td>
                         <td className="border-b px-4 py-5 hidden md:table-cell">
-                          {feedback.rating}
                           <FiStar className="inline fill-yellow-300 text-yellow-300" />{" "}
                           {feedback.rating}
                         </td>
