@@ -6,6 +6,7 @@ import { InterMedium, PoppinsBold } from "../../font/font";
 import Loading from "../../app/loading";
 import { SearchFeedback } from "./SearchFeedback";
 import { useRouter } from "next/navigation";
+import { FiStar } from "react-icons/fi";
 import useFetchAllFeedbackPengajar from "../../common/hooks/feedback/useFetchAllFeedbackPengajar";
 import { useAuthContext } from "../../common/utils/authContext";
 
@@ -159,6 +160,12 @@ export const FeedbackListPengajarTable = () => {
                       className="px-4 py-4 text-left hidden md:table-cell"
                       style={InterMedium.style}
                     >
+                      RATING
+                    </th>
+                    <th
+                      className="px-4 py-4 text-left hidden md:table-cell"
+                      style={InterMedium.style}
+                    >
                       STATUS
                     </th>
                     <th
@@ -184,7 +191,15 @@ export const FeedbackListPengajarTable = () => {
                           {feedback.namaProgram}
                         </td>
                         <td className="border-b px-4 py-5 hidden md:table-cell">
-                          {feedback.tanggalPembuatan[2] + "/" + feedback.tanggalPembuatan[1] + "/" + feedback.tanggalPembuatan[0]}
+                          {feedback.tanggalPembuatan[2] +
+                            "/" +
+                            feedback.tanggalPembuatan[1] +
+                            "/" +
+                            feedback.tanggalPembuatan[0]}
+                        </td>
+                        <td className="border-b px-4 py-5 hidden md:table-cell">
+                          <FiStar className="inline fill-yellow-300 text-yellow-300" />{" "}
+                          {feedback.rating}
                         </td>
                         {!feedback.finished ? (
                           <td className="border-b px-4 py-5 hidden md:table-cell text-red-500">
@@ -196,8 +211,7 @@ export const FeedbackListPengajarTable = () => {
                           </td>
                         )}
                         {!feedback.finished ? (
-                          <td className="border-b px-4 py-5 hidden md:table-cell text-red-500">
-                          </td>
+                          <td className="border-b px-4 py-5 hidden md:table-cell text-red-500"></td>
                         ) : (
                           <td className="border-b px-4 py-5 md:table-cell hidden">
                             <button
@@ -206,7 +220,7 @@ export const FeedbackListPengajarTable = () => {
                             >
                               Detail
                             </button>
-                        </td>
+                          </td>
                         )}
                       </tr>
                     ))}

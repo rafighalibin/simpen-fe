@@ -11,8 +11,8 @@
 .card2 {
   border-radius: 8px;
   background: #ffffff;
-  width: 99vh;
-  height: 42vh;
+  width: auto;
+  height: auto;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add box shadow */
   border: 0.5px solid var(--Stroke, #dfe4ea);
 }
@@ -28,7 +28,7 @@
   border-radius: 8px;
   background: #ffffff;
   width: auto;
-  height: 60vh;
+  height: 59.5vh;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add box shadow */
   border: 0.5px solid var(--Stroke, #dfe4ea);
 }
@@ -36,7 +36,7 @@
 .card5 {
   border-radius: 8px;
   background: #ffffff;
-  width: 48vh;
+  width: auto;
   height: 37.75vh;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add box shadow */
   border: 0.5px solid var(--Stroke, #dfe4ea);
@@ -45,14 +45,14 @@
 .card6 {
   border-radius: 8px;
   background: #ffffff;
-  width: 99vh;
-  height: 37.75vh;
+  width: auto;
+  height: auto;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add box shadow */
   border: 0.5px solid var(--Stroke, #dfe4ea);
 }
 
 .heading1 {
-  font-size: 48px;
+  font-size: 36px;
 }
 
 .heading_user {

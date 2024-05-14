@@ -45,7 +45,7 @@ export const AddProgramForm = () => {
           window.location.href = "/kelas/program";
         }, 1000);
       } else if (data.code == 400) {
-        setError("Program sudah pernah ada.");
+        setError("Program sudah pernah ada atau ada input yang salah. Cek kembali!");
         setFormState({
           nama: "",
           jumlahLevel: null,
@@ -116,6 +116,7 @@ export const AddProgramForm = () => {
     for (let i = 1; i <= totalPages; i++) {
       pageNumbers.push(
         <button
+          type="button"
           key={i}
           onClick={(e) => {
             e.preventDefault();
@@ -181,21 +182,23 @@ export const AddProgramForm = () => {
               Jumlah Level
             </div>
             <input
-              id="jumlah-level"
-              name="jumlah-level"
-              type="jumlah-level"
-              autoComplete="jumlah-level"
               required
-              className={`${styles.form_placeholder} appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
-              placeholder="Jumlah Level"
+              type="text"
               value={formState.jumlahLevel}
+              name="Jumlah Level"
+              placeholder="Jumlah Level"
               onChange={(e) =>
                 setFormState({
                   ...formState,
                   jumlahLevel: parseInt(e.target.value),
                 })
               }
-              style={InterReguler.style}
+              className={`${styles.form_placeholder} appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
+              min={0}
+              onInput={(e) => {
+                const input = e.target as HTMLInputElement;
+                input.value = input.value.replace(/[^0-9]/g, ""); // Menghapus karakter selain angka
+              }}
             />
             <div
               style={InterReguler.style}
@@ -212,21 +215,23 @@ export const AddProgramForm = () => {
               Jumlah Pertemuan
             </div>
             <input
-              id="jumlah-pertemuan"
-              name="jumlah-pertemuan"
-              type="jumlah-pertemuan"
-              autoComplete="jumlah-pertemuan"
               required
-              className={`${styles.form_placeholder} appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
-              placeholder="Jumlah Pertemuan"
+              type="text"
               value={formState.jumlahPertemuan}
+              name="Jumlah Pertemuan"
+              placeholder="Jumlah Pertemuan"
               onChange={(e) =>
                 setFormState({
                   ...formState,
                   jumlahPertemuan: parseInt(e.target.value),
                 })
               }
-              style={InterReguler.style}
+              className={`${styles.form_placeholder} appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500  rounded-md focus:outline-none focus:ring-[#66A2DC] focus:border-[#66A2DC] focus:z-10`}
+              min={0}
+              onInput={(e) => {
+                const input = e.target as HTMLInputElement;
+                input.value = input.value.replace(/[^0-9]/g, ""); // Menghapus karakter selain angka
+              }}
             />
             <div
               style={InterReguler.style}
