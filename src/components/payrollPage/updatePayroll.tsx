@@ -9,9 +9,6 @@ import styles from "./detailFee.module.css";
 
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import Loading from "../../app/loading";
-import Link from "next/link";
-import { JenisKelas } from "../../common/types/jeniskelas";
-import { Program } from "../../common/types/program";
 
 export const UpdateFee = () => {
     const queryClient = useQueryClient();
@@ -40,8 +37,6 @@ export const UpdateFee = () => {
                 window.alert(data.message);
                 router.push("/dashboard");
             }
-            console.log("Data")
-            console.log(data.content);
             setJenisKelas(data.content.jenisKelas);
             setProgram(data.content.program);
             setBaseFee(data.content.baseFee);
@@ -98,11 +93,6 @@ export const UpdateFee = () => {
     if (fetchingError || !data) {
         return <div>Error fetching class details.</div>;
     }
-
-    console.log("Jenis Kelas");
-    console.log(jenisKelas);
-    console.log("Program");
-    console.log(program);
 
     return (
         <div>

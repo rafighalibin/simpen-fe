@@ -104,7 +104,6 @@ const AddKelas = () => {
     mutationFn: () =>
       fetchWithToken("/kelas", "POST", payload).then((res) => res.json()),
     onSuccess: (data) => {
-      console.log(data.content as Kelas);
       if(data.content===null){
         alert("Kelas gagal dibuat");
       } else{
@@ -161,11 +160,9 @@ const AddKelas = () => {
         payloadJenis
       ).then((res) => res.json()),
     onSuccess: (data) => {
-      console.log(data);
       if(data.content.hasFee == true){
         setError("");
         const jenisKelas = data.content as JenisKelas;
-        console.log("jenisKelas" + jenisKelas);
         setJenisKelas(jenisKelas);
         setJenisKelasId(jenisKelas.id);
       } else {
@@ -232,7 +229,6 @@ const AddKelas = () => {
     queryKey: ["ruangan"],
     queryFn: () => fetchWithToken(`/platform/ruangan/${cabang}`, "GET").then((res) => res.json()),
     onSuccess: (data) => {
-      console.log(data)
       const listRuanganTemp = data.content.map((ruangan) => ({
         value: ruangan.id,
         label: ruangan.nama,
@@ -331,7 +327,6 @@ const AddKelas = () => {
 
   const handleChangeProgram = (e) => {
     const selectedProgramId = e.value;
-    console.log(e);
     setProgramId(selectedProgramId);
     if (selectedProgramId) {
       setJumlahPertemuan(e.jumlahPertemuan);
@@ -384,7 +379,6 @@ const AddKelas = () => {
         <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-lg rounded-lg border">
             <form
               onSubmit={(e) => {
-                console.log(payload);
                 e.preventDefault();
                 addKelasMutation();
               }}

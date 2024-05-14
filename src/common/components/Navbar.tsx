@@ -234,11 +234,10 @@ const Navbar = () => {
                     </div>
                   </li>
                   <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
-                    <div
-                        className="relative"
-                        onMouseEnter={(e) => setDropdownPengajar(!dropdownPengajar)}
-                        onMouseLeave={(e) => setDropdownPengajar(!dropdownPengajar)}
-                      >
+                    <div className="relative"
+                    onMouseEnter={(e) => setDropdownPengajar(!dropdownPengajar)}
+                    onMouseLeave={(e) => setDropdownPengajar(!dropdownPengajar)}
+                    >
                       {/* Main link for Pengajar */}
                       <span
                         className={`${

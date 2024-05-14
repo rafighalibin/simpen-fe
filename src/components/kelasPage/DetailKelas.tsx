@@ -22,7 +22,6 @@ const DetailKelas = () => {
     queryKey: ["kelasDetail"],
     queryFn: () => fetchWithToken(`/kelas/${id}`).then((res) => res.json()),
     onSuccess: (data) => {
-      console.log(data);
       if (data.status != "OK") {
         window.alert(data.message);
         router.push("/dashboard");
@@ -71,7 +70,9 @@ const DetailKelas = () => {
     linkPlaylist,
     listMurid,
     level,
+    modaPertemuan,
     zoom,
+    ruangan,
     namaPengajar,
     status,
   } = data.content;
@@ -203,14 +204,25 @@ const DetailKelas = () => {
 
         <div>
           <label className="block font-medium text-neutral/70">
-            Link Platform
+            Platform
           </label>
-          <input
-            disabled
-            type="text"
-            value={zoom.link}
-            className="read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full rounded-md"
-          />
+          { modaPertemuan === "OFFLINE" ? (
+            <input
+              disabled
+              type="text"
+              value={ruangan.nama}
+              name="platform"
+              className=" read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
+            />
+          ) : (
+            <input
+              disabled
+              type="text"
+              value={zoom.link}
+              name="platform"
+              className=" read-only:text-neutral/60 bg-neutral/5 mt-1 p-2 w-full border rounded-md"
+            />
+          )}
         </div>
 
         {playlistKelas !== null && (

@@ -12,6 +12,7 @@ export const AvailabilityPengajar = () => {
   const [schedule, setSchedule] = useState([]);
   const [payload, setPayload] = useState([] as UpdateAvailability[]);
   const [lastUpdate, setLastUpdate] = useState(new Date());
+  const [loadSchedule, setLoadSchedule] = useState(false);
   const { id } = useParams();
 
   const {
@@ -31,8 +32,13 @@ export const AvailabilityPengajar = () => {
       });
 
       let e = data.content.lastUpdate;
-      let dateInstance = new Date(e[0], e[1] - 1, e[2], e[3], e[4]);
-      setLastUpdate(dateInstance);
+      if (e === null) {
+        setLastUpdate(new Date());
+      } else {
+        let dateInstance = new Date(e[0], e[1] - 1, e[2], e[3], e[4]);
+        setLastUpdate(dateInstance);
+      }
+      setLoadSchedule(true);
     },
   });
 
@@ -43,22 +49,18 @@ export const AvailabilityPengajar = () => {
       </h1>
       <div className="bg-base flex flex-col space-y-4 px-8 py-12 shadow-lg rounded-lg border">
         <div className="px-20">
-          <ScheduleSelector
-            startDate={
-              new Date(
-                new Date().getFullYear(),
-                new Date("1/4/2024").getMonth(),
-                1
-              )
-            }
-            selection={schedule}
-            numDays={7}
-            minTime={8}
-            maxTime={22}
-            hourlyChunks={1}
-            dateFormat="dddd"
-            timeFormat="HH:mm"
-          />
+          {loadSchedule && (
+            <ScheduleSelector
+              startDate={new Date(2024, 0, 1)}
+              selection={schedule}
+              numDays={7}
+              minTime={8}
+              maxTime={22}
+              hourlyChunks={1}
+              dateFormat="dddd"
+              timeFormat="HH:mm"
+            />
+          )}
         </div>
         <p className="font-medium text-neutral/70 flex justify-center">
           Update terakhir {format(lastUpdate, "DD/MM/YYYY HH:mm:ss")}

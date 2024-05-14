@@ -44,9 +44,16 @@ export const DaftarPengajar = () => {
       ).then((res) => res.json()),
     onSuccess(data) {
       if (data) {
+        // Gunakan spread operator untuk membuat salinan dari array sebelumnya
+        const updatedList = [...listPengajarExisting];
         data.content.forEach((element: PengajarDetail) => {
-          listPengajarExisting.push(element);
+          // Periksa apakah pengajar sudah ada sebelum menambahkannya
+          if (!updatedList.some(pengajar => pengajar.id === element.id)) {
+            updatedList.push(element);
+          }
         });
+        // Perbarui state dengan salinan yang diperbarui
+        setListPengajarExisting(updatedList);
       }
     },
   });

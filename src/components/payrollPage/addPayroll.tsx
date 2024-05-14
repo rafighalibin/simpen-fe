@@ -49,8 +49,6 @@ export const AddPayroll = () => {
         mutationFn: () => 
             fetchWithToken("/payroll/fee","POST", payload).then((res) => res.json()),
         onSuccess: (data) => {
-            console.log("Success")
-            console.log(data);
             if(data.content===null){
                 alert("Payroll fee addition failed");
             }
@@ -181,7 +179,6 @@ export const AddPayroll = () => {
                 <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-lg rounded-lg border">
                     <form
                         onSubmit={(e) => {
-                            console.log(payload);
                             e.preventDefault();
                             addPayrollMutation();
                         }}
