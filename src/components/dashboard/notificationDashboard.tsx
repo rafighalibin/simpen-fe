@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import styles from "./dashboard.module.css";
-import { PoppinsBold, PoppinsMedium, InterMedium, InterReguler } from "../../font/font";
+import {
+  PoppinsBold,
+  PoppinsMedium,
+  InterMedium,
+  InterReguler,
+} from "../../font/font";
 import { FiBell } from "react-icons/fi";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
 
@@ -91,20 +96,23 @@ export const Notification = ({ data, onUpdate }) => {
     <div className={`${styles.card4}`}>
       <div className="flex items-center p-4 ml-2 align-middle">
         <div>
-          <FiBell size={32} className="align-middle mt-2 ml-4" /> {/* Profile icon */}
+          <FiBell size={32} className="align-middle mt-2 ml-4" />{" "}
+          {/* Profile icon */}
         </div>
-          <div
-            style={PoppinsBold.style}
-            className={`${styles.heading_announcement} ml-5 mt-4 mb-2`}
-          >
-            Notifikasi
+        <div
+          style={PoppinsBold.style}
+          className={`${styles.heading_announcement} ml-5 mt-4 mb-2`}
+        >
+          Notifikasi
+        </div>
+      </div>
+      <div className="overflow-y-auto overflow-x-hidden max-h-[50vh]">
+        {!notifications || notifications.length === 0 ? (
+          <div className="mt-32 ml-5 mb-96 align-center items-center text-center">
+            Tidak ada Notifikasi.
           </div>
-        </div>
-        <div className="overflow-y-auto overflow-x-hidden max-h-[50vh]">
-          {!notifications || notifications.length === 0 ? (
-            <div className="mt-5 ml-5 align-center items-center text-center">Tidak ada Notifikasi.</div>
-          ) : (
-            <div className="overflow-y-auto overflow-x-hidden max-h-[65vh]">
+        ) : (
+          <div className="overflow-y-auto overflow-x-hidden max-h-[50vh]">
             {notifications.map((notification, index) => (
               <div
                 key={index}
@@ -119,27 +127,59 @@ export const Notification = ({ data, onUpdate }) => {
                     style={PoppinsBold.style}
                     className={`${styles.heading}`}
                   >
-                    {notification.tipe === 1 && <div className={`text-[#215E9B]`}>Assign Kelas</div>}
-                    {notification.tipe === 2 && <div className={`text-[#215E9B]`}>Feedback Akademik</div>}
+                    {notification.tipe === 0 && <div>Assign Sesi Kelas</div>}
+
+                    {notification.tipe === 1 && (
+                      <div className={`text-[#215E9B]`}>Assign Kelas</div>
+                    )}
+                    {notification.tipe === 2 && (
+                      <div className={`text-[#215E9B]`}>Feedback Akademik</div>
+                    )}
                     {notification.tipe === 3 && (
-                      <div className={`text-[#215E9B]`}>Permintaan Perubahan Jadwal</div>
+                      <div className={`text-[#215E9B]`}>
+                        Permintaan Perubahan Jadwal
+                      </div>
                     )}
                     {notification.tipe === 4 && (
-                      <div className={`text-[#215E9B]`}>Permintaan Pengajar Pengganti</div>
+                      <div className={`text-[#215E9B]`}>
+                        Permintaan Pengajar Pengganti
+                      </div>
                     )}
                     {notification.tipe === 5 && (
-                      <div className={`text-[#215E9B]`}>Permintaan Perubahan Jadwal</div>
+                      <div className={`text-[#215E9B]`}>
+                        Permintaan Perubahan Jadwal
+                      </div>
                     )}
                     {notification.tipe === 6 && (
-                      <div className={`text-[#215E9B]`}>Permintaan Pengajar Pengganti</div>
+                      <div className={`text-[#215E9B]`}>
+                        Permintaan Pengajar Pengganti
+                      </div>
                     )}
-                    {notification.tipe === 7 && <div className={`text-[#215E9B]`}>Assign PIC Akademik</div>}
-                    {notification.tipe === 8 && <div className={`text-[#215E9B]`}>Akun Tidak Aktif</div>}
+                    {notification.tipe === 7 && (
+                      <div className={`text-[#215E9B]`}>
+                        Assign PIC Akademik
+                      </div>
+                    )}
+                    {notification.tipe === 8 && (
+                      <div className={`text-[#215E9B]`}>Akun Tidak Aktif</div>
+                    )}
                   </div>
                   <div
                     className={`${styles.paragraph}`}
                     style={InterMedium.style}
                   >
+                    {notification.tipe === 0 && (
+                      <div>
+                        {"Anda mendapatkan jadwal "}
+
+                        <a
+                          href={`/kelas/${notification.isi["idKelas"]}`}
+                          className="hover:text-blue-500 focus:text-blue-500"
+                        >
+                          Sesi Kelas baru
+                        </a>
+                      </div>
+                    )}
                     {notification.tipe === 1 && (
                       <div>
                         {"Anda mendapatkan jadwal "}
@@ -251,9 +291,8 @@ export const Notification = ({ data, onUpdate }) => {
               </div>
             ))}
           </div>
-          )}
-        </div>
+        )}
+      </div>
     </div>
   );
 };
-

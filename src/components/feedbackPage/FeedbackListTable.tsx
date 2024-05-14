@@ -7,13 +7,11 @@ import { InterMedium, PoppinsBold } from "../../font/font";
 import Loading from "../../app/loading";
 import { SearchFeedback } from "./SearchFeedback";
 import { useRouter } from "next/navigation";
+import { FiStar } from "react-icons/fi";
+import { useMutation } from "react-query";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
 
-import { useMutation } from "react-query";
-
 export const FeedbackListTable = () => {
-  const fetchWithToken = useFetchWithToken();
-
   const {
     isLoading: listAllFeedbackLoading,
     error,
@@ -25,6 +23,7 @@ export const FeedbackListTable = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
+  const fetchWithToken = useFetchWithToken();
 
   useEffect(() => {
     refetch();
@@ -192,10 +191,6 @@ export const FeedbackListTable = () => {
                       className="px-4 py-4 text-left hidden md:table-cell"
                       style={InterMedium.style}
                     ></th>
-                    <th
-                      className="px-4 py-4 text-left hidden md:table-cell"
-                      style={InterMedium.style}
-                    ></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -218,9 +213,15 @@ export const FeedbackListTable = () => {
                           {feedback.namaProgram}
                         </td>
                         <td className="border-b px-4 py-5 hidden md:table-cell">
-                          {feedback.tanggalPembuatan[2] + "/" + feedback.tanggalPembuatan[1] + "/" + feedback.tanggalPembuatan[0]}
+                          {feedback.tanggalPembuatan[2] +
+                            "/" +
+                            feedback.tanggalPembuatan[1] +
+                            "/" +
+                            feedback.tanggalPembuatan[0]}
                         </td>
                         <td className="border-b px-4 py-5 hidden md:table-cell">
+                          {feedback.rating}
+                          <FiStar className="inline fill-yellow-300 text-yellow-300" />{" "}
                           {feedback.rating}
                         </td>
                         {!feedback.finished ? (
@@ -249,14 +250,6 @@ export const FeedbackListTable = () => {
                               Ubah Feedback
                             </button>
                           )}
-                        </td>
-                        <td className="border-b px-4 py-5 md:table-cell hidden">
-                          <button
-                            onClick={() => handleDelete(feedback)}
-                            className={`bg-transparent hover:bg-[#215E9B] text-[#215E9B] focus:bg-[#215E9B] focus:text-white hover:text-white py-2 px-4 border border-[#215E9B] hover:border-transparent rounded-full`}
-                          >
-                            Hapus
-                          </button>
                         </td>
                       </tr>
                     ))}

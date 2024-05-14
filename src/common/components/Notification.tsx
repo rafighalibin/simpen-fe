@@ -104,7 +104,7 @@ export const Notification = ({ data, onUpdate }) => {
                     style={PoppinsBold.style}
                     className={`${styles.heading}`}
                   >
-                    {notification.tipe === 1 && <div>Assign Sesi Kelas</div>}
+                    {notification.tipe === 0 && <div>Assign Sesi Kelas</div>}
 
                     {notification.tipe === 1 && <div>Assign Kelas</div>}
                     {notification.tipe === 2 && <div>Feedback Akademik</div>}

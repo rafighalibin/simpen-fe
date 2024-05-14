@@ -33,8 +33,8 @@ export const StatsAdmin = () => {
   };
 
   return (
-    <div className="mr-8 flex">
-    <div className={`${styles.card6} p-5 mr-8`}>
+    <div className="flex-grow grid grid-flow-row-dense">
+    <div className={`${styles.card6} p-5`}>
       <div className="flex items-center align-middle">
       <div>
           <FiBook size={32} className="align-middle mt-2 ml-4" /> {/* Profile icon */}
