@@ -10,6 +10,7 @@ import styles from "./detailFee.module.css";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import Loading from "../../app/loading";
 import Link from "next/link";
+import { useAuthContext } from "../../common/utils/authContext";
 
 export const DetailFee = () => {
     const { id } = useParams();
@@ -18,6 +19,7 @@ export const DetailFee = () => {
     const queryClient = useQueryClient();
     const [error, setError] = useState("");
     const [succces, setSuccess] = useState("");
+    const { pengguna } = useAuthContext();
 
     const {
         isLoading,
@@ -230,15 +232,17 @@ export const DetailFee = () => {
                         />
                     </div>
                 </div>
-                <div className="flex justify-center mt-9 space-x-6">
-                    <button
-                    className={`${styles.button_tx} ${styles.btn} `}
-                    style={InterMedium.style}
-                    onClick={handleEditButtonClick}
-                    >
-                    Edit Fee
-                    </button>
-                </div>
+                {pengguna.role === "operasional" && (
+                    <div className="flex justify-center mt-9 space-x-6">
+                        <button
+                        className={`${styles.button_tx} ${styles.btn} `}
+                        style={InterMedium.style}
+                        onClick={handleEditButtonClick}
+                        >
+                        Edit Fee
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

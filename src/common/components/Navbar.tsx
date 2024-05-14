@@ -14,6 +14,7 @@ import useFetchLoggedUser from "../hooks/user/useFetchLoggedUser";
 import { Notification } from "./Notification";
 import { useMutation } from "react-query";
 import useFetchWithToken from "../hooks/fetchWithToken";
+import { set } from "react-hook-form";
 
 const getRootPath = (path: String) => {
   const rootPath = path.split("/")[1];
@@ -29,6 +30,7 @@ const Navbar = () => {
   const [navbar, setNavbar] = useState(false);
   const [dropdownKelas, setDropdownKelas] = useState(false);
   const [dropdownPengajar, setDropdownPengajar] = useState(false);
+  const [dropdownPlatform, setDropdownPlatform] = useState(false);
 
   const path = usePathname();
   const {
@@ -279,6 +281,57 @@ const Navbar = () => {
                       Murid
                     </a>
                   </li>
+                  <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                    <div className="relative"
+                    onMouseEnter={(e) => setDropdownPlatform(!dropdownPlatform)}
+                    onMouseLeave={(e) => setDropdownPlatform(!dropdownPlatform)}
+                    >
+                      {/* Main link for Platform */}
+                      <span
+                        className={`${
+                          getRootPath(path) === "platform"
+                            ? "md:text-primaryForeground"
+                            : "md:text-info"
+                        }  md:hover:text-primaryForeground`}
+                      >
+                        Platform
+                      </span>
+                      {dropdownPlatform && (
+                        <div className="absolute top-full left-0 w-48 rounded-md shadow-lg z-10">
+                          <ul>
+                            <li className="p-2 background-color: transparent"></li>
+                            <a href="/platform" className="text-sm">
+                              <li className="p-2 bg-primary text-info hover:bg-infoHover hover:text-primaryForeground">
+                                Jadwal Pemakaian
+                              </li>
+                            </a>
+                            <a href="/platform/zoom" className="text-sm">
+                              <li className="p-2 bg-primary text-info hover:bg-infoHover hover:text-primaryForeground">
+                                Daftar Zoom
+                              </li>
+                            </a>
+                            <a href="/platform/ruangan" className="text-sm">
+                              <li className="p-2 bg-primary text-info hover:bg-infoHover hover:text-primaryForeground">
+                                Daftar Ruangan
+                              </li>
+                            </a>
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </li>{" "}
+                  <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                    <a
+                      href="/payroll"
+                      className={`${
+                        getRootPath(path) === "payroll"
+                          ? "md:text-primaryForeground"
+                          : "md:text-info"
+                      }  md:hover:text-primaryForeground`}
+                    >
+                      Payroll
+                    </a>
+                  </li>
                   <a
                     href="/profile"
                     className={`${
@@ -419,6 +472,14 @@ const Navbar = () => {
                       className="md:text-info md:hover:text-primaryForeground"
                     >
                       Availability
+                    </a>
+                  </li>
+                  <li className="md:border-0 border-b-[1px] p-2 md:hover:bg-transparent hover:bg-[#efefef]">
+                    <a
+                      href="/payroll"
+                      className="md:text-info md:hover:text-primaryForeground"
+                    >
+                      Payroll
                     </a>
                   </li>
                   <a
