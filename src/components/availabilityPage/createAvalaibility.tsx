@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
 import ScheduleSelector from "react-schedule-selector";
 import { format } from "date-fns";
@@ -11,6 +11,7 @@ export const CreateAvailability = () => {
   const [schedule, setSchedule] = useState([]);
   const [payload, setPayload] = useState([] as UpdateAvailability[]);
   const [lastUpdate, setLastUpdate] = useState(new Date());
+  const [loadSchedule, setLoadSchedule] = useState(false);
   const {
     mutateAsync: updateAvailabilityMutation,
     isLoading: updateAvailabilityIsLoading,
@@ -31,16 +32,6 @@ export const CreateAvailability = () => {
   } = useQuery({
     queryKey: ["availability"],
     queryFn: () => fetchWithToken(`/availability`).then((res) => res.json()),
-    onSuccess: (data) => {
-      data.content.availability.map((e) => {
-        let dateInstance = new Date(e[0], e[1] - 1, e[2], e[3], e[4]);
-        setSchedule((prev) => [...prev, dateInstance]);
-      });
-
-      let e = data.content.lastUpdate;
-      let dateInstance = new Date(e[0], e[1] - 1, e[2], e[3], e[4]);
-      setLastUpdate(dateInstance);
-    },
   });
   const handleChange = (newSchedule) => {
     setPayload([]);
@@ -55,6 +46,30 @@ export const CreateAvailability = () => {
 
     setSchedule(newSchedule);
   };
+
+  useEffect(() => {
+    if (fetchAvailabilityResponse) {
+      let tempSchedule = [] as Date[];
+      fetchAvailabilityResponse.content.availability.map((e) => {
+        let dateInstance = new Date(e[0], 0, e[2], e[3], e[4]);
+        tempSchedule.push(dateInstance);
+      });
+      setSchedule(tempSchedule);
+
+      let e = fetchAvailabilityResponse.content.lastUpdate;
+      if (e === null) {
+        setLastUpdate(new Date());
+      } else {
+        let dateInstance = new Date(e[0], e[1] - 1, e[2], e[3], e[4]);
+        setLastUpdate(dateInstance);
+      }
+      setLoadSchedule(true);
+    }
+  }, [
+    fetchAvailabilityResponse,
+    fetchAvailabilitySuccess,
+    fetchAvailabilityIsLoading,
+  ]);
 
   function handleSubmit() {
     updateAvailabilityMutation();
@@ -71,23 +86,19 @@ export const CreateAvailability = () => {
       </h1>
       <div className="bg-base flex flex-col space-y-4 px-8 py-12 shadow-lg rounded-lg border">
         <div className="px-20">
-          <ScheduleSelector
-            startDate={
-              new Date(
-                new Date().getFullYear(),
-                new Date("1/4/2024").getMonth(),
-                1
-              )
-            }
-            selection={schedule}
-            numDays={7}
-            minTime={8}
-            maxTime={22}
-            hourlyChunks={1}
-            onChange={handleChange}
-            dateFormat="dddd"
-            timeFormat="HH:mm"
-          />
+          {loadSchedule && (
+            <ScheduleSelector
+              startDate={new Date(2024, 0, 1)}
+              selection={schedule}
+              numDays={7}
+              minTime={8}
+              maxTime={22}
+              hourlyChunks={1}
+              onChange={handleChange}
+              dateFormat="dddd"
+              timeFormat="HH:mm"
+            />
+          )}
 
           <div className="my-5">
             {updateAvailabilitySuccess && (
@@ -111,12 +122,6 @@ export const CreateAvailability = () => {
             className="bg-info text-white px-8 py-2 rounded-md hover:bg-infoHover"
           >
             Update
-          </button>
-          <button
-            onClick={handleClear}
-            className="bg-error text-white px-8 py-2 rounded-md hover:bg-errorHover"
-          >
-            Clear
           </button>
         </div>
       </div>

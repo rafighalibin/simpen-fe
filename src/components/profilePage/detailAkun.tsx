@@ -126,19 +126,13 @@ const DetailAkun = ({ buttons }) => {
                 Foto Diri
               </label>
               <div className="mt-1 relative w-48 h-48 flex items-center justify-center rounded-full overflow-hidden">
-                <input
-                  disabled
-                  type="file"
-                  value={""}
-                  accept="image/*"
-                  className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-                />
                 {fotoDiri && (
                   <img
                     src={fotoDiri}
                     alt="Foto Diri"
                     className="object-cover w-full h-full"
-                    style={{ borderRadius: "50%" }}
+                     style={{ borderRadius: "50%", cursor: "pointer" }}
+                   onClick={() => window.open(fotoDiri, '_blank')}
                   />
                 )}
                 {!fotoDiri && (
@@ -395,18 +389,13 @@ const DetailAkun = ({ buttons }) => {
                 Foto KTP
               </label>
               <div className="mt-1 relative w-full h-80 flex items-center justify-center rounded-lg overflow-hidden">
-                <input
-                  disabled
-                  type="file"
-                  accept="image/*"
-                  value={""}
-                  className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-                />
                 {fotoKtp && (
                   <img
                     src={fotoKtp}
                     alt="Foto KTP"
                     className="object-cover w-full h-full"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => window.open(fotoKtp, '_blank')}
                   />
                 )}
                 {!fotoKtp && (
@@ -506,19 +495,13 @@ const DetailAkun = ({ buttons }) => {
                 Foto Buku Tabungan
               </label>
               <div className="mt-1 relative w-full h-80 flex items-center justify-center rounded-lg overflow-hidden">
-                <input
-                  disabled
-                  type="file"
-                  accept="image/*"
-                  value={""}
-                  // Gunakan fungsi handleFileChangeBukuTabungan untuk foto buku tabungan
-                  className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-                />
                 {fotoBukuTabungan && (
                   <img
                     src={fotoBukuTabungan}
                     alt="Foto Buku Tabungan"
                     className="object-cover w-full h-full"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => window.open(fotoKtp, '_blank')}
                   />
                 )}
                 {!fotoBukuTabungan && (
@@ -559,18 +542,13 @@ const DetailAkun = ({ buttons }) => {
                 Foto NPWP
               </label>
               <div className="mt-1 relative w-full h-80 flex items-center justify-center rounded-lg overflow-hidden">
-                <input
-                  disabled
-                  type="file"
-                  accept="image/*"
-                  value={""}
-                  className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-                />
                 {fotoNpwp && (
                   <img
                     src={fotoNpwp}
                     alt="Foto NPWP"
                     className="object-cover w-full h-full"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => window.open(fotoKtp, '_blank')}
                   />
                 )}
                 {!fotoNpwp && (

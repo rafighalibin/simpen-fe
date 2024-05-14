@@ -104,6 +104,8 @@ export const Notification = ({ data, onUpdate }) => {
                     style={PoppinsBold.style}
                     className={`${styles.heading}`}
                   >
+                    {notification.tipe === 1 && <div>Assign Sesi Kelas</div>}
+
                     {notification.tipe === 1 && <div>Assign Kelas</div>}
                     {notification.tipe === 2 && <div>Feedback Akademik</div>}
                     {notification.tipe === 3 && (
@@ -125,6 +127,18 @@ export const Notification = ({ data, onUpdate }) => {
                     className={`${styles.paragraph}`}
                     style={InterMedium.style}
                   >
+                    {notification.tipe === 0 && (
+                      <div>
+                        {"Anda mendapatkan jadwal "}
+
+                        <a
+                          href={`/kelas/${notification.isi["idKelas"]}`}
+                          className="hover:text-blue-500 focus:text-blue-500"
+                        >
+                          Sesi Kelas baru
+                        </a>
+                      </div>
+                    )}
                     {notification.tipe === 1 && (
                       <div>
                         {"Anda mendapatkan jadwal "}
@@ -135,6 +149,7 @@ export const Notification = ({ data, onUpdate }) => {
                         >
                           Kelas baru
                         </a>
+                        {` pada ${notification.isi["waktuSesi"][2]} - ${notification.isi["waktuSesi"][1]} - ${notification.isi["waktuSesi"][0]}`}
                       </div>
                     )}
                     {notification.tipe === 2 && (

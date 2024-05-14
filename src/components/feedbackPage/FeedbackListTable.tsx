@@ -5,7 +5,7 @@ import useFetchAllFeedback from "../../common/hooks/feedback/useFetchAllFeedback
 import styles from "./FeedbackListTable.module.css";
 import { InterMedium, PoppinsBold } from "../../font/font";
 import Loading from "../../app/loading";
-import { SearchPengajar } from "./SearchPengajar";
+import { SearchFeedback } from "./SearchFeedback";
 import { useRouter } from "next/navigation";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
 
@@ -108,7 +108,7 @@ export const FeedbackListTable = () => {
 
   const handleDetailClick = (feedback) => {
     const feedbackId = feedback.id;
-    router.push(`/feedback/${feedbackId}`);
+    router.push(`/feedback/edit/${feedbackId}`);
   };
 
   const { mutateAsync: deleteMutation } = useMutation({
@@ -132,7 +132,7 @@ export const FeedbackListTable = () => {
         Daftar Feedback
       </div>
       <div>
-        <SearchPengajar sQ={searchQuery} ssQ={setSearchQuery} />
+        <SearchFeedback sQ={searchQuery} ssQ={setSearchQuery} />
       </div>
       <div>
         {!filteredFeedbacks ? (
@@ -174,6 +174,12 @@ export const FeedbackListTable = () => {
                       className="px-4 py-4 text-left hidden md:table-cell"
                       style={InterMedium.style}
                     >
+                      TANGGAL SELESAI
+                    </th>
+                    <th
+                      className="px-4 py-4 text-left hidden md:table-cell"
+                      style={InterMedium.style}
+                    >
                       RATING
                     </th>
                     <th
@@ -210,6 +216,9 @@ export const FeedbackListTable = () => {
                         </td>
                         <td className="border-b px-4 py-5">
                           {feedback.namaProgram}
+                        </td>
+                        <td className="border-b px-4 py-5 hidden md:table-cell">
+                          {feedback.tanggalPembuatan[2] + "/" + feedback.tanggalPembuatan[1] + "/" + feedback.tanggalPembuatan[0]}
                         </td>
                         <td className="border-b px-4 py-5 hidden md:table-cell">
                           {feedback.rating}

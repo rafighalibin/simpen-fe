@@ -6,6 +6,7 @@ export type RatingMurid = {
   jenisKelas: JenisKelas[];
   rating: number;
   linkPlaylist: string;
+  tanggalSelesai: string;
 };
 
 export type Rating = {
