@@ -102,9 +102,9 @@ export const Notification = ({ data, onUpdate }) => {
         </div>
         <div className="overflow-y-auto overflow-x-hidden max-h-[50vh]">
           {!notifications || notifications.length === 0 ? (
-            <div className="mt-5 ml-5 align-center items-center text-center">Tidak ada Notifikasi.</div>
+            <div className="mt-32 ml-5 mb-96 align-center items-center text-center">Tidak ada Notifikasi.</div>
           ) : (
-            <div className="overflow-y-auto overflow-x-hidden max-h-[65vh]">
+            <div className="overflow-y-auto overflow-x-hidden max-h-[50vh]">
             {notifications.map((notification, index) => (
               <div
                 key={index}

@@ -34,8 +34,8 @@ export const StatsAkad = () => {
   };
 
   return (
-    <div className="mr-8 flex">
-    <div className={`${styles.card6} p-5 mr-8`}>
+    <div className="flex-grow grid grid-flow-row-dense">
+    <div className={`${styles.card6} p-5`}>
       <div className="flex items-center align-middle">
       <div>
           <FiBook size={32} className="align-middle mt-2 ml-4" /> {/* Profile icon */}
@@ -57,7 +57,7 @@ export const StatsAkad = () => {
           <div style={PoppinsBold.style} className={`${styles.heading} mt-3 ml-5 align-center items-center text-center`}>
           <button
             style={InterMedium.style}
-            className={`px-5 py-3 mt-3 ${styles.btn} ${styles.btn_tx} text-white hover:bg-[#215E9B] focus:bg-[#215E9B] px-3`}
+            className={`px-5 py-3 mt-3 mb-12 ${styles.btn} ${styles.btn_tx} text-white hover:bg-[#215E9B] focus:bg-[#215E9B] px-3`}
             onClick={handleKelas}
           >
             Lihat Daftar Feedback
