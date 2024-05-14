@@ -13,7 +13,7 @@ import useFetchAllFeedback from "../../common/hooks/feedback/useFetchAllFeedback
 export const StatsAkad = () => {
   const { pengguna } = useAuthContext();
   const fetchWithToken = useFetchWithToken();
-  
+
   const {
     isLoading: listAllFeedbackLoading,
     error,
@@ -26,7 +26,7 @@ export const StatsAkad = () => {
   }, [refetch]);
 
   const handleKelas = () => {
-    window.location.href = "/kelas";
+    window.location.href = "/feedback";
   };
 
   const handlePerubahanKelas = () => {
@@ -35,37 +35,46 @@ export const StatsAkad = () => {
 
   return (
     <div className="flex-grow grid grid-flow-row-dense">
-    <div className={`${styles.card6} p-5`}>
-      <div className="flex items-center align-middle">
-      <div>
-          <FiBook size={32} className="align-middle mt-2 ml-4" /> {/* Profile icon */}
-        </div>
+      <div className={`${styles.card6} p-5`}>
+        <div className="flex items-center align-middle">
+          <div>
+            <FiBook size={32} className="align-middle mt-2 ml-4" />{" "}
+            {/* Profile icon */}
+          </div>
           <div
             style={PoppinsBold.style}
             className={`${styles.heading_announcement} ml-5 mt-4 mb-2`}
           >
             Total Feedback Pengajar Pending
           </div>
-      </div>
-      <div className="flex-wrap items-center align-middle">
-          <div style={PoppinsBold.style} className={`${styles.heading} mt-12 ml-5 align-center items-center text-center text-8xl`}>
+        </div>
+        <div className="flex-wrap items-center align-middle">
+          <div
+            style={PoppinsBold.style}
+            className={`${styles.heading} mt-12 ml-5 align-center items-center text-center text-8xl`}
+          >
             {listFeedback.length}
           </div>
-          <div style={PoppinsBold.style} className={`${styles.heading} mt-3 ml-5 align-center items-center text-center text-3xl`}>
+          <div
+            style={PoppinsBold.style}
+            className={`${styles.heading} mt-3 ml-5 align-center items-center text-center text-3xl`}
+          >
             Pending
           </div>
-          <div style={PoppinsBold.style} className={`${styles.heading} mt-3 ml-5 align-center items-center text-center`}>
-          <button
-            style={InterMedium.style}
-            className={`px-5 py-3 mt-3 mb-12 ${styles.btn} ${styles.btn_tx} text-white hover:bg-[#215E9B] focus:bg-[#215E9B] px-3`}
-            onClick={handleKelas}
+          <div
+            style={PoppinsBold.style}
+            className={`${styles.heading} mt-3 ml-5 align-center items-center text-center`}
           >
-            Lihat Daftar Feedback
-          </button>
+            <button
+              style={InterMedium.style}
+              className={`px-5 py-3 mt-3 mb-12 ${styles.btn} ${styles.btn_tx} text-white hover:bg-[#215E9B] focus:bg-[#215E9B] px-3`}
+              onClick={handleKelas}
+            >
+              Lihat Daftar Feedback
+            </button>
           </div>
-          </div>
-    </div>
+        </div>
+      </div>
     </div>
   );
 };
-

@@ -6,6 +6,49 @@ import styles from "./FormFeedback.module.css";
 import { InterMedium, PoppinsBold } from "../../font/font";
 import { FiStar } from "react-icons/fi";
 import { useFetchRatingByPengajar } from "../../common/hooks/feedback/useFetchRatingByPengajar";
+import { Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+const prepareChartData = (ratings) => {
+  const labels = ratings.map(
+    (rating) => `${rating.program.nama} - ${rating.jenisKelas.nama}`
+  );
+  const data = ratings.map((rating) => rating.rating);
+
+  return {
+    labels,
+    datasets: [
+      {
+        label: "Average Rating",
+        data,
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 1,
+        fill: false,
+        tension: 0.1,
+      },
+    ],
+  };
+};
 
 export const FormFeedback = ({ data: dataPass }) => {
   const fetchWithToken = useFetchWithToken();
@@ -30,9 +73,7 @@ export const FormFeedback = ({ data: dataPass }) => {
         } else {
           throw new Error(data.message || "Failed to fetch data");
         }
-      } catch (error) {
-        setErrorMsg("Failed to fetch jenis kelas detail: " + error.message);
-      }
+      } catch (error) {}
     };
 
     fetchRating();
@@ -74,14 +115,10 @@ export const FormFeedback = ({ data: dataPass }) => {
     }
   };
 
-  // Function to convert timestamps to readable dates
-  const formatDate = (timestamp) => {
-    const date = new Date(timestamp);
-    return date.toLocaleDateString("id-ID");
-  };
+  const chartData = rating ? prepareChartData(rating.listRatingMurid) : null;
 
   return (
-    <div>
+    <div className="mb-10">
       <div
         className={`${styles.heading} text-center md:my-10 my-6`}
         style={PoppinsBold.style}
@@ -95,7 +132,7 @@ export const FormFeedback = ({ data: dataPass }) => {
               className={`label text-center text-xl ${styles.heading_announcement}`}
               style={PoppinsBold.style}
             >
-              Class Table
+              Daftar Kelas{" "}
             </div>
             <div className={` ${styles.card_form} mt-4`}>
               <table className="table-auto w-full">
@@ -161,7 +198,11 @@ export const FormFeedback = ({ data: dataPass }) => {
                             {ratingMurid.jenisKelas.nama}
                           </td>
                           <td className="border-b px-4 py-4 text-left">
-                            {formatDate(ratingMurid.tanggalSelesai)}
+                            {ratingMurid.tanggalSelesai[2] +
+                              "-" +
+                              ratingMurid.tanggalSelesai[1] +
+                              "-" +
+                              ratingMurid.tanggalSelesai[0]}
                           </td>
                           <td className="border-b px-4 py-4 text-left">
                             <FiStar className="inline fill-yellow-300 text-yellow-300" />{" "}
@@ -188,6 +229,29 @@ export const FormFeedback = ({ data: dataPass }) => {
                 </tbody>
               </table>
             </div>
+            <div className={`flex-wrap items-center p-5`}>
+              <div
+                className={`label text-center text-xl ${styles.heading_announcement}`}
+                style={PoppinsBold.style}
+              >
+                Statistik Performa
+              </div>
+              {chartData && (
+                <div className="mt-8 p-3 flex justify-center">
+                  <Line
+                    data={chartData}
+                    options={{
+                      scales: {
+                        x: {
+                          beginAtZero: true,
+                        },
+                      },
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+
             <div className={`items-center mb-4 mt-5`}>
               <label htmlFor="isi" className="label">
                 Feedback:
@@ -195,7 +259,7 @@ export const FormFeedback = ({ data: dataPass }) => {
               <textarea
                 id="isi"
                 name="isi"
-                value={formState.isi}
+                value={formState.isi || dataPass.isi || ""}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border rounded"
                 required

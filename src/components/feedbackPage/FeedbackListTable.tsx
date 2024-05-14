@@ -191,6 +191,10 @@ export const FeedbackListTable = () => {
                       className="px-4 py-4 text-left hidden md:table-cell"
                       style={InterMedium.style}
                     ></th>
+                    <th
+                      className="px-4 py-4 text-left hidden md:table-cell"
+                      style={InterMedium.style}
+                    ></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -233,7 +237,7 @@ export const FeedbackListTable = () => {
                           </td>
                         )}
 
-                        <td className="border-b px-4 py-5 md:table-cell hidden">
+                        <td className="border-b px-2 py-5 md:table-cell hidden">
                           {!feedback.finished ? (
                             <button
                               onClick={() => handleDetailClick(feedback)}
@@ -249,6 +253,14 @@ export const FeedbackListTable = () => {
                               Ubah Feedback
                             </button>
                           )}
+                        </td>
+                        <td className="border-b px-2 py-5 md:table-cell hidden">
+                          <button
+                            onClick={() => handleDelete(feedback)}
+                            className={`bg-transparent hover:bg-[#a00e0e] text-[#a00e0e] focus:bg-[#a00e0e] focus:text-white hover:text-white py-2 px-4 border border-[#a00e0e] hover:border-transparent rounded-full`}
+                          >
+                            Hapus
+                          </button>
                         </td>
                       </tr>
                     ))}

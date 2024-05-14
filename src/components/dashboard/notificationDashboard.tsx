@@ -178,6 +178,7 @@ export const Notification = ({ data, onUpdate }) => {
                         >
                           Sesi Kelas baru
                         </a>
+                        {` pada ${notification.isi["waktuSesi"].slice(0, -6)}`}
                       </div>
                     )}
                     {notification.tipe === 1 && (
@@ -208,7 +209,7 @@ export const Notification = ({ data, onUpdate }) => {
                         <div>
                           {"Permintaan perubahan "}
                           <a
-                            href={`/sesi/${notification.isi["sesiKelas"]}`}
+                            href={`/kelas/${notification.isi["idKelas"]}`}
                             className="hover:text-blue-500 focus:text-blue-500 text-[#215E9B]"
                           >
                             Sesi Kelas
@@ -224,12 +225,15 @@ export const Notification = ({ data, onUpdate }) => {
                       notification.isi["status"] == "disetujui" && (
                         <div>
                           <a
-                            href={`/sesi/${notification.isi["sesiKelas"]}`}
-                            className="hover:text-blue-500 focus:text-blue-500 text-[#215E9B]"
+                            href={`/kelas/${notification.isi["idKelas"]}`}
+                            className="hover:text-blue-500 focus:text-blue-500"
                           >
                             Sesi Kelas
                           </a>
-                          {" digantikan oleh " + notification.isi["pengganti"]}
+                          {` pada ${notification.isi["waktuSesi"].slice(
+                            0,
+                            -6
+                          )} digantikan oleh ${notification.isi["pengganti"]}`}
                         </div>
                       )}
                     {notification.tipe === 4 &&
@@ -240,7 +244,7 @@ export const Notification = ({ data, onUpdate }) => {
                       <div>
                         {"Terdapat "}
                         <a
-                          href={`/permintaan-kelas`}
+                          href={`/perubahan-kelas`}
                           className="hover:text-blue-500 focus:text-blue-500"
                         >
                           {"permintaan perubahan jadwal"}
@@ -252,7 +256,7 @@ export const Notification = ({ data, onUpdate }) => {
                       <div>
                         {"Terdapat "}
                         <a
-                          href={`/permintaan-kelas`}
+                          href={`/perubahan-kelas`}
                           className="hover:text-blue-500 focus:text-blue-500"
                         >
                           {"permintaan pengajar pengganti"}
