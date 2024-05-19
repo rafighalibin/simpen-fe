@@ -108,7 +108,7 @@ export const ListOfAnnouncement = ({ data }) => {
         </div>
           <div
             style={PoppinsBold.style}
-            className={`${styles.heading_announcement} ml-5 mt-4 mb-2`}
+            className={`${styles.heading_announcement} ml-5 mt-2`}
           >
             Pengumuman
           </div>
@@ -129,6 +129,7 @@ export const ListOfAnnouncement = ({ data }) => {
               </button>
             ))}
         </div>
+        <div className="overflow-y-auto overflow-x-hidden max-h-[46vh]">
           {listAnnouncementLoading ? (
             <div>
               <Loading />
@@ -136,7 +137,7 @@ export const ListOfAnnouncement = ({ data }) => {
           ) : error ? (
             <div className="ml-5 align-middle items-center text-center">Error fetching data</div>
           ) : !listAnnouncement || listAnnouncement.length === 0 ? (
-            <div className="ml-5 align-middle items-center text-center">Tidak ada Pengumuman.</div>
+            <div className="mt-28 ml-5 mb-32 align-middle items-center text-center">Tidak ada Pengumuman.</div>
           ) : (
             <div className="">
               {reversedListAnnouncement.slice(0, 2).map((announcement) => (
@@ -176,11 +177,12 @@ export const ListOfAnnouncement = ({ data }) => {
                   </div>
                 </div>
               ))}
+              <div className="ml-5 align-middle items-center text-center"><br></br></div>
             {listAnnouncement.length > 2 && (
             <div className="ml-8 align-middle items-center ">
               <button
                 style={InterMedium.style}
-                className={`px-5 py-3 mt-5 mb-5 ${styles.btn} ${styles.btn_tx} text-white hover:bg-[#215E9B] focus:bg-[#215E9B] px-3`}
+                className={`px-5 py-3 mb-5 ${styles.btn} ${styles.btn_tx} text-white hover:bg-[#215E9B] focus:bg-[#215E9B] px-3`}
                 onClick={() => handleOpenModalList()}
               >
                 Lihat Pengumuman Lainnya
@@ -189,6 +191,7 @@ export const ListOfAnnouncement = ({ data }) => {
             )}
             </div>
           )}
+          </div>
       </div>
       {isModalListOpen && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
