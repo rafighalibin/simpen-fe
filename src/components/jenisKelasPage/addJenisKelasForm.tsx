@@ -327,41 +327,52 @@ export const AddJenisKelasForm = () => {
               ))}
             </div>
             <div>
-                {customModaPertemuan.map((customModaPertemuan, index) => (
-                  <div key={index} className="flex items-center">
+              {customModaPertemuan.map((customModaPertemuan, index) => (
+                <div key={index} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={customModaPertemuan.enabled}
+                    onChange={(e) =>
+                      toggleCustomModaPertemuan(index, e.target.checked)
+                    }
+                    className="mr-2"
+                  />
+                  {customModaPertemuan.enabled && (
                     <input
-                      type="checkbox"
-                      checked={customModaPertemuan.enabled}
-                      onChange={(e) => toggleCustomModaPertemuan(index, e.target.checked)}
+                      type="text"
+                      placeholder="Enter custom moda"
+                      value={customModaPertemuan.value}
+                      onChange={(e) =>
+                        handleCustomModaPertemuanChange(
+                          index,
+                          e.target.value.toUpperCase()
+                        )
+                      }
+                      onBlur={() => handleCustomModaPertemuanBlur(index)}
                       className="mr-2"
                     />
-                    {customModaPertemuan.enabled && (
-                      <input
-                        type="text"
-                        placeholder="Enter custom moda"
-                        value={customModaPertemuan.value}
-                        onChange={(e) => handleCustomModaPertemuanChange(index, e.target.value.toUpperCase())}
-                        onBlur={() => handleCustomModaPertemuanBlur(index)}
-                        className="mr-2"
-                      />
-                    )}
-                  </div>
-                ))}
-                <button 
-                  onClick={() => toggleCustomModaPertemuan(customModaPertemuan.length, true)} 
-                  className={`${styles.btn_add_tx} ${styles.btn_add} mr-2 mt-2 hover:bg-[#215E9B] focus:bg-[#215E9B]` }
-                  type="button">
-                  Add Custom Moda
-                </button>
-              </div>
-              <div
-                style={InterReguler.style}
-                className={`${styles.form_paragraph} mt-2`}
+                  )}
+                </div>
+              ))}
+              <button
+                onClick={() =>
+                  toggleCustomModaPertemuan(customModaPertemuan.length, true)
+                }
+                className={`${styles.btn_add_tx} ${styles.btn_add} mr-2 mt-2 hover:bg-[#215E9B] focus:bg-[#215E9B]`}
+                type="button"
               >
-                Moda adalah identifier platform daring atau luring (cth: online atau offline).
-              </div>
+                Add Custom Moda
+              </button>
             </div>
-            <div className="mt-8">
+            <div
+              style={InterReguler.style}
+              className={`${styles.form_paragraph} mt-2`}
+            >
+              Moda adalah identifier platform daring atau luring (cth: online
+              atau offline).
+            </div>
+          </div>
+          <div className="mt-8">
             <div
               style={InterMedium.style}
               className={`${styles.form_title} mb-3`}
@@ -384,48 +395,55 @@ export const AddJenisKelasForm = () => {
               ))}
             </div>
             <div>
-                {customTypes.map((customType, index) => (
-                  <div key={index} className="flex items-center">
+              {customTypes.map((customType, index) => (
+                <div key={index} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={customType.enabled}
+                    onChange={(e) => toggleCustomType(index, e.target.checked)}
+                    className="mr-2"
+                  />
+                  {customType.enabled && (
                     <input
-                      type="checkbox"
-                      checked={customType.enabled}
-                      onChange={(e) => toggleCustomType(index, e.target.checked)}
+                      type="text"
+                      placeholder="Enter custom tipe"
+                      value={customType.value}
+                      onChange={(e) =>
+                        handleCustomTypeChange(
+                          index,
+                          e.target.value.toUpperCase()
+                        )
+                      }
+                      onBlur={() => handleCustomTypeBlur(index)}
                       className="mr-2"
                     />
-                    {customType.enabled && (
-                      <input
-                        type="text"
-                        placeholder="Enter custom tipe"
-                        value={customType.value}
-                        onChange={(e) => handleCustomTypeChange(index, e.target.value.toUpperCase())}
-                        onBlur={() => handleCustomTypeBlur(index)}
-                        className="mr-2"
-                      />
-                    )}
-                  </div>
-                ))}
-                <button 
-                  onClick={() => toggleCustomType(customTypes.length, true)} 
-                  className={`${styles.btn_add_tx} ${styles.btn_add} mr-2 mt-2 hover:bg-[#215E9B] focus:bg-[#215E9B]` }
-                  type="button">
-                  Add Custom Tipe
-                </button>
-              </div>
-              <div
-                style={InterReguler.style}
-                className={`${styles.form_paragraph} mt-2`}
+                  )}
+                </div>
+              ))}
+              <button
+                onClick={() => toggleCustomType(customTypes.length, true)}
+                className={`${styles.btn_add_tx} ${styles.btn_add} mr-2 mt-2 hover:bg-[#215E9B] focus:bg-[#215E9B]`}
+                type="button"
               >
-                Tipe adalah identifier banyaknya peserta kelas (cth: reguler atau private).
-              </div>
+                Add Custom Tipe
+              </button>
             </div>
-            <div className="mt-8">
-              <div
-                style={InterMedium.style}
-                className={`${styles.form_title} mb-3`}
-              >
-                Bahasa
-              </div>
-              <div>
+            <div
+              style={InterReguler.style}
+              className={`${styles.form_paragraph} mt-2`}
+            >
+              Tipe adalah identifier banyaknya peserta kelas (cth: reguler atau
+              private).
+            </div>
+          </div>
+          <div className="mt-8">
+            <div
+              style={InterMedium.style}
+              className={`${styles.form_title} mb-3`}
+            >
+              Bahasa
+            </div>
+            <div>
               {formStateFetched.bahasaFetched.map((bahasa, index) => (
                 <div key={index} className="flex items-center">
                   <input
@@ -439,41 +457,49 @@ export const AddJenisKelasForm = () => {
                   <label htmlFor={bahasa}>{bahasa}</label>
                 </div>
               ))}
-              </div>
-              <div>
-                {customBahasa.map((customBahasa, index) => (
-                  <div key={index} className="flex items-center">
+            </div>
+            <div>
+              {customBahasa.map((customBahasa, index) => (
+                <div key={index} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={customBahasa.enabled}
+                    onChange={(e) =>
+                      toggleCustomBahasa(index, e.target.checked)
+                    }
+                    className="mr-2"
+                  />
+                  {customBahasa.enabled && (
                     <input
-                      type="checkbox"
-                      checked={customBahasa.enabled}
-                      onChange={(e) => toggleCustomBahasa(index, e.target.checked)}
+                      type="text"
+                      placeholder="Enter custom bahasa"
+                      value={customBahasa.value}
+                      onChange={(e) =>
+                        handleCustomBahasaChange(
+                          index,
+                          e.target.value.toUpperCase()
+                        )
+                      }
+                      onBlur={() => handleCustomBahasaBlur(index)}
                       className="mr-2"
                     />
-                    {customBahasa.enabled && (
-                      <input
-                        type="text"
-                        placeholder="Enter custom bahasa"
-                        value={customBahasa.value}
-                        onChange={(e) => handleCustomBahasaChange(index, e.target.value.toUpperCase())}
-                        onBlur={() => handleCustomBahasaBlur(index)}
-                        className="mr-2"
-                      />
-                    )}
-                  </div>
-                ))}
-                <button 
-                  onClick={() => toggleCustomBahasa(customBahasa.length, true)} 
-                  className={`${styles.btn_add_tx} ${styles.btn_add} mr-2 mt-2 hover:bg-[#215E9B] focus:bg-[#215E9B]` }
-                  type="button">
-                  Add Custom Bahasa
-                </button>
-              </div>
-              <div
-                style={InterReguler.style}
-                className={`${styles.form_paragraph} mt-2`}
+                  )}
+                </div>
+              ))}
+              <button
+                onClick={() => toggleCustomBahasa(customBahasa.length, true)}
+                className={`${styles.btn_add_tx} ${styles.btn_add} mr-2 mt-2 hover:bg-[#215E9B] focus:bg-[#215E9B]`}
+                type="button"
               >
-                Bahasa yang digunakan ketika kelas berlangsung.
-              </div>
+                Add Custom Bahasa
+              </button>
+            </div>
+            <div
+              style={InterReguler.style}
+              className={`${styles.form_paragraph} mt-2`}
+            >
+              Bahasa yang digunakan ketika kelas berlangsung.
+            </div>
             <div className="mt-8">
               <div
                 style={InterMedium.style}
