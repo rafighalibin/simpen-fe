@@ -7,6 +7,9 @@ import { InterMedium, PoppinsBold } from "../../font/font";
 import Loading from "../../app/loading";
 import { SearchFeedback } from "./SearchFeedback";
 import { useRouter } from "next/navigation";
+import { FiStar } from "react-icons/fi";
+import { useMutation } from "react-query";
+import useFetchWithToken from "../../common/hooks/fetchWithToken";
 
 export const FeedbackListTable = () => {
   const {
@@ -20,6 +23,7 @@ export const FeedbackListTable = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
+  const fetchWithToken = useFetchWithToken();
 
   useEffect(() => {
     refetch();
@@ -106,6 +110,18 @@ export const FeedbackListTable = () => {
     router.push(`/feedback/edit/${feedbackId}`);
   };
 
+  const { mutateAsync: deleteMutation } = useMutation({
+    mutationFn: (id) =>
+      fetchWithToken(`/feedback/${id}`, "DELETE").then((res) => res.json),
+  });
+
+  const handleDelete = async (feedback) => {
+    if (window.confirm("Apa anda yakin ingin menghapus?")) {
+      await deleteMutation(feedback.id);
+      router.push("/user");
+    }
+  };
+
   return (
     <div>
       <div
@@ -175,6 +191,10 @@ export const FeedbackListTable = () => {
                       className="px-4 py-4 text-left hidden md:table-cell"
                       style={InterMedium.style}
                     ></th>
+                    <th
+                      className="px-4 py-4 text-left hidden md:table-cell"
+                      style={InterMedium.style}
+                    ></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -197,9 +217,14 @@ export const FeedbackListTable = () => {
                           {feedback.namaProgram}
                         </td>
                         <td className="border-b px-4 py-5 hidden md:table-cell">
-                          {feedback.tanggalPembuatan[2] + "/" + feedback.tanggalPembuatan[1] + "/" + feedback.tanggalPembuatan[0]}
+                          {feedback.tanggalPembuatan[2] +
+                            "/" +
+                            feedback.tanggalPembuatan[1] +
+                            "/" +
+                            feedback.tanggalPembuatan[0]}
                         </td>
                         <td className="border-b px-4 py-5 hidden md:table-cell">
+                          <FiStar className="inline fill-yellow-300 text-yellow-300" />{" "}
                           {feedback.rating}
                         </td>
                         {!feedback.finished ? (
@@ -212,7 +237,7 @@ export const FeedbackListTable = () => {
                           </td>
                         )}
 
-                        <td className="border-b px-4 py-5 md:table-cell hidden">
+                        <td className="border-b px-2 py-5 md:table-cell hidden">
                           {!feedback.finished ? (
                             <button
                               onClick={() => handleDetailClick(feedback)}
@@ -228,6 +253,14 @@ export const FeedbackListTable = () => {
                               Ubah Feedback
                             </button>
                           )}
+                        </td>
+                        <td className="border-b px-2 py-5 md:table-cell hidden">
+                          <button
+                            onClick={() => handleDelete(feedback)}
+                            className={`bg-transparent hover:bg-[#a00e0e] text-[#a00e0e] focus:bg-[#a00e0e] focus:text-white hover:text-white py-2 px-4 border border-[#a00e0e] hover:border-transparent rounded-full`}
+                          >
+                            Hapus
+                          </button>
                         </td>
                       </tr>
                     ))}

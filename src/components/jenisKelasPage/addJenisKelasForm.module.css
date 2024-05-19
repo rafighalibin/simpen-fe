@@ -70,6 +70,24 @@
   background: var(--Blue, #66a2dc);
 }
 
+.btn_add {
+  display: inline-flex;
+  padding: 6px 24px;
+  justify-content: left;
+  align-items: left;
+  gap: 10px;
+  border-radius: 6px;
+  background: var(--Blue, #66a2dc);
+}
+
+.btn_add_tx {
+  color: var(--White-White, var(--White, #fff));
+  text-align: left;
+  font-size: 16px;
+  font-style: normal;
+  line-height: 24px; /* 150% */
+}
+
 .button_tx {
   color: var(--White-White, var(--White, #fff));
   text-align: center;

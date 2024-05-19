@@ -18,12 +18,11 @@ export const ProgramTable = () => {
   } = useFetchAllProgram(); // Updated hook
   const fetchWithToken = useFetchWithToken();
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(6);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
   const [sortBy, setSortBy] = useState("");
   const [filterBy, setFilterBy] = useState("");
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedPage, setSelectedPage] = useState(1);
   const [sortDirection, setSortDirection] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
 
@@ -99,19 +98,9 @@ export const ProgramTable = () => {
     }
   };
 
-  const handleNextPage = () => {
-    setSelectedPage((prevPage) =>
-      Math.min(prevPage + 1, Math.ceil(sortedProgram.length / itemsPerPage))
-    );
-  };
+  const totalPages = Math.ceil(filteredProgram.length / itemsPerPage);
 
-  const handlePrevPage = () => {
-    setSelectedPage((prevPage) => Math.max(prevPage - 1, 1));
-  };
-
-  const totalPages = Math.ceil(sortedProgram.length / itemsPerPage);
-
-  const paginate = (pageNumber: React.SetStateAction<number>) => setCurrentPage(pageNumber);
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   const renderPageNumbers = () => {
     const pageNumbers = [];
@@ -120,7 +109,7 @@ export const ProgramTable = () => {
         <button
           key={i}
           onClick={() => paginate(i)}
-          className={`${styles.paginatioan_tx} px-3 py-1 mx-1 ${
+          className={`${styles.pagination_tx} px-3  py-2 mx-1 ${
             currentPage === i
               ? "bg-[#215E9B] text-white"
               : "bg-[#FFFFFF] border border-[#DFE4EA] text-[#637381] hover:bg-[#A8D4FF] hover:text-white"
@@ -244,16 +233,16 @@ export const ProgramTable = () => {
           <div className="flex justify-center my-4">
             <div className={`${styles.pagination_container} p-2`}>
               <button
-                onClick={handlePrevPage}
-                disabled={selectedPage === 1}
+                onClick={() => paginate(currentPage - 1)}
+                disabled={currentPage === 1}
                 className="px-3 py-1 mx-1 bg-white border border-[#DFE4EA] text-[#637381] rounded hover:bg-[#A8D4FF] hover:text-white"
               >
                 {"<"}
               </button>
               {renderPageNumbers()}
               <button
-                onClick={handleNextPage}
-                disabled={selectedPage === totalPages}
+                onClick={() => paginate(currentPage + 1)}
+                disabled={currentPage === totalPages}
                 className="px-3 py-1 mx-1 bg-white border border-[#DFE4EA] text-[#637381] rounded hover:bg-[#A8D4FF] hover:text-white"
               >
                 {">"}

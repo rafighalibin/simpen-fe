@@ -15,6 +15,9 @@ export const AddPayroll = () => {
     const queryClient = useQueryClient();
     const fetchWithToken = useFetchWithToken();
     const { pengguna } = useAuthContext();
+    const [success, setSuccess] = useState("");
+    const [error, setError] = useState("");
+    const [errorJenis, setErrorJenis] = useState("");
 
     const router = useRouter();
 
@@ -45,20 +48,24 @@ export const AddPayroll = () => {
         maxStudents,
     };
 
-    const { mutateAsync: addPayrollMutation, data, error } = useMutation({
+    const { mutateAsync: addPayrollMutation, data, error: errorAdd } = useMutation({
         mutationFn: () => 
             fetchWithToken("/payroll/fee","POST", payload).then((res) => res.json()),
         onSuccess: (data) => {
-            if(data.content===null){
-                alert("Payroll fee addition failed");
+            if(data.status === "OK"){
+              setSuccess("Fee berhasil ditambahkan");
+              setTimeout(() => {
+                  router.push("/payroll");
+                  queryClient.invalidateQueries("fee");
+              }, 1000);
             }
             else{
-                router.push("/payroll");
-                queryClient.invalidateQueries("fee");
+              setError("Error adding payroll fee");
             }
         },
         onError: (error) => {
             console.log(error);
+            setError("Error adding payroll fee");
         },
     });
 
@@ -142,6 +149,11 @@ export const AddPayroll = () => {
         onSuccess: (data) => {
           const jenisKelas = data.content as JenisKelas;
           setJenisKelas(jenisKelas.id);
+          if (data.content.hasFee) {
+            setErrorJenis("Fee already exists");
+          } else {
+            setErrorJenis("");
+          }
         },
         enabled: !!jenisKelasNama && !!tipe && !!modaPertemuan && !!bahasa,
       });
@@ -184,24 +196,6 @@ export const AddPayroll = () => {
                         }}
                         className="space-y-4"
                     >
-                      {/* <div className="mt-5">
-                        {succces && (
-                          <div
-                            className="bg-[#DAF8E6] text-[#004434] text-sm px-4 py-2"
-                            style={InterReguler.style}
-                          >
-                            {succces}
-                          </div>
-                        )}
-                        {error && (
-                          <div
-                            className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2"
-                            style={InterReguler.style}
-                          >
-                            {error}
-                          </div>
-                        )}
-                      </div> */}
                       <div>
                         <label className="block font-medium text-neutral/70">
                             Program
@@ -388,11 +382,30 @@ export const AddPayroll = () => {
                         }}
                       />
                       </div>
+                      <div className="mt-5">
+                        {success && (
+                          <div
+                            className="bg-[#DAF8E6] text-[#004434] text-sm px-4 py-2"
+                            style={InterReguler.style}
+                          >
+                            {success}
+                          </div>
+                        )}
+                        {error || errorJenis && (
+                          <div
+                            className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2"
+                            style={InterReguler.style}
+                          >
+                            {error}
+                          </div>
+                        )}
+                      </div>
                       <button
                         type="submit"
-                        className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
+                        className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover disabled:bg-neutral/20 disabled:cursor-not-allowed"
+                        disabled={ error != "" ? true : false}
                       >
-                        Buat Fee
+                        Buat Kelas
                       </button>
                     </form>
                 </div>

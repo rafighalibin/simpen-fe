@@ -1,8 +1,7 @@
-import React, { use, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import useFetchWithToken from "../../../../common/hooks/fetchWithToken";
 import { useState } from "react";
-import { Kelas } from "../../../../common/types/kelas";
 import { Program } from "../../../../common/types/program";
 import { JenisKelas } from "../../../../common/types/jenis";
 import useFetchPengajar from "../../../../common/hooks/user/useFetchPengajar";
@@ -11,10 +10,9 @@ import Select from "react-select";
 import { MuridDetail, MuridSelect } from "../../../../common/types/murid";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "../../../../common/utils/authContext";
-import { set } from "react-hook-form";
+
 import { InterMedium, InterReguler } from "../../../../font/font";
 import styles from "./addKelas.module.css";
-import { get } from "http";
 
 const AddKelas = () => {
   const queryClient = useQueryClient();
@@ -22,6 +20,9 @@ const AddKelas = () => {
   const { pengguna } = useAuthContext();
 
   const [error, setError] = useState("");
+  const [errorFee, setErrorFee] = useState("");
+  const [zoomNotFound, setZoomNotFound] = useState("");
+  const [success, setSuccess] = useState("");
   const router = useRouter();
 
   const [programId, setProgramId] = useState("");
@@ -40,6 +41,7 @@ const AddKelas = () => {
 
   const [selectedDays, setSelectedDays] = useState([]);
   const [selectedTime, setSelectedTime] = useState("00:00");
+  const previousListJadwalKelas = useRef([]);
   const [listJadwalKelas, setListJadwalKelas] = useState([]);
 
   const [tanggalMulai, setTanggalMulai] = useState("");
@@ -60,6 +62,9 @@ const AddKelas = () => {
 
   const [listRuangan, setListRuangan] = useState([]);
   const [ruangan, setRuangan] = useState("");
+
+  const [listZoom, setListZoom] = useState([]);
+  const [zoom, setZoom] = useState("");
 
   const [linkGroup, setLinkGroup] = useState("");
 
@@ -104,11 +109,13 @@ const AddKelas = () => {
     mutationFn: () =>
       fetchWithToken("/kelas", "POST", payload).then((res) => res.json()),
     onSuccess: (data) => {
-      if(data.content===null){
-        alert("Kelas gagal dibuat");
-      } else{
-        router.push("/kelas");
-        queryClient.invalidateQueries("kelas");
+      if (data.status === "OK") {
+        setSuccess("Kelas berhasil ditambahkan");
+        setTimeout(() => {
+          router.push("/kelas");
+        }, 1000);
+      } else {
+        setError(data.message);
       }
     },
     onError: (error) => {
@@ -128,6 +135,28 @@ const AddKelas = () => {
         jumlahLevel: program.jumlahLevel,
       }));
       setListProgram(listProgramTemp);
+    },
+  });
+
+  const {isLoading: isLoadingAllZoom, data: dataAllZoom, refetch: getAllZoom,} = useQuery({
+    queryKey: ["allZoom"],
+    queryFn: () =>
+      fetchWithToken(
+        `/platform?zoom`,
+        "GET"
+      ).then((res) => res.json()),
+    onSuccess: (data) => {
+      console.log(data);
+      if(data.status === "OK") {
+        const listZoomTemp = data.content.map((zoom) => ({
+          value: zoom.id,
+          label: zoom.nama,
+        }));
+        setListZoom(listZoomTemp);
+      }
+    },
+    onError: (error) => {
+      console.log(error);
     },
   });
 
@@ -161,12 +190,12 @@ const AddKelas = () => {
       ).then((res) => res.json()),
     onSuccess: (data) => {
       if(data.content.hasFee == true){
-        setError("");
+        setErrorFee("");
         const jenisKelas = data.content as JenisKelas;
         setJenisKelas(jenisKelas);
         setJenisKelasId(jenisKelas.id);
       } else {
-        setError("Jenis Kelas belum memiliki fee, silahkan menambahkan fee terlebih dahulu!");
+        setErrorFee("Jenis Kelas belum memiliki fee, silahkan menambahkan fee terlebih dahulu!");
       }
     },
     onError: (error) => {
@@ -247,6 +276,27 @@ const AddKelas = () => {
     }
   };
 
+  const {isLoading: isLoadingZoom, data: dataZoom, refetch: getZoom,} = useQuery({
+    queryKey: ["findZoom"],
+    queryFn: () =>
+      fetchWithToken(
+        `/platform/zoom/find`,
+        "POST",
+        listJadwalKelas
+      ).then((res) => res.json()),
+    onSuccess: (data) => {
+      if(data.content != null) {
+        setZoomNotFound("");
+      } else {
+        setZoomNotFound("Tidak ada link zoom yang tersedia untuk jadwal kelas ini, silahkan memilih zoom secara manual.");
+      }
+    },
+    onError: (error) => {
+      setZoomNotFound("Tidak ada link zoom yang tersedia untuk jadwal kelas ini, silahkan memilih zoom secara manual.");
+    },
+    enabled: false,
+  });
+
   const generateClassDates = () => {
     if (
       programId &&
@@ -296,6 +346,12 @@ const AddKelas = () => {
     }
   };
   
+  useEffect(() => {
+    if (listJadwalKelas.length > 0) {
+      getZoom();
+    }
+  }, [listJadwalKelas]);
+
   useEffect(() => {
     generateClassDates();
   }, [selectedDays, selectedTime, tanggalMulai]);
@@ -532,12 +588,12 @@ const AddKelas = () => {
 
           
           <div className="mt-5">
-            {error && (
+            {errorFee && (
               <div
                 className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2"
                 style={InterReguler.style}
               >
-                {error}
+                {errorFee}
               </div>
             )}
           </div>
@@ -749,6 +805,39 @@ const AddKelas = () => {
             />
           </div>
 
+          {zoomNotFound && (
+            <div className="form-control mt-6">
+              <div
+                className="bg-[#ffeaa7] text-white-500 text-sm px-4 py-2"
+                style={InterReguler.style}
+              >
+                {zoomNotFound}
+              </div>
+              <label className="label">Zoom</label>
+              <Select
+                required
+                defaultValue={zoom}
+                name="colors"
+                onChange={handleChangePlatform}
+                options={listZoom}
+                className="bg-base mt-1 p-1 w-full border rounded-md"
+                classNamePrefix="select"
+                styles={{
+                  control: (provided) => ({
+                    ...provided,
+                    border: "none",
+                    boxShadow: "none",
+                    backgroundColor: "none",
+                  }),
+                  multiValue: (provided) => ({
+                    ...provided,
+                    backgroundColor: "#EDF6FF",
+                  }),
+                }}
+                />
+            </div>
+          )}
+
           {modaPertemuan === "OFFLINE" && (
             <div className="">
               <div>
@@ -813,10 +902,29 @@ const AddKelas = () => {
             />
           </div>
 
+          <div className="mt-5">
+            {success && (
+              <div
+                className="bg-[#DAF8E6] text-[#004434] text-sm px-4 py-2"
+                style={InterReguler.style}
+              >
+                {success}
+              </div>
+            )}
+            {error && (
+              <div
+                className="bg-[#ffcfcf] text-red-500 text-sm px-4 py-2"
+                style={InterReguler.style}
+              >
+                {error}
+              </div>
+            )}
+          </div>
+
           <button
             type="submit"
             className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover disabled:bg-neutral/20 disabled:cursor-not-allowed"
-            disabled={ error != "" ? true : false}
+            disabled={ errorFee != "" ? true : false}
           >
             Buat Kelas
           </button>

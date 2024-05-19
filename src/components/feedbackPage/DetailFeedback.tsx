@@ -5,6 +5,7 @@ import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import styles from "./FormFeedback.module.css";
 import { InterMedium, PoppinsBold } from "../../font/font";
 import { useFetchRatingByPengajar } from "../../common/hooks/feedback/useFetchRatingByPengajar";
+import { FiStar } from "react-icons/fi";
 
 export const DetailFeedback = ({ data: dataPass }) => {
   const fetchWithToken = useFetchWithToken();
@@ -97,32 +98,16 @@ export const DetailFeedback = ({ data: dataPass }) => {
                 htmlFor="namaKelas"
                 className={`${styles.form_title} mb-3`}
               >
-                Nama Program
+                Nama Pengajar: {dataPass?.namaProgram}
               </label>
-              <input
-                type="text"
-                name="namaKelas"
-                id="namaKelas"
-                value={rating?.namaPengajar}
-                disabled
-                className="w-full px-3 py-2 border rounded"
-              />
             </div>
             <div className={`items-center mb-4 mt-5`}>
               <label
                 htmlFor="rating"
                 className={`${styles.form_title} mb-3`}
               >
-                Rating
+                Rating: <FiStar className="inline fill-yellow-300 text-yellow-300" /> {dataPass.rating}
               </label>
-              <input
-                type="text"
-                name="rating"
-                id="rating"
-                value={dataPass.rating}
-                disabled
-                className="w-full px-3 py-2 border rounded"
-              />
             </div>
           </div>
           <div>
@@ -131,7 +116,7 @@ export const DetailFeedback = ({ data: dataPass }) => {
                 htmlFor="isi"
                 className={`${styles.form_title} mb-3`}
               >
-                Feedback
+                Feedback:
               </label>
               <textarea
                 name="isi"

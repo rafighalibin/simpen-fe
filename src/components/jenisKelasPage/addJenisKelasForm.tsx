@@ -328,7 +328,7 @@ export const AddJenisKelasForm = () => {
             </div>
             <div>
               {customModaPertemuan.map((customModaPertemuan, index) => (
-                <div key={index} className="flex items-center mb-2">
+                <div key={index} className="flex items-center">
                   <input
                     type="checkbox"
                     checked={customModaPertemuan.enabled}
@@ -358,7 +358,7 @@ export const AddJenisKelasForm = () => {
                 onClick={() =>
                   toggleCustomModaPertemuan(customModaPertemuan.length, true)
                 }
-                className="mr-2"
+                className={`${styles.btn_add_tx} ${styles.btn_add} mr-2 mt-2 hover:bg-[#215E9B] focus:bg-[#215E9B]`}
                 type="button"
               >
                 Add Custom Moda
@@ -396,7 +396,7 @@ export const AddJenisKelasForm = () => {
             </div>
             <div>
               {customTypes.map((customType, index) => (
-                <div key={index} className="flex items-center mb-2">
+                <div key={index} className="flex items-center">
                   <input
                     type="checkbox"
                     checked={customType.enabled}
@@ -422,7 +422,7 @@ export const AddJenisKelasForm = () => {
               ))}
               <button
                 onClick={() => toggleCustomType(customTypes.length, true)}
-                className="mr-2"
+                className={`${styles.btn_add_tx} ${styles.btn_add} mr-2 mt-2 hover:bg-[#215E9B] focus:bg-[#215E9B]`}
                 type="button"
               >
                 Add Custom Tipe
@@ -460,7 +460,7 @@ export const AddJenisKelasForm = () => {
             </div>
             <div>
               {customBahasa.map((customBahasa, index) => (
-                <div key={index} className="flex items-center mb-2">
+                <div key={index} className="flex items-center">
                   <input
                     type="checkbox"
                     checked={customBahasa.enabled}
@@ -488,7 +488,7 @@ export const AddJenisKelasForm = () => {
               ))}
               <button
                 onClick={() => toggleCustomBahasa(customBahasa.length, true)}
-                className="mr-2"
+                className={`${styles.btn_add_tx} ${styles.btn_add} mr-2 mt-2 hover:bg-[#215E9B] focus:bg-[#215E9B]`}
                 type="button"
               >
                 Add Custom Bahasa
