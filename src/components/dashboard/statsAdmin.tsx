@@ -36,7 +36,7 @@ export const StatsAdmin = () => {
     <div className="flex-grow grid grid-flow-row-dense">
     <div className={`${styles.card6} p-5`}>
       <div className="flex items-center align-middle">
-      <div>
+        <div>
           <FiBook size={32} className="align-middle mt-2 ml-4" /> {/* Profile icon */}
         </div>
           <div
@@ -80,7 +80,7 @@ export const StatsAdmin = () => {
           </div>
       </div>
       </div>
-    <div style={PoppinsBold.style} className={`${styles.heading} mt-5 ml-5 align-center items-center text-center`}>
+      <div style={PoppinsBold.style} className={`${styles.heading} mt-5 ml-5 align-center items-center text-center`}>
           <button
             style={InterMedium.style}
             className={`px-5 py-3 mt-3 ${styles.btn} ${styles.btn_tx} text-white hover:bg-[#215E9B] focus:bg-[#215E9B] px-3`}
@@ -89,7 +89,7 @@ export const StatsAdmin = () => {
             Lihat Daftar Akun
           </button>
           </div>
-    </div>
+      </div>
     </div>
   );
 };
