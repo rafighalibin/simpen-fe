@@ -41,9 +41,9 @@ export const StatsOps = () => {
 
   return (
     <div className="flex-grow grid grid-flow-row-dense grid-cols-2">
-    <div className={`${styles.card5} p-5 mr-5`}>
+    <div className={`${styles.card5} flex-grow p-5 mr-5`}>
       <div className="flex items-center align-middle">
-      <div>
+        <div>
           <FiBook size={32} className="align-middle mt-2 ml-4" /> {/* Profile icon */}
         </div>
           <div
@@ -53,23 +53,23 @@ export const StatsOps = () => {
             Total Kelas Aktif
           </div>
       </div>
-      <div className="flex-wrap items-center align-middle">
-          <div style={PoppinsBold.style} className={`${styles.heading} mt-12 ml-5 align-center items-center text-center text-8xl`}>
+      <div>
+          <div style={PoppinsBold.style} className={`${styles.heading} mt-5 ml-5 mb-5 align-center items-center text-center text-7xl`}>
             {listKelas.length}
           </div>
-          <div style={PoppinsBold.style} className={`${styles.heading} mt-3 ml-5 align-center items-center text-center text-3xl`}>
+          <div style={PoppinsBold.style} className={`${styles.heading} mt-3 ml-5 mb-5 align-center items-center text-center text-3xl`}>
             Kelas
           </div>
-          <div style={PoppinsBold.style} className={`${styles.heading} mt-3 ml-5 align-center items-center text-center`}>
+          <div style={PoppinsBold.style} className={`${styles.heading} mt-3 ml-5 mb-10 align-center items-center text-center`}>
           <button
             style={InterMedium.style}
-            className={`px-5 py-3 mb-12 ${styles.btn} ${styles.btn_tx} text-white text-center hover:bg-[#215E9B] focus:bg-[#215E9B] px-3`}
+            className={`px-5 py-3 ${styles.btn} ${styles.btn_tx} text-white text-center hover:bg-[#215E9B] focus:bg-[#215E9B] px-3`}
             onClick={handleKelas}
           >
             Lihat Daftar Kelas
           </button>
           </div>
-          </div>
+      </div>
     </div>
     <div className={`${styles.card5} p-5`}>
       <div className="flex items-center align-middle">
@@ -84,16 +84,16 @@ export const StatsOps = () => {
             </div>
       </div>
       <div className="flex-wrap items-center align-middle">
-          <div style={PoppinsBold.style} className={`${styles.heading} mt-12 ml-5 align-center items-center text-center text-8xl`}>
+          <div style={PoppinsBold.style} className={`${styles.heading} mt-5 ml-5 mb-5 align-center items-center text-center text-7xl`}>
             {listPermintaanPerubahan.length}
           </div>
-          <div style={PoppinsBold.style} className={`${styles.heading} mt-3 ml-5 align-center items-center text-center text-3xl`}>
+          <div style={PoppinsBold.style} className={`${styles.heading} mt-3 ml-5 mb-5 align-center items-center text-center text-3xl`}>
             Kelas Pending
           </div>
           <div style={PoppinsBold.style} className={`${styles.heading} mt-3 ml-5 align-center items-center text-center`}>
           <button
             style={InterMedium.style}
-            className={`px-5 py-3 mb-12 ${styles.btn} ${styles.btn_tx} text-white text-center hover:bg-[#215E9B] focus:bg-[#215E9B]`}
+            className={`px-5 py-3 ${styles.btn} ${styles.btn_tx} text-white text-center hover:bg-[#215E9B] focus:bg-[#215E9B]`}
             onClick={handlePerubahanKelas}
           >
             Lihat Permintaan Perubahan Kelas

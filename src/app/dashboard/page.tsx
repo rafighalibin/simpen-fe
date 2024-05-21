@@ -73,7 +73,7 @@ const App = () => {
         <br></br>
         <Notification data={notifications} onUpdate={handleNotificationUpdate} />
       </div>
-      <div className="flex-wrap mr-5 ml-5 col-span-2">
+      <div className="flex-wrap mr-5 ml-5 mb-12 col-span-2">
         <ListOfAnnouncement data={loggedUser} />
         <br></br>
         {loggedUser && loggedUser.role == "superadmin" && (
