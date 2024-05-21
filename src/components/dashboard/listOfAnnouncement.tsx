@@ -103,12 +103,13 @@ export const ListOfAnnouncement = ({ data }) => {
     <div>
       <div className={`${styles.card2} basis-28 flex-wrap`}>
         <div className="flex items-center p-4 ml-2 align-middle">
-        <div>
-          <FiInfo size={32} className="align-middle mt-1.5 ml-2" /> {/* Profile icon */}
-        </div>
+          <div>
+            <FiInfo size={32} className="align-middle mt-1.5 ml-2" />{" "}
+            {/* Profile icon */}
+          </div>
           <div
             style={PoppinsBold.style}
-            className={`${styles.heading_announcement} ml-5 mt-4 mb-2`}
+            className={`${styles.heading_announcement} ml-5 mt-2`}
           >
             Pengumuman
           </div>
@@ -129,14 +130,19 @@ export const ListOfAnnouncement = ({ data }) => {
               </button>
             ))}
         </div>
+        <div className="overflow-y-auto overflow-x-hidden max-h-[46vh]">
           {listAnnouncementLoading ? (
             <div>
               <Loading />
             </div>
           ) : error ? (
-            <div className="ml-5 align-middle items-center text-center">Error fetching data</div>
+            <div className="ml-5 align-middle items-center text-center">
+              Error fetching data
+            </div>
           ) : !listAnnouncement || listAnnouncement.length === 0 ? (
-            <div className="ml-5 align-middle items-center text-center">Tidak ada Pengumuman.</div>
+            <div className="mt-28 ml-5 mb-32 align-middle items-center text-center">
+              Tidak ada Pengumuman.
+            </div>
           ) : (
             <div className="">
               {reversedListAnnouncement.slice(0, 2).map((announcement) => (
@@ -163,8 +169,9 @@ export const ListOfAnnouncement = ({ data }) => {
                         } ${announcement.tanggalPembuatan[0]}  `}
                         pada
                         {` ${announcement.tanggalPembuatan[3]}:${announcement.tanggalPembuatan[4]} `}
-                        oleh 
-                        {` ${announcement.rolePembuat}`} {` ${announcement.namaPembuat}`}
+                        oleh
+                        {` ${announcement.rolePembuat}`}{" "}
+                        {` ${announcement.namaPembuat}`}
                       </div>
                     </div>
                     <div
@@ -176,19 +183,23 @@ export const ListOfAnnouncement = ({ data }) => {
                   </div>
                 </div>
               ))}
-            {listAnnouncement.length > 2 && (
-            <div className="ml-8 align-middle items-center ">
-              <button
-                style={InterMedium.style}
-                className={`px-5 py-3 mt-5 mb-5 ${styles.btn} ${styles.btn_tx} text-white hover:bg-[#215E9B] focus:bg-[#215E9B] px-3`}
-                onClick={() => handleOpenModalList()}
-              >
-                Lihat Pengumuman Lainnya
-              </button>
-            </div>
-            )}
+              <div className="ml-5 align-middle items-center text-center">
+                <br></br>
+              </div>
+              {listAnnouncement.length > 2 && (
+                <div className="ml-8 align-middle items-center ">
+                  <button
+                    style={InterMedium.style}
+                    className={`px-5 py-3 mb-5 ${styles.btn} ${styles.btn_tx} text-white hover:bg-[#215E9B] focus:bg-[#215E9B] px-3`}
+                    onClick={() => handleOpenModalList()}
+                  >
+                    Lihat Pengumuman Lainnya
+                  </button>
+                </div>
+              )}
             </div>
           )}
+        </div>
       </div>
       {isModalListOpen && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
@@ -230,8 +241,9 @@ export const ListOfAnnouncement = ({ data }) => {
                         }-${announcement.tanggalPembuatan[0]}  `}
                         pada
                         {` ${announcement.tanggalPembuatan[3]}:${announcement.tanggalPembuatan[4]} `}
-                        oleh 
-                        {` ${announcement.rolePembuat}`} {` ${announcement.namaPembuat}`}
+                        oleh
+                        {` ${announcement.rolePembuat}`}{" "}
+                        {` ${announcement.namaPembuat}`}
                       </div>
                     </div>
                     <div

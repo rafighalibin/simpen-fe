@@ -93,7 +93,7 @@ export const Notification = ({ data, onUpdate }) => {
   }
 
   return (
-    <div className={`${styles.card4}`}>
+    <div className={`${styles.card4} mb-12`}>
       <div className="flex items-center p-4 ml-2 align-middle">
         <div>
           <FiBell size={32} className="align-middle mt-2 ml-4" />{" "}
@@ -101,18 +101,18 @@ export const Notification = ({ data, onUpdate }) => {
         </div>
         <div
           style={PoppinsBold.style}
-          className={`${styles.heading_announcement} ml-5 mt-4 mb-2`}
+          className={`${styles.heading_announcement} ml-5 mt-2`}
         >
           Notifikasi
         </div>
       </div>
-      <div className="overflow-y-auto overflow-x-hidden max-h-[50vh]">
+      <div className="overflow-y-auto overflow-x-hidden max-h-[46vh]">
         {!notifications || notifications.length === 0 ? (
-          <div className="mt-32 ml-5 mb-96 align-center items-center text-center">
+          <div className="mt-32 ml-5 mb-72 align-center items-center text-center">
             Tidak ada Notifikasi.
           </div>
         ) : (
-          <div className="overflow-y-auto overflow-x-hidden max-h-[50vh]">
+          <div className="overflow-y-auto overflow-x-hidden max-h-[48vh]">
             {notifications.map((notification, index) => (
               <div
                 key={index}
@@ -204,7 +204,7 @@ export const Notification = ({ data, onUpdate }) => {
                         </a>
                       </div>
                     )}
-                    {notification.tipe === 3 &&
+                    {notification.tipe === 4 &&
                       notification.isi["status"] == "disetujui" && (
                         <div>
                           {"Permintaan perubahan "}
@@ -217,11 +217,11 @@ export const Notification = ({ data, onUpdate }) => {
                           {" disetujui"}
                         </div>
                       )}
-                    {notification.tipe === 3 &&
-                      notification.isi["status"] == "ditolak" && (
-                        <div>Permintaan pengajar pengganti ditolak</div>
-                      )}
                     {notification.tipe === 4 &&
+                      notification.isi["status"] == "ditolak" && (
+                        <div>Permintaan perubahan jadwal ditolak</div>
+                      )}
+                    {notification.tipe === 3 &&
                       notification.isi["status"] == "disetujui" && (
                         <div>
                           <a
@@ -236,7 +236,7 @@ export const Notification = ({ data, onUpdate }) => {
                           )} digantikan oleh ${notification.isi["pengganti"]}`}
                         </div>
                       )}
-                    {notification.tipe === 4 &&
+                    {notification.tipe === 3 &&
                       notification.isi["status"] == "ditolak" && (
                         <div>Permintaan pengajar pengganti ditolak</div>
                       )}
@@ -296,6 +296,9 @@ export const Notification = ({ data, onUpdate }) => {
             ))}
           </div>
         )}
+      </div>
+      <div className="ml-5 align-middle items-center text-center">
+        <br></br>
       </div>
     </div>
   );

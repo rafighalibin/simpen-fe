@@ -13,8 +13,10 @@ export const UpdateForm = () => {
   const queryClient = useQueryClient();
   const { pengguna, isAuthenticated } = useAuthContext();
   const [passwordsMatch, setPasswordsMatch] = useState(true);
+  const [passwordError, setPasswordError] = useState('');
   const nikRef = useRef(null);
   const passReff = useRef(null);
+  const confirmPassReff = useRef(null);
   const [formState, setFormState] = useState({
     id: "",
     role: "",
@@ -98,6 +100,11 @@ export const UpdateForm = () => {
     }
   }, [detailAkun]);
 
+  const validatePassword = (password) => {
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    return passwordRegex.test(password);
+  };
+
   const handleConfirmPassword = () => {
     if (formState.password !== formState.konfirmasiPassword) {
       setPasswordsMatch(false);
@@ -139,7 +146,7 @@ export const UpdateForm = () => {
 
     if (
       pengguna.role === "pengajar" &&
-      (formState.nik.length !== 16 || !/^\d+$/.test(formState.nik))
+      (formState.nik == null || formState.nik.length !== 16 || !/^\d+$/.test(formState.nik))
     ) {
       setFormState({
         ...formState,
@@ -152,14 +159,24 @@ export const UpdateForm = () => {
     if(formState.password === "") {
       formState.password = null;
     }
+    if(!validatePassword(formState.password) && formState.password !== null) {
+      setPasswordError('Password harus minimal 8 karakter, mengandung huruf besar dan angka.');
+      passReff.current.focus();
+      return;
+    } else {
+      setPasswordError('');
+    }
+
     if(formState.konfirmasiPassword === "") {
       formState.konfirmasiPassword = null;
     }
+
     if (formState.password !== formState.konfirmasiPassword) {
       console.log(formState.password, formState.konfirmasiPassword);
-      passReff.current.focus();
+      confirmPassReff.current.focus();
       return;
     }
+
     updateProfileMutation();
   };
 
@@ -334,11 +351,13 @@ export const UpdateForm = () => {
           Detail Akun
         </h1>
         {pengguna.role === "pengajar" && (
-          <form>
+          <form
+          onSubmit={handleSubmit}
+          >
             <div className="bg-base flex flex-col space-y-4 px-8 py-8 shadow-lg rounded-lg ">
               <div className="flex flex-col items-center pb-16">
                 <label className="block font-medium text-neutral/70">
-                  Foto Diri
+                Foto Diri<span className="text-red-500"> *</span>
                 </label>
                 <div className="mt-1 relative w-48 h-48 flex items-center justify-center rounded-full overflow-hidden">
                   <input
@@ -396,7 +415,7 @@ export const UpdateForm = () => {
 
                 <div className="w-1/2">
                   <label className="block font-medium text-neutral/70">
-                    Jenis Kelamin
+                    Jenis Kelamin<span className="text-red-500"> *</span>
                   </label>
                   <div className="flex items-center mt-1">
                     <input
@@ -429,7 +448,7 @@ export const UpdateForm = () => {
               <div className="flex flex-row gap-4 space-x-8">
                 <div className="w-1/2 relative">
                   <label className="block font-medium text-neutral/70">
-                    Nama Lengkap
+                    Nama Lengkap<span className="text-red-500"> *</span>
                   </label>
                   <div className="flex mt-1 relative">
                     <input
@@ -445,7 +464,7 @@ export const UpdateForm = () => {
                 </div>
                 <div className="w-1/2 relative">
                   <label className="block font-medium text-neutral/70">
-                    NIK
+                    NIK<span className="text-red-500"> *</span>
                   </label>
                   <div
                     className={`flex mt-1 relative ${
@@ -477,7 +496,7 @@ export const UpdateForm = () => {
 
               <div>
                 <label className="block font-medium text-neutral/70">
-                  Alamat KTP
+                  Alamat KTP <span className="text-red-500"> *</span>
                 </label>
                 <input
                   required
@@ -493,7 +512,7 @@ export const UpdateForm = () => {
               <div className="flex flex-row gap-4 space-x-8">
                 <div className="w-1/2 relative">
                   <label className="block font-medium text-neutral/70">
-                    Email Pribadi
+                    Email Pribadi<span className="text-red-500"> *</span>
                   </label>
                   <div className="flex mt-1 relative">
                     <input
@@ -513,7 +532,7 @@ export const UpdateForm = () => {
 
                 <div className="w-1/2 relative">
                   <label className="block font-medium text-neutral/70">
-                    Domisili Kota
+                    Domisili Kota<span className="text-red-500"> *</span>
                   </label>
                   <div className="flex mt-1 relative">
                     <input
@@ -534,7 +553,7 @@ export const UpdateForm = () => {
               <div className="flex flex-row gap-4 space-x-8">
                 <div className="w-1/2 relative">
                   <label className="block font-medium text-neutral/70">
-                    No. Telpon
+                    No. Telpon<span className="text-red-500"> *</span>
                   </label>
                   <div className="flex mt-1 relative">
                     <input
@@ -557,7 +576,7 @@ export const UpdateForm = () => {
 
                 <div className="w-1/2 relative">
                   <label className="block font-medium text-neutral/70">
-                    No. Telpon Alternatif
+                    No. Telpon Alternatif<span className="text-red-500"> *</span>
                   </label>
                   <div className="flex mt-1 relative">
                     <input
@@ -582,7 +601,7 @@ export const UpdateForm = () => {
               <div className="flex flex-row gap-4 space-x-8">
                 <div className="w-1/2 relative">
                   <label className="block font-medium text-neutral/70">
-                    Nama Kontak Darurat
+                    Nama Kontak Darurat<span className="text-red-500"> *</span>
                   </label>
                   <div className="flex mt-1 relative">
                     <input
@@ -603,7 +622,7 @@ export const UpdateForm = () => {
 
                 <div className="w-1/2 relative">
                   <label className="block font-medium text-neutral/70">
-                    No. Telpon Kontak Darurat
+                    No. Telpon Kontak Darurat<span className="text-red-500"> *</span>
                   </label>
                   <div className="flex mt-1 relative">
                     <input
@@ -629,7 +648,7 @@ export const UpdateForm = () => {
               <div className="flex flex-row gap-4 space-x-8">
                 <div className="w-1/2 relative">
                   <label className="block font-medium text-neutral/70">
-                    Pendidikan Terakhir (Institusi - Jurusan)
+                    Pendidikan Terakhir (Institusi-Jurusan) <span className="text-red-500"> *</span>
                   </label>
                   <div className="mt-1 relative">
                     <input
@@ -649,7 +668,7 @@ export const UpdateForm = () => {
                 </div>
                 <div className="w-1/2 relative">
                   <label className="block font-medium text-neutral/70">
-                    Pekerjaan Lainnya Saat ini
+                    Pekerjaan Lainnya (jika ada)
                   </label>
                   <div className="flex mt-1 relative">
                     <input
@@ -670,7 +689,7 @@ export const UpdateForm = () => {
               </div>
               <div>
                 <label className="block font-medium text-neutral/70">
-                  Foto KTP
+                  Foto KTP <span className="text-red-500"> *</span>
                 </label>
                 <div className="mt-1 relative w-full h-80 flex items-center justify-center rounded-lg overflow-hidden">
                   <input
@@ -713,7 +732,7 @@ export const UpdateForm = () => {
               <div className="flex flex-row gap-4 space-x-8">
                 <div className="w-1/2 relative">
                   <label className="block font-medium text-neutral/70">
-                    Tanggal Masuk Kontrak
+                    Tanggal Masuk Kontrak <span className="text-red-500"> *</span>
                   </label>
                   <div className="flex mt-1 relative">
                     <input
@@ -729,7 +748,7 @@ export const UpdateForm = () => {
 
                 <div className="w-1/2 relative">
                   <label className="block font-medium text-neutral/70">
-                    Nama Bank Penerima
+                    Nama Bank Penerima <span className="text-red-500"> *</span>
                   </label>
                   <div className="flex mt-1 relative">
                     <input
@@ -749,7 +768,7 @@ export const UpdateForm = () => {
               <div className="flex flex-row gap-4 space-x-8">
                 <div className="w-1/2 relative">
                   <label className="block font-medium text-neutral/70">
-                    Nomor Rekening Bank
+                    Nomor Rekening Bank <span className="text-red-500"> *</span>
                   </label>
                   <div className="flex mt-1 relative">
                     <input
@@ -771,7 +790,7 @@ export const UpdateForm = () => {
                 </div>
                 <div className="w-1/2 relative">
                   <label className="block font-medium text-neutral/70">
-                    Nama Pemilik Rekening
+                    Nama Pemilik Rekening <span className="text-red-500"> *</span>
                   </label>
                   <div className="flex mt-1 relative">
                     <input
@@ -792,7 +811,7 @@ export const UpdateForm = () => {
               </div>
               <div>
                 <label className="block font-medium text-neutral/70">
-                  Foto Buku Tabungan
+                  Foto Buku Tabungan <span className="text-red-500"> *</span>
                 </label>
                 <div className="mt-1 relative w-full h-80 flex items-center justify-center rounded-lg overflow-hidden">
                   <input
@@ -857,7 +876,7 @@ export const UpdateForm = () => {
                     <>
                       <div className="w-1/2 relative">
                         <label className="block font-medium text-neutral/70">
-                          NPWP
+                          NPWP <span className="text-red-500"> *</span>
                         </label>
                         <div className="flex mt-1 relative">
                           <input
@@ -882,7 +901,7 @@ export const UpdateForm = () => {
                 {formState.memilikiNPWP === "Ya" && (
                   <div className="relative">
                     <label className="block font-medium text-neutral/70">
-                      Foto NPWP
+                      Foto NPWP <span className="text-red-500"> *</span>
                     </label>
                     <div className="mt-1 relative w-full h-80 flex items-center justify-center rounded-lg overflow-hidden">
                       <input
@@ -935,11 +954,15 @@ export const UpdateForm = () => {
                     <input
                       type="password"
                       name="password"
-                      placeholder="Password Baru"
+                      placeholder="(min 8 karakter, 1 huruf besar, 1 angka)"
                       onChange={handleChange}
                       className="bg-base mt-1 p-2 w-full border rounded-md "
+                      ref={passReff}
                     />
                   </div>
+                    {passwordError && (
+                    <p className="text-red-500 text-sm mt-1">{passwordError}</p>
+                    )}
                 </div>
                 <div className="w-1/2 relative">
                   <label className="block font-medium text-neutral/70">
@@ -951,9 +974,9 @@ export const UpdateForm = () => {
                       name="konfirmasiPassword"
                       placeholder="Konfirmasi Password"
                       onChange={handleChange}
-                      ref={passReff}
                       onBlur={handleConfirmPassword}
                       className="bg-base mt-1 p-2 w-full border rounded-md "
+                      ref={confirmPassReff}
                     />
                   </div>
                   {!passwordsMatch && (
@@ -966,7 +989,6 @@ export const UpdateForm = () => {
               </p>
               <div className="flex justify-center py-4 gap-4">
                 <button
-                  onClick={handleSubmit}
                   className="bg-info text-white px-4 py-2 rounded-md hover:bg-infoHover"
                 >
                   Ubah Detail Akun
@@ -1086,11 +1108,15 @@ export const UpdateForm = () => {
                     <input
                       type="password"
                       name="password"
-                      placeholder="Password Baru"
+                      placeholder="(min 8 karakter, 1 huruf besar, 1 angka)"
                       onChange={handleChange}
                       className="bg-base mt-1 p-2 w-full border rounded-md "
+                      ref={passReff}
                     />
                   </div>
+                  {passwordError && (
+                    <p className="text-red-500 text-sm mt-1">{passwordError}</p>
+                    )}
                 </div>
                 <div className="w-1/2 relative">
                   <label className="block font-medium text-neutral/70">
@@ -1104,6 +1130,7 @@ export const UpdateForm = () => {
                       onChange={handleChange}
                       onBlur={handleConfirmPassword}
                       className="bg-base mt-1 p-2 w-full border rounded-md "
+                      ref={confirmPassReff}
                     />
                   </div>
                   {!passwordsMatch && (

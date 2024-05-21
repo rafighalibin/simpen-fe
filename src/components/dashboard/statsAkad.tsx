@@ -33,6 +33,11 @@ export const StatsAkad = () => {
     window.location.href = `/perubahan-kelas`;
   };
 
+  console.log(listFeedback);
+  const pendingFeedbackCount = listFeedback.filter(
+    (feedback) => !feedback.finished
+  ).length;
+
   return (
     <div className="flex-grow grid grid-flow-row-dense">
       <div className={`${styles.card6} p-5`}>
@@ -53,7 +58,7 @@ export const StatsAkad = () => {
             style={PoppinsBold.style}
             className={`${styles.heading} mt-12 ml-5 align-center items-center text-center text-8xl`}
           >
-            {listFeedback.length}
+            {pendingFeedbackCount}
           </div>
           <div
             style={PoppinsBold.style}

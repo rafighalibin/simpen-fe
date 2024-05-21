@@ -10,7 +10,7 @@ import { UpdateFee } from "../../../../components/payrollPage/updatePayroll";
 const Page = () => {
   const { checkPermission } = useAuthContext();
   return (
-    checkPermission(true, true, true) && (
+    checkPermission(true, false, false) && (
       <div className="px-[8vw] py-8">
         <Breadcrumbs/>
         <UpdateFee/>

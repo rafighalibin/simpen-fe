@@ -3,15 +3,18 @@
 import React, { useEffect, useState } from "react";
 import useFetchWithToken from "../../common/hooks/fetchWithToken";
 import useFetchAllUser from "../../common/hooks/user/useFetchAllUser";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 // import font and css
 import styles from "./UserListTable.module.css";
 import { InterMedium, PoppinsBold } from "../../font/font";
 import { Filtering } from "./Filtering";
 import Loading from "../../common/components/Loading";
+import { useMutation } from "react-query";
 
 export const UserListTable = () => {
+  const pathname = usePathname();
+
   const {
     isLoading: listAllUserLoading,
     error,
@@ -28,10 +31,13 @@ export const UserListTable = () => {
   const [userAlert, setUserAlert] = useState("");
   const [alertType, setAlertType] = useState("");
   const router = useRouter();
+  const fetchWithToken = useFetchWithToken();
 
   useEffect(() => {
     refetch();
   }, [refetch]);
+
+  console.log(pathname);
 
   useEffect(() => {
     if (typeof localStorage !== "undefined") {
@@ -146,6 +152,28 @@ export const UserListTable = () => {
     const userId = user.id;
     router.push(`/user/detail/${userId}`);
   };
+
+  const handleBulkDelete = () => {
+    router.push("user/bulk-delete");
+  };
+
+  const handleExitBulkDelete = () => {
+    router.push("user");
+  };
+
+  // const { mutateAsync: deleteMutation } = useMutation({
+  //   mutationFn: (user) =>
+  //     fetchWithToken(`/user/${user.id}`, "DELETE").then((res) => res.json),
+  // });
+
+  // const handleDelete = async (user) => {
+  //   if (window.confirm("Apa anda yakin ingin menonaktifkan akun ini?")) {
+  //     await deleteMutation(user);
+  //     localStorage.setItem("removeUserSuccess", `${user.nama}`);
+  //     refetch();
+  //     router.push("/user/bulk-delete");
+  //   }
+  // };
 
   if (error || !listAllUser) {
     return <div>Error fetching all users.</div>;
@@ -272,18 +300,39 @@ export const UserListTable = () => {
                         {user.email}
                       </td>
                       <td className="border-b px-4 py-5 md:table-cell hidden">
-                        <button
-                          onClick={() => handleDetailClick(user)}
-                          className={`bg-transparent hover:bg-[#215E9B] text-[#215E9B] focus:bg-[#215E9B] focus:text-white hover:text-white py-2 px-4 border border-[#215E9B] hover:border-transparent rounded-full`}
-                        >
-                          Detail
-                        </button>
+                        {pathname !== "/user/bulk-delete" && (
+                          <button
+                            onClick={() => handleDetailClick(user)}
+                            className={`bg-transparent hover:bg-[#215E9B] text-[#215E9B] focus:bg-[#215E9B] focus:text-white hover:text-white py-2 px-4 border border-[#215E9B] hover:border-transparent rounded-full`}
+                          >
+                            Detail
+                          </button>
+                        )}
+                        {/* {pathname === "/user/bulk-delete" && (
+                          <button
+                            onClick={() => handleDelete(user)}
+                            className={`bg-transparent hover:bg-[#215E9B] text-[#215E9B] focus:bg-[#215E9B] focus:text-white hover:text-white py-2 px-4 border border-[#215E9B] hover:border-transparent rounded-full`}
+                          >
+                            Delete
+                          </button>
+                        )} */}
                       </td>
                     </tr>
                   ))}
               </tbody>
             </table>
           )}
+          {/* {pathname !== "/user/bulk-delete" && (
+            <button className="bg-red-500" onClick={handleBulkDelete}>
+              bulk delete
+            </button>
+          )}
+
+          {pathname === "/user/bulk-delete" && (
+            <button className="bg-red-500" onClick={handleExitBulkDelete}>
+              exit bulk delete
+            </button>
+          )} */}
           <div className={`flex justify-center my-4`}>
             <div className={`${styles.pagination_container} p-2`}>
               <button

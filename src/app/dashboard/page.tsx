@@ -71,23 +71,18 @@ const App = () => {
       <div className="mr-5 ml-5">
         <EstablishProfile data={loggedUser} />
         <br></br>
-        <Notification data={notifications} onUpdate={handleNotificationUpdate} />
+        <Notification
+          data={notifications}
+          onUpdate={handleNotificationUpdate}
+        />
       </div>
-      <div className="flex-wrap mr-5 ml-5 col-span-2">
+      <div className="flex-wrap mr-5 ml-5 mb-12 col-span-2">
         <ListOfAnnouncement data={loggedUser} />
         <br></br>
-        {loggedUser && loggedUser.role == "superadmin" && (
-          <StatsAdmin />
-        )}
-        {loggedUser && loggedUser.role == "pengajar" && (
-          <StatsPengajar />
-        )}
-        {loggedUser && loggedUser.role == "operasional" && (
-          <StatsOps />
-        )}
-        {loggedUser && loggedUser.role == "akademik" && (
-          <StatsAkad />
-        )}
+        {loggedUser && loggedUser.role == "superadmin" && <StatsAdmin />}
+        {loggedUser && loggedUser.role == "pengajar" && <StatsPengajar />}
+        {loggedUser && loggedUser.role == "operasional" && <StatsOps />}
+        {loggedUser && loggedUser.role == "akademik" && <StatsAkad />}
       </div>
     </div>
   );

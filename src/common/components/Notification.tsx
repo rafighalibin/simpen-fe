@@ -172,7 +172,7 @@ export const Notification = ({ data, onUpdate }) => {
                         </a>
                       </div>
                     )}
-                    {notification.tipe === 3 &&
+                    {notification.tipe === 4 &&
                       notification.isi["status"] == "disetujui" && (
                         <div>
                           {"Permintaan perubahan "}
@@ -185,11 +185,11 @@ export const Notification = ({ data, onUpdate }) => {
                           {" disetujui"}
                         </div>
                       )}
-                    {notification.tipe === 3 &&
-                      notification.isi["status"] == "ditolak" && (
-                        <div>Permintaan pengajar pengganti ditolak</div>
-                      )}
                     {notification.tipe === 4 &&
+                      notification.isi["status"] == "ditolak" && (
+                        <div>Permintaan perubahan pengajar ditolak</div>
+                      )}
+                    {notification.tipe === 3 &&
                       notification.isi["status"] == "disetujui" && (
                         <div>
                           <a
@@ -204,7 +204,7 @@ export const Notification = ({ data, onUpdate }) => {
                           )} digantikan oleh ${notification.isi["pengganti"]}`}
                         </div>
                       )}
-                    {notification.tipe === 4 &&
+                    {notification.tipe === 3 &&
                       notification.isi["status"] == "ditolak" && (
                         <div>Permintaan pengajar pengganti ditolak</div>
                       )}
