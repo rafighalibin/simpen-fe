@@ -24,6 +24,8 @@ export const JenisKelasTable = () => {
   const [sortBy, setSortBy] = useState("");
   const [sortDirection, setSortDirection] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [searchKeywords, setSearchKeywords] = useState([]);
+  const [searchType, setSearchType] = useState("");
   const router = useRouter();
   const pathname = usePathname();
 
@@ -78,7 +80,11 @@ export const JenisKelasTable = () => {
   };
 
   const filteredJenisKelas = listAllJenisKelas.filter((jenisKelas) => {
-    return jenisKelas.nama.toLowerCase().includes(searchKeyword.toLowerCase());
+    if (searchType === "moda") {
+      return jenisKelas.pertemuan.toLowerCase().includes(searchKeyword.toLowerCase());
+    } else {
+      return jenisKelas.nama.toLowerCase().includes(searchKeyword.toLowerCase());
+    }
   });
 
   const sortedJenisKelas = [...filteredJenisKelas].sort((a, b) => {
@@ -271,6 +277,16 @@ export const JenisKelasTable = () => {
           <option value="">Sort By</option>
           <option value="nama_asc">By Name (Asc)</option>
           <option value="nama_desc">By Name (Desc)</option>
+        </select>
+        <select
+          value={searchType}
+          onChange={(e) => {
+            setSearchType(e.target.value);
+          }}
+          className={`flex-grow sm:px-2 sm:py-2  p-1 ${styles.placeholder} ${styles.field} `}
+        >
+          <option value="">Filter By</option>
+          <option value="moda">Cari berdasarkan Moda</option>
         </select>
         <button
           onClick={handleAddJenisKelas}

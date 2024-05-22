@@ -1,15 +1,19 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 // import css and font
 import styles from "./Filtering.module.css";
 import { InterReguler } from "../../font/font";
+import useFetchWithToken from "../../common/hooks/fetchWithToken";
 
 export const Filtering = (props) => {
   //To-Do: Filtering
+  const fetchWithToken = useFetchWithToken();
   const [sortBy, setSortBy] = useState("");
   const [filterBy, setFilterBy] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [modaPertemuanFetched, setModaPertemuanFetched] = useState([]);
+  const [error, setError] = useState("");
   const router = useRouter();
   const pathname = usePathname();
 
@@ -39,6 +43,41 @@ export const Filtering = (props) => {
     timeout.current = setTimeout(() => {
       props.ssB(currentQuery);
     }, 300);
+  };
+
+  useEffect(() => {
+    const fetchExistingAttributes = async () => {
+      try {
+        const response = await fetchWithToken(
+          "/kelas/jenis/existing-attributes"
+        );
+        const data = await response.json();
+        // Update the form state with the existing attributes
+        setModaPertemuanFetched(data.content.modaPertemuan);
+      } catch (error) {
+        setError("Failed to fetch existing attributes");
+      }
+    };
+
+    fetchExistingAttributes();
+  }, []);
+
+  const handleDebounceFilter = (currentQuery) => {
+    clearTimeout(timeout.current);
+
+    if (!currentQuery.trim()) {
+      props.sfB("");
+      return;
+    }
+
+    timeout.current = setTimeout(() => {
+      props.sfB(currentQuery);
+    }, 300);
+  };
+
+  const handleFilterChange = (e) => {
+    setFilterBy(e.target.value);
+    handleDebounceFilter(e.target.value);
   };
 
   const handleSortChange = (e) => {
@@ -105,7 +144,19 @@ export const Filtering = (props) => {
           <option value="nama-desc">Nama Descending</option>
           <option value="">None</option>
         </select>
-
+        <select
+          value={filterBy}
+          onChange={handleFilterChange}
+          className={`flex-grow sm:px-2 sm:py-2 p-1  ${styles.placeholder} ${styles.field}`}
+          style={InterReguler.style}
+        >
+          <option value="" disabled>
+            Filter
+          </option>
+          <option value="moda-asc">Moda Asc</option>
+          <option value="moda-desc">Moda Desc</option>
+          <option value="">Semua</option>
+        </select>
         <button
           onClick={handleAddJenisKelas}
           className={`px-4 py-2 ${styles.btn} ${styles.btn_tx} text-white rounded`}
